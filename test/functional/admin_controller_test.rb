@@ -13,76 +13,39 @@ class AdminControllerTest < Test::Unit::TestCase
     @response   = ActionController::TestResponse.new
   end
 
-  def test_index
+  def test_index_with_no_password
     get :index
     assert_response :success
-    assert_template 'list'
+    assert_template 'signin_form'
+    assert_equal(session[:intended_action] , 'index')
   end
 
-  def test_list
-    get :list
-
+  def test_signin_with_faulty_password
+    post :signin, {:username => 'joeblow', :password => 'totallyfakingit'}
     assert_response :success
-    assert_template 'list'
-
-    assert_not_nil assigns(:products)
+    assert_template 'signin_form'
   end
 
-  def test_show
-    get :show, :id => 1
+  def test_signin_with_good_password
+    post :signin, {
+       :username => $STORE_PREFS['admin_username'],
+       :password => $STORE_PREFS['admin_password']}
+       
+    assert_redirected_to :action => nil
+  end
 
+  def test_orders
+    # anybody else know how I can load data
+    # into the session? jph/2006-06-24
+    process 'orders', {}, { :logged_in => true }
     assert_response :success
-    assert_template 'show'
-
-    assert_not_nil assigns(:product)
-    assert assigns(:product).valid?
+    assert_template 'orders'
+    assert_not_nil assigns(:orders)
   end
 
-  def test_new
-    get :new
-
+  def generate_coupons_blank
+    process 'generate_coupons', {}, { :logged_in => true }
     assert_response :success
-    assert_template 'new'
-
-    assert_not_nil assigns(:product)
-  end
-
-  def test_create
-    num_products = Product.count
-
-    post :create, :product => {}
-
-    assert_response :redirect
-    assert_redirected_to :action => 'list'
-
-    assert_equal num_products + 1, Product.count
-  end
-
-  def test_edit
-    get :edit, :id => 1
-
-    assert_response :success
-    assert_template 'edit'
-
-    assert_not_nil assigns(:product)
-    assert assigns(:product).valid?
-  end
-
-  def test_update
-    post :update, :id => 1
-    assert_response :redirect
-    assert_redirected_to :action => 'show', :id => 1
-  end
-
-  def test_destroy
-    assert_not_nil Product.find(1)
-
-    post :destroy, :id => 1
-    assert_response :redirect
-    assert_redirected_to :action => 'list'
-
-    assert_raise(ActiveRecord::RecordNotFound) {
-      Product.find(1)
-    }
+    assert_template 'generate_coupons'
   end
 end
