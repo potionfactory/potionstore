@@ -1,0 +1,72 @@
+<%
+  if @order.items_count == 1
+    application = 'application'
+    icon = 'icon'
+    file = 'file'
+    it = 'it'
+  else
+    application = 'applications'
+    icon = 'icons'
+    file = 'files'
+    it = 'them'
+  end
+
+  coupons = @order.promo_coupons
+  vc_coupons = coupons.compact()
+  vc_coupons.reject!{|x| x.product_code != 'vc'}
+	 
+-%>
+<h1>Thank You</h1>
+
+<p>
+    Thank you for purchasing <%=$STORE_PREFS['company_name']%> software. If you have not
+    downloaded the software already, please do so now:
+
+    <ul>
+        <% for item in @order.line_items -%>
+        <li><a href="<%=h item.product.download_url %>">Download <%=h item.product.name %></a></li>
+        <% end -%>
+    </ul>
+</p>
+
+<h3>HOW TO ACTIVATE</h3>
+<div class="box">
+<p>
+    If you have the <%= application %> installed, you can activate by clicking on the "Activate Now" button.
+    Otherwise, you can copy and paste the license key into the application's registration window.
+</p>
+
+<table id="license_keys">
+	<% for item in @order.line_items -%>
+	<tr>
+		<td class="first"><b><%=item.product.name%>:</b></td>
+		<td><code style="font-size:13px"><%= item.license_key %></code></td>
+		<td><a class="button" href="<%= item.product.license_url_scheme %>://<%= item.license_key %>">ACTIVATE NOW</a></td>
+	</tr>
+<% end -%>
+</table>
+</div>
+
+<div class="d"></div>
+
+<%= render :partial => 'receipt' -%>
+
+<div id="print">
+    <%= link_to image_tag('store/printer.png')+' Printer Friendly Receipt', { :action => 'receipt' }, :popup => ['new_window', 'height=500,width=600'] -%>
+</div>
+
+<% if coupons.length != 0 -%>
+<h3>DISCOUNT COUPONS</h3>
+<% end
+   if vc_coupons.length != 0 -%>
+<p>
+    If you have friends who might enjoy Voice Candy, here are 3 coupon
+    codes for $3 off their purchases. They expire in 15 days.
+</p>
+
+<pre><%= vc_coupons.collect {|x| x.coupon}.join(',  ') %></pre>
+<% end -%>
+
+<p style="text-align:center;margin:50px 0 10px" class="small">
+    The contents of this page are being sent to you by email.
+</p>

@@ -1,0 +1,28 @@
+<h1>Order Failed</h1>
+
+<!-- <p>Failure code: <%= @order.failure_code %></p> -->
+
+<p style="font-size:14px; margin-bottom:25px; line-height:22px;">
+	<% if @order.status == 'C' -%>
+	You placed this order already.
+	<% elsif @order.status == 'X' -%>
+	This order has been cancelled.
+	<% else -%>
+	<%= @order.failure_reason.gsub("\n", "<br/>") %>
+	<% end -%>
+</p>
+<div class="cl"></div>
+
+<% if @order.country == "US" && @order.status != "C" -%>
+<p style="color:#666; margin-bottom:50px">
+    <strong>Non-USA Customers:</strong> Please make sure to select your country
+</p>
+<% end -%>
+
+<p style="margin-bottom:50px">
+	<% if @order.status == 'C' -%>
+	An order receipt with the license key was sent to <%= @order.email -%>
+	<% else -%>
+	<strong><a href="javascript:history.back()">Go back</a></strong> to try again
+	<% end -%>
+</p>

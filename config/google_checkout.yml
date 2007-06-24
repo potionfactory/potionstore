@@ -1,0 +1,13 @@
+# settings for google checkout
+
+production:
+  gcheckout_merchant_id: "XXXXXXXXXXXXXXX"
+  gcheckout_merchant_key: "XXXXXXXXXXXXXXXXXXXXXX"
+
+development:
+  gcheckout_merchant_id: "XXXXXXXXXXXXXXX"
+  gcheckout_merchant_key: "XXXXXXXXXXXXXXXXXXXXXX"
+
+test:
+  gcheckout_merchant_id: "XXXXXXXXXXXXXXX"
+  gcheckout_merchant_key: "XXXXXXXXXXXXXXXXXXXXXX"

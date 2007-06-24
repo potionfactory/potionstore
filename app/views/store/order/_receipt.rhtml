@@ -1,0 +1,154 @@
+<% if @print -%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title><%=$STORE_PREFS['company_name']%> Receipt</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+    <h1 style="font:bold 14px helvetica; margin-top:50px;"><%=$STORE_PREFS['company_name']%></h1>
+<% end -%>
+<style type="text/css">
+<% if @print -%>
+body { margin: 0 50pt; }
+#receipt table { width:100% }
+<% else -%>
+#receipt table { width:550px; }
+<% end -%>
+</style>
+<%
+=begin
+	 /* The following is the original CSS code. They have been inlined for GMail -%>
+
+#receipt { font-family:helvetica, arial, sans-serif; font-size:12px; line-height:18px; margin-top:30px; }
+#receipt h2, #receipt h3 { margin: 0; color:#333; }
+#receipt #order_number { vertical-align:bottom; }
+#receipt table { border-collapse:collapse; }
+#receipt tr td,
+#receipt tr th { padding:5px 0; }
+#receipt td { vertical-align:top; }
+#receipt #payment { width:35%; }
+#receipt .license_key {text-align:center; }
+#receipt .unit { width:12%; text-align:center; }
+#receipt .qty { width:12%; text-align:center; }
+#receipt .price { width:11%; text-align:right; }
+#receipt th.unit { text-align:left; }
+#receipt table tr.r { border-bottom: 1px solid #ddd; }
+#receipt table tr.s td { border-bottom: 1px solid #777; padding-bottom: 12px; }
+#receipt table tr.d { border-bottom: 3px double #ddd; }
+#receipt h3 { display:inline; margin:0; padding:0;}
+
+<%
+=end -%>
+
+<div id="receipt" style="font-family:helvetica,arial,sans-serif;font-size:12px;line-height:18px;margin-top:30px;">
+    <table style="border-collapse:collapse">
+        <tr class="s">
+            <td style="padding:5px 0 12px 0;border-bottom: 1px solid #777">
+				<h2 style="margin:0;color:#333">
+					Receipt
+				</h2>
+			</td>
+            <td id="order_number" style="padding:5px 0 12px 0;vertical-align:bottom;border-bottom: 1px solid #777">
+				<h3 style="margin:0;padding:0;color:#333;display:inline">
+					Order Number: <%= @order.id %>
+				</h3>
+			</td>
+        </tr>
+        <tr class="r">
+            <td colspan="2" style="padding:5px 0;border-bottom: 1px solid #ddd">
+				<strong>Time:</strong> <%= @order.order_time.utc %>
+			</td>
+        </tr>
+
+        <tr class="r">
+            <td style="padding:5px 0;border-bottom: 1px solid #ddd">
+				<strong>Licensed to:</strong> <%=h @order.licensee_name %>
+			</td>
+            <td style="padding:5px 0;border-bottom: 1px solid #ddd">
+				<% if @order.company != '' -%>
+                <strong>Company:</strong> <%=h @order.company -%>
+                <% end -%></td>
+			</tr>
+        <tr class="r">
+            <td colspan="2" style="padding:5px 0;border-bottom: 1px solid #ddd">
+				<strong>Email:</strong> <%=h @order.email %>
+			</td>
+        </tr>
+        <tr class="d">
+            <td style="padding:5px 0;border-bottom: 3px double #ddd">
+                <strong>Billing Address:</strong><br/>
+				<%=h @order.first_name %> <%=h @order.last_name %><br/>
+				<% if @order.address1.blank? -%>
+				N/A
+				<% else -%>
+                <%=h @order.address1
+					 -%><%=h ', ' + @order.address2 if @order.address2 && ! @order.address2.blank? -%><br/>
+                <%=h @order.city %>, <%=h @order.state %> <%=h @order.zipcode %><br/>
+                <%=h @order.country_name %>
+				<% end -%>
+            </td>
+			<td id="payment" style="width:35%;padding:5px 0;border-bottom: 3px double #ddd">
+				<strong>Payment:</strong><br/>
+                <%=h @order.payment_type %>
+				<% if @order.cc_order? %>
+				<br/><%=h @order.ccnum %>
+				<% end %>
+			</td>
+        </tr>
+		</table>
+		<table style="border-collapse:collapse">
+			<tr class="r">
+				<th style="padding:5px 0;border-bottom: 1px solid #ddd">Item</th>
+				<th style="padding:5px 0;border-bottom: 1px solid #ddd">License Key</th>
+				<th style="padding:5px 0;border-bottom: 1px solid #ddd;text-align:left;" class="unit">Unit Price</th>
+				<th style="padding:5px 0;border-bottom: 1px solid #ddd">Qty</th>
+				<th style="padding:5px 0;border-bottom: 1px solid #ddd">Price</th>
+			</tr>
+			<% for item in @order.line_items -%>
+			<tr class="r">
+				<td class="prod" style="padding:5px 0;border-bottom: 1px solid #ddd">
+					<%=h item.product.name %>
+				</td>
+				<td class="license_key" style="padding:5px 0;text-align:center;border-bottom: 1px solid #ddd">
+					<%=h item.license_key %>
+				</td>
+				<td class="unit" style="padding:5px 0;text-align:center;width:12%;border-bottom: 1px solid #ddd">
+					<%= number_to_currency item.unit_price %>
+				</td>
+				<td class="qty" style="padding:5px 0;text-align:center;width:12%;border-bottom: 1px solid #ddd">
+					<%= item.quantity %>
+				</td>
+				<td class="price" style="padding:5px 0;text-align:right;width:11%;border-bottom: 1px solid #ddd">
+					<%= number_to_currency item.unit_price * item.quantity %>
+				</td>
+			</tr>
+			<% end -%>
+			<% if @order.coupon -%>
+			<tr>
+				<td colspan="4" style="padding:5px 0"><%= @order.coupon.description %></td>
+				<td class="price" style="padding:5px 0;text-align:right">-<%= number_to_currency(@order.coupon_amount) %></td>
+			</tr>
+			<% end -%>
+			<tr id="total" class="r">
+				<td colspan="3" style="padding:5px 0;border-bottom: 1px solid #ddd"></td>
+				<td class="qty" style="padding:5px 0;border-bottom: 1px solid #ddd;text-align:center">
+					<strong>Total:</strong>
+				</td>
+				<td class="price" style="padding:5px 0;border-bottom: 1px solid #ddd;text-align:right">
+					<strong><%= number_to_currency @order.total %></strong>
+				</td>
+			</tr>
+			<% if @order.comment -%>
+			<tr class="r">
+				<td colspan="5" style="padding:5px 0;border-bottom: 1px solid #ddd">
+					<strong>Comment:</strong> <%=h @order.comment %>
+				</td>
+			</tr>
+			<% end -%>
+		</table>
+	</div>
+<% if @print %>
+</body>
+</html>
+<% end %>

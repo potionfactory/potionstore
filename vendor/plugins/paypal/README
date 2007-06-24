@@ -1,0 +1,227 @@
+Ruby on Rails PayPal Plugin v1.4
+  by Andre Price, ELC Technologies
+Based off of the PayPal Web Services Example by Will C
+PayPal Plugin-
+----------------------
+This package implements various paypal merchant actions.  They are intended to e used at a level transparent to parent applications.  Therefore the express check out and other actions that link to and back from paypal's site are curently not implemented.  These actions return a response packet that the user can process as they see fit.
+
+
+Requirements-
+----------------------
+Valid PayPal Business Account ( or Developer account for testing) -- Instructions for setting up developer account below.
+Soap4r -- Install the latest from http://dev.ctor.org/soap4r.
+
+
+Getting Developer Account and needed certificates
+----------------------
+  Visit https://developer.paypal.com
+  Create an account( remember name and password)
+  Login and select the sandbox
+  Select Create an Account and follow the steps to create a premier account (remember name and password)
+  Once created launch the account via the sandbox site
+  Click on the Profile tab in the My Account section
+  CLick on API Access and request a direct access certificate
+  Download and install certificats as indicated below.
+
+Installation-
+----------------------
+  1) Extract tar -- Should put paypal.rb int correct directory
+     Or
+     Copy paypal.rb, to corresponding plugin directory.
+	   ex. vendor/plugins/paypal/lib
+
+     Move to vendor/.../lib/ directory
+
+  2) Create the default.rb, defaultDriver.rb and 
+     PayPalAPIInterfaceServiceClient.rb.
+     Some are included but they may refer to older versions of the PayPal api. 
+     
+     Use wsdl4r (from soap4r) to create the above files.  Execute the following
+     command.
+	      ./bin/wsdl2ruby.rb --wsdl http://www.sandbox.paypal.com/wsdl/PayPalSvc.wsdl --type client --force
+
+     Place the created files in the vendor/.../paypal/lib/ directory
+    
+  4) Obtain the api chain cert from PayPal. Save this to:
+     lib/api_cert_chain.crt
+     This file is obtainable through their SDK downloads at http://developer.paypal.com.
+  
+  5) Obtain a crt/key pair for your sandbox account and save to:
+	sandbox_api.crt
+	sandbox_api.key
+
+  6) Obtain a crt/key pair for your live account and save to:
+	live_api.crt
+	live_api.key
+
+  7) Edit paypal/lib/paypal.rb. Replace 'SANDBOX_ACCOUNT_NAME' with the account 
+     name that was created  for your sandbox account api access.
+
+  8) Edit paypal/lib/paypal.rb. Replace 'SANDBOX_ACCOUNT_PASS' with the account 
+     password for the sandbox api.
+ 
+  9) Repeat the for live account and password:
+	change 'LIVE_ACCOUNT_NAME' and 'LIVE_ACCOUNT_PASSWD'
+
+
+  10) Edit paypal/test/paypal_test.rb.
+    a) Replace the variables in good_params with known good parameters
+        i)Credit card numbers can be "genereated" trough paypal by using the
+           sandbox to add credit cards to your test account. 
+           (see http://paypaltech.com/Patrick/testAcctOpt/) for more info
+
+    b) Replace the variables in bad_params with known invalid values. 
+
+  11) From within /vendor/plugins/paypal, run:
+    rake
+	this will do dummy operations with the sandbox account
+    You should see the following output:
+
+/usr/bin/ruby -Ilib:lib "/usr/lib/ruby/gems/1.8/gems/rake-0.7.0/lib/rake/rake_test_loader.rb" "test/paypal_test.rb"
+Loaded suite /usr/lib/ruby/gems/1.8/gems/rake-0.7.0/lib/rake/rake_test_loader
+Started
+.......
+Finished in 10.361749 seconds.
+
+7 tests, 7 assertions, 0 failures, 0 errors
+
+  11) Success! If you do have had troubles along the way, see the troubleshooting section below.
+      
+
+
+Usage:
+-----------------
+	Each function in the Paypal suite have two ways of calling it one for
+         test or dummy charges.  And one for live acions.
+	testing,sandbox:	Paypal.directcharge(params)
+        live           :        Paypal.directcharge(params,true)
+
+Function: directcharge
+  This function performs a doDirectCharge action.  Transfering funds from the parameter's account to your paypal merchant account. 
+
+  The return value of this function is the response object from paypal.
+  For instance:
+         res = Paypal.directcharge(params)
+         res.ack == Success   // true if action was succesful
+         res.ack == Failure   // true if action failed
+  The directcharge method takes a hash argument (params).
+  The method expects the hash to be in the form of:
+               :firstName => "<FIRST_NAME_VALUE>",
+               :lastName => "<LAST_NAME_VALUE>",
+               :ip => "<BUYERS_IP_ADDRESS",
+               :ammount => "<AMOUNT_TO_CHARGE>",    //This value has a maximum of 10,000.00
+               :itemName => "<ITEM_THAT_IS_BEING_SOLD",
+               :addressName => "Billing",
+               :street1 => "<FIRST LINE OF STREET ADDRESS>",
+               :street2 => "<SECOND LINE OF STREET ADDRESS>",
+               :cityName => "<CITY OF BILLING ADDRESS OF CARD>",
+               :postalCode =>  "<ZIPCODE OF BILLING ADDRESS OF CARD>",
+               :stateOrProvince => "<STATECODE OF BILLING ADDRESS>",
+               :country => "<COUNTRY CODE OF BILLING ADDRESS>",
+               :creditCardType => "Visa or MasterCard or Amex or Discover",
+               :creditCardNumber => "<VALID CREDIT CARD NUMBER",
+               :cVV2 => "<CVV2 AUTHORIZATION NUMBER FROM CARD"
+               :expMonth => 1  ,  //Expiration month in numerical form not string
+               :expYear => 2006     ///Expiration year in numerical form
+
+Function: directauth
+  This function performs a directcharge in authorization mode.  This means no actual funds are 
+  transfered upon comletetion of this action.
+
+
+  The return value of this function is the response object from paypal.
+  For instance:
+         res = Paypal.directauth(params)
+         res.ack == Success   // true if action was succesful
+         res.ack == Failure   // true if action failed
+
+  The transactionID is needed if you intend to capture the funds authroized by this function.  
+  The method expects the param hash to be in the form of : 
+               :firstName => "<FIRST_NAME_VALUE>",
+               :lastName => "<LAST_NAME_VALUE>",
+               :ip => "<BUYERS_IP_ADDRESS",
+               :ammount => "<AMOUNT_TO_CHARGE>",    //This value has a maximum of 10,000.00
+               :itemName => "<ITEM_THAT_IS_BEING_SOLD",
+               :addressName => "Billing",
+               :street1 => "<FIRST LINE OF STREET ADDRESS>",
+               :street2 => "<SECOND LINE OF STREET ADDRESS>",
+               :cityName => "<CITY OF BILLING ADDRESS OF CARD>",
+               :postalCode =>  "<ZIPCODE OF BILLING ADDRESS OF CARD>",
+               :stateOrProvince => "<STATECODE OF BILLING ADDRESS>",
+               :country => "<COUNTRY CODE OF BILLING ADDRESS>",
+               :creditCardType => "Visa or MasterCard or Amex or Discover",
+               :creditCardNumber => "<VALID CREDIT CARD NUMBER",
+               :cVV2 => "<CVV2 AUTHORIZATION NUMBER FROM CARD"
+               :expMonth => 1  ,  //Expiration month in numerical form not string
+               :expYear => 2006     ///Expiration year in numerical form 
+
+
+ 
+Function: capture
+
+  This funcion performs a doCapture.  It captures or collects the charge from a previously authorized
+  transaction.  This transaction is referenced by the transactionID returned from directauth.
+ 
+
+  The return value of this function is the response object from paypal.
+  For instance:
+         res = Paypal.capture(params)
+         res.ack == Success   // true if action was succesful
+         res.ack == Failure   // true if action failed
+
+  The parameter hash for this function is to be in the following form:
+              :transactionID => "<transactionID  FROM PREVIOUS DIRECT AUTH return object>"
+              :amount = > "<AMOUNT TO CHARGE>" //should be less than or equal to
+	                                       //auth's amount
+Function: void
+
+  This funcion performs a DoVoid.  It voids the charge from a previously authorized
+  transaction.  This transaction is referenced by the transactionID value of the return object from directauth.
+
+
+  The return value of this function is the response object from paypal.
+  For instance:
+         res = Paypal.void(params)
+         res.ack == Success   // true if action was succesful
+         res.ack == Failure   // true if action failed
+
+  The parameter hash for this function is to be in the following form:
+              :transactionID => "<transactionID  FROM PREVIOUS DIRECT AUTH return object>"
+
+
+You can run test charges through the console and get an idea on how to use the class by:
+./script/console
+paypal.directcharge( {
+               :firstName => "Justin",
+          --- SNIP ---
+               :expYear => 2008 } )
+
+You should see a bunch of data relating to the response object from paypal.  
+For more information on what specific data is given/useful please refer to the PayPal developer api.  
+
+If things go well and the charge should show in your sandbox. To run the charge live, just add a second parameter of true.
+
+paypal.directcharge( {...}, true )
+
+If your certificates are all setup correctly, you'll see a credit on your live paypal account.
+
+Please direct any questions or comments to: aprice@elctech.com
+
+
+
+Troubleshooting
+-----------------------
+Put the command line to run the test in debug mode.
+/usr/bin/ruby -d -Ilib:lib "/usr/lib/ruby/gems/1.8/gems/rake-0.6.2/lib/rake/rake_test_loader.rb" "test/paypal_test.rb"
+
+This will give you lots of information. Look for errors in the XML response. Often passwords with '<' or other non-XML unencoded friendly characters will cause ruby to fail due to the Web Service support being incomplete at this time.
+
+
+If you are recieving a "NoMethodError: for each..." when trying to perform a capture.  Your soap version may need to be updated.
+If this does not work please refer to the following pages which concern this bug in soap4r.
+  bug link : http://dev.ctor.org/soap4r/ticket/184
+  code fix: http://dev.ctor.org/soap4r/changeset/1674
+
+Upgrading Soap4r-
+  Please see the following site for more information on upgrading soap4r
+http://www.pranavbihari.com/articles/2005/12/02/testing-paypal-web-services-with-ruby-soap4r

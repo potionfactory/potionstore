@@ -1,0 +1,75 @@
+= google4r
+
+google4r is a collection of libraries that allow you to access some of Google's web services using Ruby. At the moment, there are wrappers for
+
+* Google Maps
+* Google Checkout.
+
+You have to 'require' each library independently:
+
+  require 'google4r/maps'
+  require 'google4r/checkout'
+
+=== License
+
+google4r itself is distributed under an MIT style license.
+
+However, the library includes the cacert.pem:http://curl.haxx.se/ca/cacert.pem file from the Mozilla project. This file is distributed under the MPL:http://www.mozilla.org/MPL/.
+
+== Google Checkout
+
+You can find more information on the Google Checkout API here:http://code.google.com/apis/checkout/developer/index.html. Note that the API documentation assumes an understanding of the Google Checkout XML API.
+
+Google4R also contains a partial implementation of the level 2 of the Google Checkout API:
+
+* The <checkout-cart-command> tag and all of its subtags that are not related to the merchant calculation API can be generated.
+* The <new-order-notification> tag and all of its subtags which are not related to the merchant calculation API can be parsed.
+* The <order-state-change-notification> tag can be parsed.
+
+=== Google Checkout Tests
+
+You have to place a file called 'checkout_command_test.rb' in 'test/checkout' with the configuration for the Google4R::Checkout::Frontend class to use for running the tests.
+
+The file should contain content similar to:
+
+  # The test configuration for the Google4R::Checkout::Frontend class.
+  FRONTEND_CONFIGURATION = 
+    { 
+      :merchant_id => '<your merchant id>', 
+      :merchant_key => '<your merchant key>',
+      :use_sandbox => true
+    }
+
+=== TODO
+
+Notifications:
+
+* <risk-information-notification>
+* <charge-amount-notification>
+* <refund-amount-notification>
+* <chargeback-amount-notification>
+* <authorization-amount-notification>
+
+All of the Order Processing API.
+
+== Google Maps
+
+The only part of the Google Maps API that can be standalone with sense is the Geocoder. The Google4R::Maps::Geocoder class allows to geocode address strings, i.e. finds a number of known locations that match the query to a certain degree. The information about the "known locations" includes the latitude and longitude of the location.
+
+=== Queries To Try Out
+
+<b>Querying for this string</b>:: <b>will yield n results</b>
+Helena:: 0
+1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA:: 1
+Janitell Rd, Colorado Springs, CO:: 2
+
+=== Maps Tests
+
+Note that you wil have to place a file called 'key.rb' in the directory 'test/maps' to be able to run unit tests. It should have the following contents:
+
+  GOOGLE_MAPS_KEY = '<your google maps key>'
+
+== Dependencies
+
+The unit tests use Mocha so you have to install the gem "mocha" to run the tests.
+

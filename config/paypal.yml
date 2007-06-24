@@ -1,0 +1,16 @@
+# Live settings
+production:
+  paypal_username: "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  paypal_password: "XXXXXXXXXXXXXXXX"
+  client_cert: "certs/live_api.crt"
+  client_keys: "certs/live_api.key"
+
+# Test settings
+development:
+  paypal_username: "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  paypal_password: "XXXXXXXXXXXXXXXX"
+  client_cert: "certs/sandbox_api.crt"
+  client_keys: "certs/sandbox_api.key"
+
+# Common setting
+ca_file: "certs/api_cert_chain.crt"

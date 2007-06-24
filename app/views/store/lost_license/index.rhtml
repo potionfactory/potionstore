@@ -1,0 +1,30 @@
+<% form_tag :action => "retrieve" do -%>
+
+<h1>Retrieve License</h1>
+
+<p>
+Please tell us the email address used during the purchase. Your license along with the order receipt
+will be sent by email.
+</p>
+
+<% if flash[:notice] -%>
+<h3 style="color:red"><%= flash[:notice] %></h3>
+<% end -%>
+  
+<div style="margin-top:40px"></div>
+  
+<div>
+  Email address: <%= text_field_tag 'email', @email, :size => 40 %>
+  <%= submit_tag 'Submit' %>
+</div>
+
+<div class="s"></div>
+<div class="d"></div>
+
+<p>
+	If your email address has changed, let us know by <a href="mailto:<%=$STORE_PREFS['support_email']%>?subject=Help!%20I%20lost%20my%20license%20and%20my%20email%20address%20changed%20too">email</a>
+</p>
+
+<div style="margin-top:100px"></div>
+
+<% end -%>

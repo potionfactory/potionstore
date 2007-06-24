@@ -1,0 +1,165 @@
+<script type="text/javascript">
+
+function validate() {
+  $('#submit').get(0).disabled = true;
+  return true;
+}
+
+function reset() {
+  $('#submit').get(0).disabled = false;
+}
+
+function update_licensee_name() {
+	if ($('#order_licensee_name').val() == '') {
+		var name = $('#order_first_name').val() + ' ' + $('#order_last_name').val();
+		$('#order_licensee_name').val(name);
+	}
+}
+
+onload = reset;
+onunload = reset;
+
+$(document).ready(function(){
+	$('#order_last_name').blur(update_licensee_name);
+});
+</script>
+
+<h1>Checkout</h1>
+
+<% unless @order.errors.empty? %>
+<div id="errors">
+  <h2 style="margin-bottom:14px;color:red">Problems</h2>
+  <ul>
+  <% @order.errors.each_full do |message| %>
+    <li><%= message %></li>
+  <% end %>
+  </ul>
+</div>
+<% end %>
+
+<div class="d cl"></div>
+
+<div class="narrow">
+	<% if @order.items_count == 1 %>
+	<h2>Your Item</h2>
+	<% else %>
+	<h2>Your Items</h2>
+	<% end %>
+</div>
+
+<table id="order">
+    <% for item in @order.line_items -%>
+    <%   if item.quantity > 0 -%>
+    <tr>
+        <td class="price"><%= item.quantity %> @ <%= number_to_currency item.unit_price %> each</td>
+        <td class="prod"><%= item.product.name %></td>
+    </tr>
+    <%   end -%>
+    <% end -%>
+    <% if @order.coupon -%>
+    <tr>
+      <td class="price">-<%= number_to_currency(@order.coupon_amount) %></td>
+      <td><%= @order.coupon.description %></td>
+    </tr>
+    <% end -%>
+    <tr id="total">
+        <td></td>
+        <td>Total: <strong><%= number_to_currency @order.total %></strong></td>
+    </tr>
+</table>
+
+<% form_tag :action => "purchase", :onsubmit => "javascript:return validate();" do -%>
+
+<% for item in @order.line_items -%>
+<%= hidden_field "items", String(item.product_id), :value=> item.quantity -%>
+<% end -%>
+<%= hidden_field_tag("coupon", @order.coupon_text) if @order.coupon -%>
+
+<!-- I don't think we need this -->
+<!-- <input type="hidden" name="order_total" value="<%= number_to_currency @order.total %>" id="total_amount"/> -->
+
+<div class="d"></div>
+
+<div class="narrow">
+	<h2>Billing Information</h2>
+    <p>
+        <span><br/>Name:</span>
+        <label id="fname">First<br/><%= text_field "order", "first_name", :size=>15 %></label>
+        <label id="lname">Last<br/><%= text_field "order", "last_name", :size=>15 %></label>
+    </p>
+    <div class="cl"></div>
+    <p id="company">
+        <label><span>Company:</span><%= text_field "order", "company" %></label>
+        <span class="optional">(optional)</span>
+    </p>
+
+    <p><label><span>Address Line 1:</span><%= text_field "order", "address1" %></label></p>
+    <p><label><span>Address Line 2:</span><%= text_field "order", "address2" %></label>
+        <span class="optional">(optional)</span>
+    </p>
+    <p>
+        <label id="city"><span>City:</span><%= text_field "order", "city", :size=>15 %></label>
+        <label id="state">State:<%= text_field "order", "state", :size=>4 %></label>
+    </p>
+    <div class="cl"></div>
+    <p>
+        <label><span>Postal/Zip Code:</span><%= text_field "order", "zipcode", :size=>10 %></label>
+    </p>
+    <p>
+		<label><span>Country:</span><%= render :partial => "form_countries" %></label>
+    </p>
+	<p>
+		<label><span>Email:</span><%= text_field "order", "email"  %></label>
+	</p>
+</div>
+
+<div class="d"></div>
+
+<script type="text/javascript">
+function select_cc(card) { $("#"+card).get(0).checked = "checked"; }
+</script>
+    
+<div class="narrow">
+	<h2>Credit Card</h2>
+    <p id="cards"><span>Card Type:</span>
+	<input id="Visa" type="radio" name="order[payment_type]" value="Visa" checked="checked"/>
+	<img src="/images/store/visa.gif" alt="Visa" onclick="select_cc('Visa')"/>
+	
+	<input id="MasterCard" type="radio" name="order[payment_type]" value="MasterCard"/>
+	<img src="/images/store/mc.gif" alt="MasterCard" onclick="select_cc('MasterCard')" />
+	
+	<input id="Amex" type="radio" name="order[payment_type]" value="Amex" />
+	<img src="/images/store/amex.gif" alt="Amex" onclick="select_cc('Amex')" />
+	
+	<input id="Discover" type="radio" name="order[payment_type]" value="Discover" />
+	<img src="/images/store/discover.gif" alt="Discover" onclick="select_cc('Discover')" />
+    </p>
+
+    <p><label><span>Credit Card Number:</span><%= text_field 'order', 'cc_number', :size=>24  %></label></p>
+
+    <p>
+        <label><span>Expiration Date:</span>
+            <%= render :partial => "form_months" %> /
+            <%= select_year Date.today, :prefix => 'order', :field_name => 'cc_year', :start_year => Date.today.year, :end_year => Date.today.year + 10 %>
+        </label>
+    </p>
+    <p><label><span>Card Security Code:</span><%= text_field 'order', 'cc_code', :size => 4 %></label>
+        <img src="/images/store/cvv.png" alt="CVV" style="vertical-align:middle;position:relative; top:-2px;"/>
+    </p>
+</div>
+
+<div class="d"></div>
+
+<div class="narrow">
+	<h2>Almost There</h2>
+	<p><span>Name on License:</span> <%= text_field "order", "licensee_name" %></p>
+	<p><label><span>Comment:</span><%= text_field 'order', 'comment' %></label>
+        <span class="optional">(optional)</span>
+    </p>
+    <p><span>&nbsp;</span><label><input type="checkbox" name="extra[subscribe]" value="checked"/>
+        Keep me updated with <%=$STORE_PREFS['company_name']%> news.</label></p>
+</div>
+
+<p><input id="submit" name="commit" type="submit" value="&nbsp; Place Order &rarr;" /></p>
+
+<% end -%>

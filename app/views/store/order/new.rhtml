@@ -1,0 +1,74 @@
+<h1>Purchase <span>Software</span></h1>
+
+<script type="text/javascript">
+/* Dynamically adjust price for bundling (Commented out for illustrative purposes) */
+// function update_prices() { if ($('#items_3').val() > 0) $('#item_2_price').html('$9.95'); else $('#item_2_price').html('$12.95'); }
+$(document).ready(function(){
+//	update_prices();
+	$('.creditcards img').click(function() { $('#creditcard').get(0).checked = 'checked'; });
+	$('.paypal img').click(function() { $('#paypal').get(0).checked = 'checked'; });
+	$('.gcheckout img').click(function() { $('#gcheckout').get(0).checked = 'checked'; });
+//	$('#items_3').keyup(update_prices);
+//	$('#items_3').change(update_prices);
+});
+</script>
+
+<% form_tag :action => "payment" do -%>
+
+<div id="site_license">
+    If you need a site license or have special pricing needs, please <a href="mailto:<%=$STORE_PREFS['sales_email']%>?subject=Request%20For%20Quote">contact us</a>.
+</div>
+
+
+<table id="products">
+<% for product in @products -%>
+	<tr>
+		<td>
+			<a href="<%=product.url %>">
+				<% if product.image_path != "" -%>
+				<%= image_tag product.image_path, :alt => '' -%>
+				<% end -%>
+				<%= product.name %>
+			</a>
+		</td>
+		<td>
+			<%= text_field "items", product.id, :size => "3", :value => @qty[product.code], :autocomplete => "off", :class => "qty" -%>
+			<strong id="item_<%=product.id %>_price">$<%=product.price %></strong>&nbsp; each
+		</td>
+	</tr>
+<% end -%>
+    <tr><td colspan="2"><div class="d"></div></td></tr>
+    <tr id="coupon_row">
+		<td>Coupon Code:</td>
+		<td colspan="2"><%= text_field_tag 'coupon', session[:coupon_text], :autocomplete => 'off' %></td>
+    </tr>
+    <tr><td colspan="2"><div class="d" style="margin-top:15px"></div></td></tr>
+    <tr id="payment_method">
+		<td><b>Payment Method:</b></td>
+		<td>
+			<p class="creditcards">
+				<%= radio_button_tag 'payment_type', 'cc', !(['paypal', 'gcheckout'].member? @payment_type), :id => 'creditcard' %>
+				<img src="/images/store/visa.gif" alt="Visa" /><img src="/images/store/mc.gif" alt="MasterCard" /><img src="/images/store/amex.gif" alt="Amex" /><img src="/images/store/discover.gif" alt="Discover" />
+			</p>
+			<p class="paypal" style="font: 10px helvetica">
+				<%= radio_button_tag 'payment_type', 'paypal', @payment_type == 'paypal', :id => 'paypal' %>
+				<img src="/images/store/paypal.gif" alt="PayPal" />
+				Shop without sharing your financial information
+			</p>
+			<p class="gcheckout">
+				<%= radio_button_tag 'payment_type', 'gcheckout', @payment_type == 'gcheckout', :id => 'gcheckout' %>
+				<img src="/images/store/gcheckout.gif" alt="Google Checkout" />
+			</p>
+		</td>
+    </tr>
+    <tr>
+		<td></td>
+		<td>
+			<input id="submit" name="commit" type="submit" value="&nbsp; Continue &rarr;" />
+            <span style="color:red; margin-left:10px"><%= flash[:notice] %></span>
+		</td>
+    </tr>
+</table>
+
+<% end -%>
+

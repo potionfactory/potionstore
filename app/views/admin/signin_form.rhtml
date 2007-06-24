@@ -1,0 +1,33 @@
+<center>
+	<h1>Magic Potion Required</h1>
+
+	<br/>
+	<br/>
+	
+	<% form_tag :action => "signin" do -%>
+	<table>
+		<tr>
+			<td>
+				<label for="username">magic:</label>
+			</td>
+			<td>
+				<%= text_field_tag "username" %>
+			</td>
+		</tr>
+		<tr>
+			<td align="right">
+				<label for="password">potion:</label>
+			</td>
+			<td>
+				<%= password_field_tag "password" %>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<%= submit_tag "Abracadabra" %>
+			</td>
+		</tr>
+	</table>
+	<% end -%>
+</center>
