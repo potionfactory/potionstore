@@ -3,9 +3,17 @@ Any volunteers?
 
 - Write some unit tests
 - Show sales graphs instead of tables in the dashboard
+- PayPal Website Payments Standard integration (very low priority for me -AK)
+- MySQL compatibility (again, very low priority for me -AK)
+- Refactor code to be RESTful and well structured. orders_controller could use some help in that department
+- A desktop client someday after the REST refactoring is done?
 
 
 Changes:
+
+6/24/2007
+- Applied admin_controller functional test patch from Jamie Hardt.
+  Functional tests are now passing at least :)
 
 6/23/2007
 - Searching by order number possible now
