@@ -1,10 +1,16 @@
+
 Any volunteers?
 
 - Write some unit tests
-- Show sales graphs in the admin site
+- Show sales graphs instead of tables in the dashboard
 
 
 Changes:
+
+6/23/2007
+- Searching by order number possible now
+- Cleaned up sql code for the admin dashboard
+- Applied patch from Jamie Hardt -- The admin page no longer craps out when there are no orders.
 
 12/11/2006
 - AK: No longer says coupons at the bottom when there are no coupons
