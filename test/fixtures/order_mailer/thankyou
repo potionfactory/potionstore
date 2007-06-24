@@ -1,0 +1,3 @@
+OrderMailer#thankyou
+
+Find me in app/views/order_mailer/thankyou.rhtml

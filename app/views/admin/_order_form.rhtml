@@ -1,0 +1,72 @@
+<% form_tag :action => "modify_order" do -%>
+<% if @order -%>
+<%= hidden_field "order", "id" %>
+<%= hidden_field "order", "status" %>
+<% end -%>
+<table class="form">
+	<tr>
+		<td>Licensee Name:</td>
+		<td><%= text_field "order", "licensee_name" %></td>
+	</tr>
+	<tr>
+		<td>Email:</td>
+		<td><%= text_field "order", "email" %></td>
+	</tr>
+	<tr>
+		<td>Items:</td>
+		<td><%= render :partial => "product_quantities" -%></td>
+	</tr>
+	<tr>
+		<td>Ordered Time:</td>
+		<td><%= datetime_select("order", "order_time") -%></td>
+	</tr>
+	<tr>
+		<td>Company:</td>
+		<td><%= text_field "order", "company" %></td>
+	</tr>
+	<tr>
+		<td>Billing First Name:</td>
+		<td><%= text_field "order", "first_name" %></td>
+	</tr>
+	<tr>
+		<td>Billing Last Name:</td>
+		<td><%= text_field "order", "last_name" %></td>
+	</tr>
+	<tr>
+		<td>Address 1:</td>
+		<td><%= text_field "order", "address1" %></td>
+	</tr>
+	<tr>
+		<td>Address 2:</td>
+		<td><%= text_field "order", "address2" %></td>
+	</tr>
+	<tr>
+		<td>City:</td>
+		<td><%= text_field "order", "city" %></td>
+	</tr>
+	<tr>
+		<td>State:</td>
+		<td><%= text_field "order", "state" %></td>
+	</tr>
+	<tr>
+		<td>Postal/Zipcode:</td>
+		<td><%= text_field "order", "zipcode" %></td>
+	</tr>
+	<tr>
+		<td>Country 2 letter Code:</td>
+		<td><%= text_field "order", "country", :size => 2 %></td>
+	</tr>
+	<tr>
+		<td>Comment:</td>
+		<td><%= text_field "order", "comment" %></td>
+	</tr>
+	<tr>
+		<td>Payment Method:</td>
+		<td><%= text_field "order", "payment_type" %></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><%= submit_tag "Submit" %></td>
+	</tr>
+</table>
+<% end -%>

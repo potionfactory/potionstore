@@ -1,0 +1,27 @@
+Any volunteers?
+
+- Write some unit tests
+- Show sales graphs in the admin site
+
+
+Changes:
+
+12/11/2006
+- AK: No longer says coupons at the bottom when there are no coupons
+- AK: Percentage based coupons accepted now
+
+12/04/2006
+- AK: Bug where adding a new order in the admin interface didn't make a new license key fixed
+- AK: Comment field in order editor fixed
+
+11/30/2006
+- AK: Paypal order problem fixed.
+
+11/28/2006
+- AK: Coupons are now accepted
+
+9/20/2006
+- AK: A valid license is created for people with unicode names
+- AK: Printable receipt did not have a potion factory title-
+- AK: License files get downloaded with the correct unicode name
+- AK: UTF-8 encoding specified in the database configuration 

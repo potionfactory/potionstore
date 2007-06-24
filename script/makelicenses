@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+#
+# Usage:
+#
+# makelicense product_code input_file
+#
+# product_code is either vc or tgr
+# input_file should have one name per line.
+# 
+require File.dirname(__FILE__) + '/../lib/regcode'
+
+
+if __FILE__ == $0
+  if ARGV.length != 2
+    puts "Usage: makelicense product_code input_file"
+    exit
+  end
+
+  product_code = ARGV.shift
+  filename = ARGV.shift;
+  
+  # Open the input file
+  input = File.open(filename)
+  if input == nil
+    puts "Could not read file: #{filename}"
+    exit
+  end
+
+  input.each_line {|line|
+    name = line.chomp
+    license_key = make_license(product_code, name, 1)
+    puts "#{license_key},#{name}"
+  }
+  
+end

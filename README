@@ -1,0 +1,47 @@
+== Welcome to PotionStore
+
+Features:
+
+- PayPal Website Payments Pro support
+- PayPal Express Checkout support
+- Google Checkout support
+- Administration interface
+- Coupons
+- Send lost license page (http://mycompany.com/store/lost_license)
+
+
+== Dependencies
+
+- Rails 1.2 or higher
+- Postgresql
+- money rubygem
+
+
+== Installation
+
+- Edit the following config files to suit your needs
+
+  config/store.yml
+  config/paypal.yml
+  config/google_checkout.yml
+
+- Setup database
+  - Install Postgresql if you haven't
+  - Create the store_development database.
+  	Make sure to set the encoding of the database to UTF8.
+	I recommend pgAdmin for Postgresql newcomers.
+  - Edit config/database.yml
+  - run "rake db:migrate" to import schema
+   
+- Install gem dependency:
+  gem install money
+
+- Install PayPal API access certificates into config/certs
+
+- Run with script/server and test through
+  http://localhost:3000/store and
+  http://localhost:3000/admin
+
+- Replace the default license key generator in lib/licensekey.rb with your own
+
+- Modify config/deploy.rb to setup your deployment

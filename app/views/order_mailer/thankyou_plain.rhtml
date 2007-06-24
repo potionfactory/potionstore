@@ -1,0 +1,83 @@
+<%
+  if @order.items_count == 1
+    application = 'application'
+    file = 'file'
+  else
+    application = 'applications'
+    file = 'files'
+  end
+
+  coupons = @order.promo_coupons
+-%>
+Dear <%= @order.first_name %> <%= @order.last_name %>,
+
+Thank you for purchasing <%=$STORE_PREFS['company_name']%> software.
+Below are your application license keys. To activate, please copy
+and paste the code to the registration window in the application.
+
+<% for item in @order.line_items -%>
+<%=item.product.name%>:
+<%= item.license_key %>
+
+<% end -%>
+
+Please let us know if you have any questions or comments.
+Enjoy your purchase.
+
+- <%=$STORE_PREFS['company_name']%>
+
+
+
+RECEIPT
+----------------------------------------------------------------------
+
+Order Number: <%= @order.id %>
+
+Placed On: <%= @order.order_time.utc %>
+
+Registered-To: <%= @order.first_name %> <%= @order.last_name %>
+<% if @order.company != '' -%>
+Company: <%= @order.company %>
+<% end -%>
+Email: <%= @order.email %>
+
+Billing Address:
+<% if @order.payment_type == 'PayPal' -%>
+N/A
+<% else -%>
+<%= @order.address1 -%><%= ', ' + @order.address2 if @order.address2 && ! @order.address2.blank? %>
+<%= @order.city %>, <%= @order.state %> <%= @order.zipcode %>
+<%= @order.country_name %>
+<% end -%>
+
+Payment:
+<%= @order.payment_type %><%= ', ' + @order.ccnum if @order.cc_order? %>
+
+Purchased Items:
+
+<% for item in @order.line_items -%>
+<%= sprintf("%d %s @ %s each", item.quantity, item.product.name, number_to_currency(item.unit_price)) %>
+<% end -%>
+<% if @order.coupon -%>
+<%= @order.coupon.description %>: -<%= number_to_currency(@order.coupon_amount) %>
+<% end -%>
+
+Total: <%= number_to_currency(@order.total) %>
+
+<% if coupons && coupons.length > 0 -%>
+<% vc_coupons = coupons.compact()
+   vc_coupons.reject!{|x| x.product_code != 'vc'}
+
+   if coupons.length != 0 -%>
+
+
+COUPONS
+----------------------------------------------------------------------
+<%   if vc_coupons.length != 0 -%>
+If you have friends who might enjoy Voice Candy, here are 3 coupon
+codes for $3 off their purchases. They expire in 15 days.
+
+<%= vc_coupons.collect {|x| x.coupon}.join(',  ') -%>
+<%   end -%>
+<% end -%>
+<% end -%>

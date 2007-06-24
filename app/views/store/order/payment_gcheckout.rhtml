@@ -1,0 +1,90 @@
+<script type="text/javascript">
+
+function validate() {
+  $('submit').disabled = true;
+  return true;
+}
+
+function reset() {
+  $('submit').disabled = false;
+}
+
+$('body').onunload = reset;
+
+</script>
+
+<h1>Confirm</h1>
+
+<% unless @order.errors.empty? %>
+<div id="errors">
+  <h2 style="margin-bottom:14px;color:red">Problems</h2>
+  <ul>
+  <% @order.errors.each_full do |message| %>
+    <li><%= message %></li>
+  <% end %>
+  </ul>
+</div>
+<% end %>
+
+<p>Your license key, along with your purchase receipt, will be emailed to your GMail address.</p>
+
+<div class="d cl"></div>
+
+<div class="narrow">
+	<% if @order.items_count == 1 %>
+	<h2>Your Item</h2>
+	<% else %>
+	<h2>Your Items</h2>
+	<% end %>
+
+	<table id="order">
+		<% for item in @order.line_items -%>
+		<%   if item.quantity > 0 -%>
+		<tr>
+			<td class="price"><%= item.quantity %> @ <%= number_to_currency item.unit_price %> each</td>
+			<td class="prod"><%= item.product.name %></td>
+		</tr>
+		<%   end -%>
+		<% end -%>
+		<% if @order.coupon -%>
+		<tr>
+			<td class="price">-<%= number_to_currency(@order.coupon_amount) %></td>
+			<td><%= @order.coupon.description %></td>
+		</tr>
+		<% end -%>
+		<tr id="total">
+			<td></td>
+			<td>Total: <strong><%= number_to_currency @order.total %></strong></td>
+		</tr>
+	</table>
+
+</div>
+
+<% form_tag :action => "purchase", :onsubmit => "javascript:return validate();" do -%>
+
+<% for item in @order.line_items -%>
+<%= hidden_field 'items', String(item.product_id), :value=> item.quantity %>
+<% end -%>
+<%= hidden_field_tag("coupon", @order.coupon_text) if @order.coupon %>
+<%= hidden_field("order", "payment_type", :value => "Google Checkout") %>
+
+<div class="d"></div>
+
+<div class="narrow">
+	<h2>Your Information</h2>
+    <p>
+		<span>Name on License:</span> <%= text_field "order", "licensee_name" %>
+	</p>
+    <p>
+	<label><span>Comment:</span><%= text_field "order", "comment" %></label>
+        <span class="optional">(optional)</span>
+    </p>
+</div>
+
+<p>
+	<input id="submit" name="commit" type="image" src="https://checkout.google.com/buttons/checkout.gif?merchant_id=448556089164547&w=168&h=44&style=white&variant=text&loc=en_US" />
+</p>
+
+<% end -%>
+
+

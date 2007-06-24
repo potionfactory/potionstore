@@ -1,0 +1,59 @@
+<h1>Generate Coupons</h1>
+
+<% form_tag :action => "generate_coupons" do -%>
+
+<table class="form">	
+	<tr>
+		<td># to Generate:</td>
+		<td><%= text_field 'form', 'quantity', 'value' => '1' %></td>
+	</tr>
+
+	<tr>
+		<td>Coupon Identifider Code:</td>
+		<td><%= text_field 'form', 'code' %></td>
+	</tr>
+
+	<tr>
+		<td>Description:</td>
+		<td><%= text_field 'form', 'description' %></td>
+	</tr>
+
+	<tr>
+		<td>Product:</td>
+		<td>
+			<select name="form[product_code]">
+				<option value="all">All</a>
+					<%= options_for_select Product.find_all.collect{|x| x.code}.uniq %>
+			</select>
+		</td>
+	</tr>
+
+	<tr>
+		<td>Amount:</td>
+		<td><%= text_field 'form', 'amount' %></td>
+	</tr>
+
+	<tr>
+		<td>Use Limit:</td>
+		<td><%= text_field 'form', 'use_limit', :value => '1' %></td>
+	</tr>
+
+	<tr>
+		<td></td>
+		<td><%= submit_tag 'Generate Coupons' %></td>
+	</tr>
+</table>
+	
+<% end -%>
+
+<% if @coupons -%>
+<h2>Generated Coupons</h2>
+<pre>
+<% for coupon in @coupons -%>
+<%= coupon.coupon %>
+<% end -%>
+</pre>
+<% end -%>
+
+
+
