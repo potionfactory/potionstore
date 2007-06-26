@@ -11,6 +11,8 @@ Any volunteers?
 Changes:
 
 6/26/2007
+- Fixed the back button on the admin/product/show rhtml
+- Fixed some bugs that were making the store side break.
 - admin_controller separted into admin, orders, and products controller
 - orders and products controllers under admin are RESTful
 - functional test updated to work with the new structure
