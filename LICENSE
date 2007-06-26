@@ -1,12 +1,12 @@
+Copyright 2007, Potion Factory LLC
+
 Unless noted otherwise, the files of this project are licensed under a
 Creative Commons Attribution-Share Alike License.
 
 http://creativecommons.org/licenses/by-sa/3.0/
 
-Additionally, we ask that you credit and link to http://www.potionfactory.com
-somewhere on your store. This is not a requirement, however.
-
-Copyright 2007, Potion Factory LLC
+Additionally, we ask that you credit and link to http://www.potionfactory.com/potionstore
+in the footer of your store.
 
 ###
 
@@ -16,3 +16,5 @@ files for details:
 
 vendor/plugins/google4r/LICENSE
 vendor/plugins/paypal/LPGL-LICENSE
+
+The printer icon in public/images/printer.png was created by Mark James at FamFamFam.com
