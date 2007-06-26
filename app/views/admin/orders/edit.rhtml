@@ -1,0 +1,10 @@
+<h1>Edit Order <%= @order.id %></h1>
+
+<%= error_messages_for :order %>
+
+<% form_for(:order, :url => order_path(@order), :html => { :method => :put }) do |f| %>
+<%= render :partial => "form" -%>
+  <p>
+    <%= submit_tag "Update" %>
+  </p>
+<% end %>

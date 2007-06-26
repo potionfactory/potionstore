@@ -1,0 +1,12 @@
+<h1>Add Order</h1>
+
+<%= error_messages_for :order %>
+
+<% form_for(:order, :url => orders_path) do |f| %>
+<%= render :partial => "form" -%>
+  <p>
+    <%= submit_tag "Create" %>
+  </p>
+<% end %>
+
+

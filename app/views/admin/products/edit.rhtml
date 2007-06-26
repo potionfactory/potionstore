@@ -1,0 +1,9 @@
+<h1>Editing product</h1>
+
+<% form_tag :action => 'update', :id => @product do %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag 'Edit' %>
+<% end %>
+
+<%= link_to 'Show', :action => 'show', :id => @product %> |
+<%= link_to 'Back', :controller => 'admin' , :action => 'products' %>

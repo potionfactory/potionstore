@@ -1,5 +1,5 @@
 <table>
-	<% for product in Product.find_all() -%>
+	<% for product in Product.find(:all) -%>
 	<tr>
 		<% if @order && @order.has_item_with_product_id(product.id) -%>
 		<% item = @order.line_item_with_product_id(product.id) -%>

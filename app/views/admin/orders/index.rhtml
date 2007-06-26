@@ -1,22 +1,12 @@
-<style type="text/css">
-    table { border-collapse: collapse; }
-    th { border:1px dotted #bbb; background-color: #eee; padding:5px; }
-    td { border:1px dotted #999; padding:5px; }
-    tr.F, tr.F A { color:#999; }
-    tr.X { background-color:#999; }
-    tr.X td { border:1px dotted #bbb; }
-    .address { width:150px; }
-    tr.newday { border-top:3px double #ccc; }
-</style>
-
 <h1>Orders</h1>
 
-<p>
-<%= link_to 'Previous page', { :page => @order_pages.current.previous } if @order_pages.current.previous %>
-<%= link_to 'Next page', { :page => @order_pages.current.next } if @order_pages.current.next %>
-</p>
+<div class="pagination">
+	<%= link_to 'Prev', { :page => @order_pages.current.previous } if @order_pages.current.previous %>
+	<%= pagination_links(@order_pages) %>
+	<%= link_to 'Next', { :page => @order_pages.current.next } if @order_pages.current.next %>
+</div>
 
-<table id="orders">
+<table id="orders" class="list">
     <tr>
 	<th class=="status"></th>
 	<th class="ordernum">#</th>
@@ -34,7 +24,7 @@
     <tr class="<%= if last_day != order.order_time.yday; order.status + ' newday'; else; order.status; end %>">
 	<td><%= order.status -%></td>
 	<td>
-		<%= link_to order.id, :action => 'order', :id => order %><%= "*" if order.comment != '' %>
+		<%= link_to order.id, :action => "show", :id => order %><%= "*" if order.comment != '' %>
 	</td>
 	<td><%= order.order_time.strftime("%m/%d/%y&nbsp;%H:%M") -%></td>
 	<td><%= order.licensee_name ? order.licensee_name : order.name -%></td>
@@ -54,9 +44,10 @@
      end %>
 </table>
 
-<p>
-<%= link_to 'Previous page', { :page => @order_pages.current.previous } if @order_pages.current.previous %>
-<%= link_to 'Next page', { :page => @order_pages.current.next } if @order_pages.current.next %>
-</p>
+<div class="pagination">
+	<%= link_to 'Prev', { :page => @order_pages.current.previous } if @order_pages.current.previous %>
+	<%= pagination_links(@order_pages) %>
+	<%= link_to 'Next', { :page => @order_pages.current.next } if @order_pages.current.next %>
+</div>
 
 <br />

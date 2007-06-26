@@ -24,8 +24,10 @@ class Order < ActiveRecord::Base
 
   def validate
     if self.cc_order? && !skip_cc_validation
-      errors.add_on_blank(['first_name', 'last_name', 'address1', 'city', 'country',
-                           'cc_number', 'cc_month', 'cc_year', 'cc_code', 'email'])
+      errors.add_on_blank(['first_name', 'last_name', 'address1', 'city', 'country', 'email'])
+      if self.status == 'P'
+        errors.add_on_blank(['cc_number', 'cc_month', 'cc_year', 'cc_code'])
+      end
 
       if ['US', 'CA'].member?(self.country)
         errors.add_on_blank('zipcode')

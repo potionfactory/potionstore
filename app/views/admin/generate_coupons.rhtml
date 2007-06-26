@@ -23,7 +23,7 @@
 		<td>
 			<select name="form[product_code]">
 				<option value="all">All</a>
-					<%= options_for_select Product.find_all.collect{|x| x.code}.uniq %>
+					<%= options_for_select Product.find(:all).collect{|x| x.code}.uniq %>
 			</select>
 		</td>
 	</tr>

@@ -1,0 +1,19 @@
+<%= render :partial => "store/order/receipt" %>
+
+<p>
+    <b>Status:</b> <%= @order.status_description %><br/>
+	<b>Transaction ID:</b> <%= @order.transaction_number -%>
+</p>
+
+<h3>Commands</h3>
+<ul>
+	<li><%= link_to "Edit Order", :action => "edit", :id => @order.id %></li>
+    <% if @order.complete? -%>
+    <li><%= link_to "Cancel Order", :action => "cancel", :id => @order.id %></li>
+    <% elsif @order.status == "X" -%>
+    <li><%= link_to "Uncancel Order", :action => "uncancel", :id => @order.id %></li>
+    <% end -%>
+    <% if @order.complete? -%>
+    <li><%= link_to "Send Confirmation Email", :action => "send_emails", :id => @order.id %></li>
+    <% end -%>
+</ul>

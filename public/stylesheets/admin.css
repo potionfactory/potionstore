@@ -67,3 +67,18 @@ tr { vertical-align: top; }
 {
   margin: 1px 0 0 0;
 }
+
+.pagination
+{
+  margin: 20px 0;
+}
+
+/* Used for the order and product list */
+table.list { border-collapse: collapse; }
+table.list th { border:1px dotted #bbb; background-color: #eee; padding:5px; }
+table.list td { border:1px dotted #999; padding:5px; }
+table.list tr.F, tr.F A { color:#999; }
+table.list tr.X { background-color:#999; }
+table.list tr.X td { border:1px dotted #bbb; }
+table.list .address { width:150px; }
+table.list tr.newday { border-top:3px double #ccc; }

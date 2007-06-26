@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class LineItemTest < Test::Unit::TestCase
+  fixtures :orders
+  fixtures :products
   fixtures :line_items
 
   # Replace this with your real tests.
