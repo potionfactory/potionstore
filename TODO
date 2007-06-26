@@ -11,6 +11,7 @@ Any volunteers?
 Changes:
 
 6/26/2007
+- Added a simple functional test for store/order_controller
 - Fixed the back button on the admin/product/show rhtml
 - Fixed some bugs that were making the store side break.
 - admin_controller separted into admin, orders, and products controller
