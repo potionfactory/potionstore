@@ -8,8 +8,15 @@ Any volunteers?
 - Refactor code to be RESTful and well structured. orders_controller could use some help in that department
 - A desktop client someday after the REST refactoring is done?
 
-
 Changes:
+
+6/26/2007
+- admin_controller separted into admin, orders, and products controller
+- orders and products controllers under admin are RESTful
+- functional test updated to work with the new structure
+- admin_controller's signin_form and signin methods under admin unified under login method
+- orders and products stylesheet moved into admin.css
+- Cleaned up a few things here and there
 
 6/24/2007
 - Applied admin_controller functional test patch from Jamie Hardt.

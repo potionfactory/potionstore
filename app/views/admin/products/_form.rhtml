@@ -1,0 +1,28 @@
+<%= error_messages_for 'product' %>
+
+<!--[form:product]-->
+<p><label for="product_code">Code</label><br/>
+<%= text_field 'product', 'code'  %></p>
+
+<p><label for="product_name">Name</label><br/>
+<%= text_field 'product', 'name'  %></p>
+
+<p><label for="product_price">Price</label><br/>
+<%= text_field 'product', 'price'  %></p>
+
+<p><label for="product_image_path">Image path</label><br/>
+<%= text_area 'product', 'image_path' , {"cols" => 40, "rows" => 3} %></p>
+
+<p><label for="product_url">Url</label><br/>
+<%= text_area 'product', 'url' , {"cols" => 40, "rows" => 3} %></p>
+
+<p><label for="product_download_url">Download url</label><br/>
+<%= text_area 'product', 'download_url' , {"cols" => 40, "rows" => 3} %></p>
+
+<p><label for="product_license_url_scheme">License url scheme</label><br/>
+<%= text_area 'product', 'license_url_scheme' , {"cols" => 40, "rows" => 3}  %></p>
+
+<p><label for="product_active">Active</label><br/>
+<%= check_box 'product', 'active' , {} , "1", "0" %></p>
+<!--[eoform:product]-->
+

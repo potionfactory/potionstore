@@ -2,6 +2,13 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  def check_authentication
+    unless session[:logged_in]
+      session[:intended_url] = request.request_uri
+      logger.debug('intended_url: ' + session[:intended_url])
+      redirect_to :controller => "/admin", :action => "login"
+    end
+  end
 end
 
 def is_live

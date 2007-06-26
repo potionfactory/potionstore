@@ -15,6 +15,7 @@ Features:
 - Rails 1.2 or higher
 - Postgresql
 - money rubygem
+- ruby-debug rubygem
 
 
 == Installation
@@ -35,6 +36,7 @@ Features:
    
 - Install gem dependency:
   gem install money
+  gem install ruby-debug
 
 - Install PayPal API access certificates into config/certs
 

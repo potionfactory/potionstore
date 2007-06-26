@@ -15,32 +15,22 @@ class AdminControllerTest < Test::Unit::TestCase
 
   def test_index_with_no_password
     get :index
-    assert_response :success
-    assert_template 'signin_form'
-    assert_equal(session[:intended_action] , 'index')
+    assert_redirected_to 'admin/login'
+    assert_equal(session[:intended_url] , '/admin')
   end
 
-  def test_signin_with_faulty_password
-    post :signin, {:username => 'joeblow', :password => 'totallyfakingit'}
+  def test_login_with_faulty_password
+    post :login, {:username => 'joeblow', :password => 'totallyfakingit'}
+    assert_template 'login'
     assert_response :success
-    assert_template 'signin_form'
   end
 
-  def test_signin_with_good_password
-    post :signin, {
+  def test_login_with_good_password
+    post :login, {
        :username => $STORE_PREFS['admin_username'],
        :password => $STORE_PREFS['admin_password']}
        
-    assert_redirected_to :action => nil
-  end
-
-  def test_orders
-    # anybody else know how I can load data
-    # into the session? jph/2006-06-24
-    process 'orders', {}, { :logged_in => true }
-    assert_response :success
-    assert_template 'orders'
-    assert_not_nil assigns(:orders)
+    assert_redirected_to :action => 'index'
   end
 
   def generate_coupons_blank

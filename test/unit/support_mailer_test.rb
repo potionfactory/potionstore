@@ -15,7 +15,11 @@ class SupportMailerTest < Test::Unit::TestCase
     @expected = TMail::Mail.new
     @expected.set_content_type "text", "plain", { "charset" => CHARSET }
   end
-
+  
+  def test_truth
+    assert true
+  end
+  
   private
     def read_fixture(action)
       IO.readlines("#{FIXTURES_PATH}/support_mailer/#{action}")

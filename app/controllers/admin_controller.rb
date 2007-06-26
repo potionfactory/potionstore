@@ -4,30 +4,28 @@ class AdminController < ApplicationController
   :redirect_to => { :action => :list }
 
   # Authentication stuff
-  before_filter :check_authentication, :except => [:signin_form, :signin]
-  def check_authentication
-    unless session[:logged_in]
-      session[:intended_action] = action_name
-      render :action => "signin_form", :layout => 'error'
+  before_filter :check_authentication, :except => [:login]
+
+  def login
+    unless params[:username] && params[:password]
+      render :action => "login", :layout => 'error' and return
     end
-  end
-
-  def signin_form
-    render :action => 'signin_form', :layout => 'error'
-  end
-
-  def signin
+      
     if params[:username] == $STORE_PREFS['admin_username'] &&
        params[:password] == $STORE_PREFS['admin_password']
       session[:logged_in] = true
-      redirect_to :action => session[:intended_action]
+      if session[:intended_url] != nil
+        redirect_to session[:intended_url]
+      else
+        redirect_to :action => 'index'
+      end
     else
       flash[:notice] = "Go home kid. This ain't for you."
-      render :action => "signin_form", :layout => 'error'
+      render :action => "login", :layout => 'error'
     end
   end
 
-  def signout
+  def logout
     session[:logged_in] = nil
     redirect_to home_url
   end
@@ -142,135 +140,6 @@ class AdminController < ApplicationController
 
   end
 
-  # Order actions
-  def find_orders
-    q = params[:query]
-    q.strip!
-    redirect_to :back and return if not q
-    conditions = "status != 'P' AND (email ~* '#{q}' OR
-                                     first_name ~* '#{q}.*' OR
-                                     last_name ~* '#{q}.*' OR
-                                     licensee_name ~* '%#{q}.*' OR
-                                     id = #{q})"
-    @order_pages, @orders = paginate :orders, :per_page => 100, :order => 'order_time DESC', :conditions => conditions
-    render :action => "orders"
-  end
-  
-  def orders
-    @order_pages, @orders = paginate :orders, :per_page => 100, :order => 'order_time DESC', :conditions => "status != 'P'"
-  end
-
-  def order
-    @order = Order.find(params[:id])
-  end
-
-  def add_order
-    @order = Order.new()
-    @order.country = 'US'
-    @order.payment_type = 'Free'
-  end
-
-  def edit_order
-    @order = Order.find(params[:id])
-  end
-
-  def modify_order
-    # must delete the licensee name from parameters because we need to set it after the line items are added
-    licensee_name = params[:order][:licensee_name]
-    params[:order].delete("licensee_name")
-    
-    if params[:order] && !params[:order][:id].blank?
-      @order = Order.find(params[:order][:id])
-      @order.attributes = params[:order]
-    else
-      @order = Order.new(params[:order])
-      @order.status = 'C'
-    end
-    begin
-      @order.transaction do
-        if not @order.add_or_update_items(params[:items])
-          flash[:notice] = 'Order contains no items'
-          raise "Problem"
-        end
-        @order.update_item_prices(params[:item_prices])
-        @order.skip_cc_validation = true
-        @order.licensee_name = licensee_name
-        if not @order.save()
-          flash[:notice] = 'Problem saving order'
-          raise "Problem"
-        end
-      end
-    rescue
-      redirect_to :back and return
-    end
-    redirect_to :action => "order", :id => @order.id
-  end
-
-  def cancel_order
-    @order = Order.find(params[:id])
-    @order.status = 'X'
-    @order.update()
-    redirect_to :action => 'order', :id => @order.id
-  end
-
-  def uncancel_order
-    @order = Order.find(params[:id])
-    @order.status = 'C'
-    @order.update()
-    redirect_to :action => 'order', :id => @order.id
-  end
-
-  def send_order_emails
-    @order = Order.find(params[:id])
-    OrderMailer.deliver_thankyou(@order) # if is_live()
-    redirect_to :action => 'order', :id => @order.id
-  end
-
-
-  # Product actions
-  # Modifying a product doesn't happen often enough, so I am doing it directly through the
-  # database for now.
-  def products # unused
-    @product_pages, @products = paginate :products, :per_page => 10
-  end
-
-  def product # unused
-    @product = Product.find(params[:id])
-  end
-
-  def new_product # unused
-    @product = Product.new
-  end
-
-  def create_product # unused
-    @product = Product.new(params[:product])
-    if @product.save
-      flash[:notice] = 'Product was successfully created.'
-      redirect_to :action => 'list'
-    else
-      render :action => 'new'
-    end
-  end
-
-  def edit_product # unused
-    @product = Product.find(params[:id])
-  end
-
-  def update_product # unused
-    @product = Product.find(params[:id])
-    if @product.update_attributes(params[:product])
-      flash[:notice] = 'Product was successfully updated.'
-      redirect_to :action => 'show', :id => @product
-    else
-      render :action => 'edit'
-    end
-  end
-
-  def destroy_product # unused
-    Product.find(params[:id]).destroy
-    redirect_to :action => 'list'
-  end
-
   # Coupon actions
   def generate_coupons
     if params[:form]
@@ -290,68 +159,68 @@ class AdminController < ApplicationController
     end
   end
 
-  def add_coupons # unused
-    if params[:form]
-      form = params[:form]
-      lines = form[:coupons].split("\r\n")
-      lines.reject! {|x| x.strip == ''}
-      for line in lines
-        coupon = Coupon.new
-        coupon.code = form[:code]
-        coupon.coupon = line.strip()
-        coupon.product_code = 'x'
-        coupon.description = form[:description].strip()
-        coupon.amount = form[:amount].strip()
-        coupon.save()
-      end
-    end
-  end
+#   def add_coupons # unused
+#     if params[:form]
+#       form = params[:form]
+#       lines = form[:coupons].split("\r\n")
+#       lines.reject! {|x| x.strip == ''}
+#       for line in lines
+#         coupon = Coupon.new
+#         coupon.code = form[:code]
+#         coupon.coupon = line.strip()
+#         coupon.product_code = 'x'
+#         coupon.description = form[:description].strip()
+#         coupon.amount = form[:amount].strip()
+#         coupon.save()
+#       end
+#     end
+#   end
 
-  def mass_order # unused
-    if params[:form]
-      form = params[:form]
-      for key in form.keys()
-        form[key] = form[key].strip()
-      end
-      lines = form[:people].split("\r\n")
-      lines.reject! {|x| x.strip == ''}
-      for line in lines
-        fname, lname, email = line.split(",").collect{|x| x.strip}
-        order = Order.new
+#   def mass_order # unused
+#     if params[:form]
+#       form = params[:form]
+#       for key in form.keys()
+#         form[key] = form[key].strip()
+#       end
+#       lines = form[:people].split("\r\n")
+#       lines.reject! {|x| x.strip == ''}
+#       for line in lines
+#         fname, lname, email = line.split(",").collect{|x| x.strip}
+#         order = Order.new
 
-        # add item
-        order.order_time = Time.now()
+#         # add item
+#         order.order_time = Time.now()
 
-        order.add_form_items(params[:items])
-        order.update_item_prices(params[:item_prices])
+#         order.add_form_items(params[:items])
+#         order.update_item_prices(params[:item_prices])
 
-        order.first_name = fname
-        order.last_name = lname
-        order.email = email
+#         order.first_name = fname
+#         order.last_name = lname
+#         order.email = email
 
-        order.address1 = 'n/a'
-        order.address2 = ''
-        order.city = 'n/a'
-        order.state = 'n/a'
-        order.zipcode = 'n/a'
-        order.country = 'XX'
+#         order.address1 = 'n/a'
+#         order.address2 = ''
+#         order.city = 'n/a'
+#         order.state = 'n/a'
+#         order.zipcode = 'n/a'
+#         order.country = 'XX'
 
-        order.payment_type = form[:payment_type]
-        order.cc_number = 'XXXXXXXXXXXXXXXX'
-        order.cc_month = 'n/a'
-        order.cc_year = 'n/a'
-        order.cc_code = 'n/a'
+#         order.payment_type = form[:payment_type]
+#         order.cc_number = 'XXXXXXXXXXXXXXXX'
+#         order.cc_month = 'n/a'
+#         order.cc_year = 'n/a'
+#         order.cc_code = 'n/a'
 
-        order.comment = ''
+#         order.comment = ''
         
-        order.status = 'C'
-        order.save()
+#         order.status = 'C'
+#         order.save()
 
-        coupons = order.add_promo_coupons()
+#         coupons = order.add_promo_coupons()
         
-        email = OrderMailer.deliver_thankyou(order)
-      end
-    end
-  end
+#         email = OrderMailer.deliver_thankyou(order)
+#       end
+#     end
+#   end
 
 end

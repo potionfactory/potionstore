@@ -1,4 +1,3 @@
-<% form_tag :action => "modify_order" do -%>
 <% if @order -%>
 <%= hidden_field "order", "id" %>
 <%= hidden_field "order", "status" %>
@@ -64,9 +63,5 @@
 		<td>Payment Method:</td>
 		<td><%= text_field "order", "payment_type" %></td>
 	</tr>
-	<tr>
-		<td></td>
-		<td><%= submit_tag "Submit" %></td>
-	</tr>
 </table>
-<% end -%>
+
