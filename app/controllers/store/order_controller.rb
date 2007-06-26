@@ -22,7 +22,7 @@ class Store::OrderController < ApplicationController
     session[:order] = nil
     @qty = {}
     @payment_type = session[:payment_type]
-    @products = Product.find(:all, :active => 1)
+    @products = Product.find(:all, :conditions => {:active => 1})
     if params[:product]
       @qty[params[:product]] = 1
     elsif session[:items]
