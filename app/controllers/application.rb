@@ -2,6 +2,9 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+
+  filter_parameter_logging "cc_number|cc_code|cc_month|cc_year"
+
   def check_authentication
     unless session[:logged_in]
       session[:intended_url] = request.request_uri
