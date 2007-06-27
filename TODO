@@ -11,6 +11,8 @@ Any volunteers?
 Changes:
 
 6/26/2007
+- mailer test patch from Jamie Hardt applied.
+- Fixed the back button on admin/views/product/edit.rhtml and new.rhtml
 - Added a simple functional test for store/order_controller
 - Fixed the back button on the admin/product/show rhtml
 - Fixed some bugs that were making the store side break.
