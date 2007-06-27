@@ -49,7 +49,7 @@ class AdminController < ApplicationController
         select (select count(*)
                   from orders
                  where status = 'C' and
-                       payment_type != 'free' and
+                       lower(payment_type) != 'free' and
                        current_date - #{days} <= order_time) as orders,
                sum(line_items.unit_price * quantity)
                  - sum(coalesce(coupons.amount, 0))
