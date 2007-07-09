@@ -61,12 +61,8 @@ class Admin::OrdersController < ApplicationController
     @order = Order.new(params[:order])
     @order.status = 'C'
 
-    if not save()
-      redirect_to :back and return
-    end
-    
     respond_to do |format|
-      if @order.save
+      if save()
         flash[:notice] = 'Order was successfully created.'
         format.html { redirect_to order_url(@order) }
         format.xml  { head :created, :location => order_url(@order) }
