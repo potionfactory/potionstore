@@ -13,7 +13,7 @@
     <td><%= image_tag(product.image_path) %></td>
 	<td><%=h product.code %></td>
 	<td><%=h product.name %></td>
-	<td><%=h number_to_currency product.price %></td>
+	<td><%=h number_to_currency(product.price) %></td>
 	<td><%= link_to 'Show', product_path(product) %></td>
     <td><%= link_to 'Edit', edit_product_path(product) %></td>
     <td><%= link_to 'Destroy', product_path(product), :confirm => 'Are you sure?', :method => :delete %></td>
