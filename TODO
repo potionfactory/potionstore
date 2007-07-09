@@ -10,6 +10,14 @@ Any volunteers?
 
 Changes:
 
+7/8/2007
+- Fixed admin page dashboard statistics
+- Google Analytics e-commerce transaction tracking support added
+  You need to enable e-commerce transaction tracking at Google Analytics:
+  http://www.google.com/support/analytics/bin/answer.py?answer=40932&query=e-commerce&topic=&type=#0.1.1_step9
+- Mint support added. Make sure to redirect /mint/ to the mint installation
+- Minor fixes
+
 6/26/2007
 - Credit card info filtered from log
 - mailer test patch from Jamie Hardt applied.
