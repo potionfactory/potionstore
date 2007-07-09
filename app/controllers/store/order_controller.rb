@@ -225,7 +225,7 @@ class Store::OrderController < ApplicationController
     if success
       session[:order] = @order
       redirect_to :action => 'thankyou'
-      OrderMailer.deliver_thankyou(@order)
+      OrderMailer.deliver_thankyou(@order) if is_live()
     else
       render :action => 'failed', :layout => 'error'
     end

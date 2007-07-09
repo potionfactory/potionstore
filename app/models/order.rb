@@ -51,7 +51,16 @@ class Order < ActiveRecord::Base
     end
     return total
   end
-  
+
+  ## tax and shipping are hard-wired to 0 for now
+  def tax_total
+    return 0
+  end
+
+  def shipping_total
+    return 0
+  end
+
   def coupon_amount
     return 0 if coupon == nil
     return coupon.amount if coupon.percentage == nil

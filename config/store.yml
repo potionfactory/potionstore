@@ -9,6 +9,7 @@ company_logo_path: ""
 store_name: "My Company Store"
 copyright_html: "Copyright &copy; 2007 My Company. All rights reserved."
 google_analytics_account: ""
+include_mint: false
 paypal_express_checkout_header_image: "https://www.mycompany.com/images/mylogo.png"
 
 # Email addresses

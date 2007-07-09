@@ -45,6 +45,7 @@ class AdminController < ApplicationController
     # helper function
     def last_n_days_sql(days)
       # NOTE: mysql should use IFNULL instead of COALESCE
+      days = days - 1
       return "
         select (select count(*)
                   from orders
@@ -127,7 +128,7 @@ class AdminController < ApplicationController
     @daily = Order.find_by_sql(last_8_days_sql)
     @monthly = Order.find_by_sql(last_8_months_sql)
 
-    # Calculate a very simple estimate.
+    # Calculate a very simple projection.
     # Takes the average daily sales from the last 30 days to extrapolate the sales
     # for the remaining days of the current month
     today = Date.today

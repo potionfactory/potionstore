@@ -70,3 +70,26 @@
 <p style="text-align:center;margin:50px 0 10px" class="small">
     The contents of this page are being sent to you by email.
 </p>
+
+<% if is_live() && $STORE_PREFS['google_analytics_account'] != "" -%>
+<!-- Google Analytics Transaction Tracking -->
+<form style="display:none;" name="utmform">
+<% 
+=begin
+Format for the textarea field:
+
+UTM:T|[order-id]|[affiliation]|[total]|[tax]|[shipping]|[city]|[state]|[country]
+UTM:I|[order-id]|[sku/code]|[productname]|[category]|[price]|[quantity]
+=end
+-%>
+<textarea id="utmtrans">
+UTM:T|<%=@order.id %>||<%=@order.total %>|<%=@order.tax_total %>|<%=@order.shipping_total %>|<%=@order.city %>|<%=@order.state %>|<%=@order.country %>
+<% for item in @order.line_items -%>
+UTM:I|<%=@order.id %>|<%=item.product.code %>|<%=item.product.name %>||<%=item.unit_price %>|<%=item.quantity %>
+<% end -%>
+</textarea>
+</form>
+<script type="text/javascript"> 
+__utmSetTrans(); 
+</script>
+<% end -%>
