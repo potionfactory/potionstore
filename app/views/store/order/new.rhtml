@@ -26,7 +26,7 @@ $(document).ready(function(){
 		<td>
 			<a href="<%=product.url %>">
 				<% if product.image_path != "" -%>
-				<%= image_tag product.image_path, :alt => '' -%>
+				<img src="<%= product.image_path %>" alt="">
 				<% end -%>
 				<%= product.name %>
 			</a>
