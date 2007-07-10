@@ -1,13 +1,17 @@
 
 Any volunteers?
 
-- Upgrade google4r to the lastest version and test everything to make sure it still works
-  Perhaps move away from google4r altogether and just parse the xml?
-- Write more unit tests
+- Fix order pagination problem in admin interface
+  http://code.google.com/p/potionstore/issues/detail?id=5
+- Upgrade google4r to the lastest version and test everything to make sure it still works.
+  Or perhaps move away from google4r altogether and just parse the xml?
+- Write more unit tests, especially for the store, paypal and google checkout parts
 - Show sales graphs instead of tables in the dashboard
 - PayPal Website Payments Standard integration (very low priority for me -AK)
 - MySQL compatibility (again, very low priority for me -AK)
+- A smarter algorithm for projection of future sales
 - Refactor code to be RESTful and well structured. orders_controller could use some help in that department
+- Refactor to allow plugging in other checkout methods easier
 - A desktop client someday after the REST refactoring is done?
 
 
