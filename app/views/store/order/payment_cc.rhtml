@@ -68,7 +68,7 @@ $(document).ready(function(){
     </tr>
 </table>
 
-<% form_tag :action => "purchase", :onsubmit => "javascript:return validate();" do -%>
+<% form_tag({:action => "purchase"}, {:onsubmit => "javascript:return validate();"}) do -%>
 
 <% for item in @order.line_items -%>
 <%= hidden_field "items", String(item.product_id), :value=> item.quantity -%>

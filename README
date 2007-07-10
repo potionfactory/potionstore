@@ -1,4 +1,4 @@
-== Welcome to PotionStore
+== Welcome to Potion Store
 
 Features:
 
@@ -8,17 +8,22 @@ Features:
 - Administration interface
 - Coupons
 - Send lost license page (http://mycompany.com/store/lost_license)
+- Google Analytics e-commerce transaction tracking support for PayPal and credit card orders
 
 
 == Dependencies
 
 - Rails 1.2 or higher
 - Postgresql
-- money rubygem
-- ruby-debug rubygem
+- ruby-debug rubygem (I'm forcing this on you, but you really owe it
+  to yourself to try it out. It's way better than the built-in
+  breakpointer)
 
 
 == Installation
+
+This is a brief outline of the steps required to get Potion Store up and running.
+I'll assume that you have basic rails knowledge or some Google skills.
 
 - Edit the following config files to suit your needs
 
@@ -35,15 +40,13 @@ Features:
   - run "rake db:migrate" to import schema
    
 - Install gem dependency:
-  gem install money
   gem install ruby-debug
 
 - Install PayPal API access certificates into config/certs
 
-- Run with script/server and test through
+- Run script/server and test through
   http://localhost:3000/store and
   http://localhost:3000/admin
 
 - Replace the default license key generator in lib/licensekey.rb with your own
 
-- Modify config/deploy.rb to setup your deployment
