@@ -58,7 +58,7 @@ onunload = reset;
 	</table>
 </div>
 
-<% form_tag :action => "purchase_paypal", :onsubmit => "javascript:return validate();" do -%>
+<% form_tag({:action => "purchase_paypal"}, {:onsubmit => "javascript:return validate();"}) do -%>
 
 <div class="d"></div>
 

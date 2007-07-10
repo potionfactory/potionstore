@@ -1,18 +1,28 @@
 
 Any volunteers?
 
-- Write some unit tests
+- Upgrade google4r to the lastest version and test everything to make sure it still works
+  Perhaps move away from google4r altogether and just parse the xml?
+- Write more unit tests
 - Show sales graphs instead of tables in the dashboard
 - PayPal Website Payments Standard integration (very low priority for me -AK)
 - MySQL compatibility (again, very low priority for me -AK)
 - Refactor code to be RESTful and well structured. orders_controller could use some help in that department
 - A desktop client someday after the REST refactoring is done?
 
+
+
 Changes:
+
+7/10/2007
+- Looked into having Google Analytics support for Google Checkout, but google4r doesn't support that yet.
+  Google Checkout views have the support for it now, but the data is just not being transmitted to Checkout yet.
+- money rubygem frozen in
+- Form tag onsubmit attributes were not working. Fixed.
 
 7/8/2007
 - Fixed admin page dashboard statistics
-- Google Analytics e-commerce transaction tracking support added
+- Google Analytics e-commerce transaction tracking support added for PayPal and credit card orders
   You need to enable e-commerce transaction tracking at Google Analytics:
   http://www.google.com/support/analytics/bin/answer.py?answer=40932&query=e-commerce&topic=&type=#0.1.1_step9
 - Mint support added. Make sure to redirect /mint/ to the mint installation
@@ -59,4 +69,4 @@ Changes:
 - AK: A valid license is created for people with unicode names
 - AK: Printable receipt did not have a potion factory title-
 - AK: License files get downloaded with the correct unicode name
-- AK: UTF-8 encoding specified in the database configuration 
+- AK: UTF-8 encoding specified in the database configuration
