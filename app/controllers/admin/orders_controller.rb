@@ -3,11 +3,21 @@ class Admin::OrdersController < ApplicationController
   layout "admin"
 
   before_filter :check_authentication
-  
+
   # GET /orders
   # GET /orders.xml
   def index
-    @order_pages, @orders = paginate :orders, :per_page => 100, :order => 'order_time DESC', :conditions => "status != 'P'"
+    q = params[:query]
+    conditions = "status != 'P'"
+    if q
+      q.strip!
+      conditions = conditions + " AND (email ~* '#{q}' OR
+                                       first_name ~* '#{q}.*' OR
+                                       last_name ~* '#{q}.*' OR
+                                       licensee_name ~* '%#{q}.*' OR
+                                       id ~* '#{q}')"
+    end
+    @order_pages, @orders = paginate :orders, :per_page => 100, :order => 'order_time DESC', :conditions => conditions
 
     respond_to do |format|
       format.html # index.rhtml
@@ -24,20 +34,6 @@ class Admin::OrdersController < ApplicationController
       format.html # show.rhtml
       format.xml  { render :xml => @order.to_xml }
     end
-  end
-
-  # GET /orders/find
-  def find
-    q = params[:query]
-    q.strip!
-    redirect_to :back and return if not q
-    conditions = "status != 'P' AND (email ~* '#{q}' OR
-                                     first_name ~* '#{q}.*' OR
-                                     last_name ~* '#{q}.*' OR
-                                     licensee_name ~* '%#{q}.*' OR
-                                     id ~* '#{q}')"
-    @order_pages, @orders = paginate :orders, :per_page => 100, :order => 'order_time DESC', :conditions => conditions
-    render :action => "index"
   end
 
   # GET /orders/new
@@ -79,7 +75,7 @@ class Admin::OrdersController < ApplicationController
     # must delete the licensee name from parameters because we need to set it after the line items are added
     @licensee_name = params[:order][:licensee_name]
     params[:order].delete("licensee_name")
-    
+
     @order = Order.find(params[:order][:id])
     @order.attributes = params[:order]
 
@@ -153,5 +149,5 @@ class Admin::OrdersController < ApplicationController
     rescue
       return false
     end
-  end  
+  end
 end
