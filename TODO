@@ -18,6 +18,9 @@ Any volunteers?
 
 Changes:
 
+7/16/2007
+- Access keys 1, 2, 3, 4, 5, and F added to the admin menu
+
 7/10/2007
 - Looked into having Google Analytics support for Google Checkout, but google4r doesn't support that yet.
   Google Checkout views have the support for it now, but the data is just not being transmitted to Checkout yet.
