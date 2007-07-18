@@ -10,7 +10,7 @@ class AdminController < ApplicationController
     unless params[:username] && params[:password]
       render :action => "login", :layout => 'error' and return
     end
-      
+
     if params[:username] == $STORE_PREFS['admin_username'] &&
        params[:password] == $STORE_PREFS['admin_password']
       session[:logged_in] = true
@@ -32,9 +32,9 @@ class AdminController < ApplicationController
 
   # Dashboard page
   def index
-    
+
     @reports = {}
-    
+
     if Product.count == 0
       flash[:notice] = "This store doesn't have any products! Add some!"
       redirect_to :action => 'products' and return
@@ -54,7 +54,7 @@ class AdminController < ApplicationController
                        current_date - #{days} <= order_time) as orders,
                sum(line_items.unit_price * quantity)
                  - sum(coalesce(coupons.amount, 0))
-                 - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as earned,
+                 - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
                sum(quantity) as q,
                products.name as product
 
@@ -75,14 +75,14 @@ class AdminController < ApplicationController
 
     @report_num_orders = {}
     @report_totals = {}
-  
+
     for key in ['Today', 'Last 7 Days', 'Last 30 Days', 'Last 365 Days']
       report = @reports[key]
       orders = 0
       total = 0
       for product in report
         orders = product.orders
-        total += product.earned if product
+        total += product.revenue if product
       end
       @report_num_orders[key] = orders
       @report_totals[key] = total
@@ -95,14 +95,14 @@ class AdminController < ApplicationController
                date_part('month', orders.order_time) as month,
                date_part('day', orders.order_time) as day,
                sum(line_items.unit_price * quantity) - sum(coalesce(coupons.amount, 0))
-                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as earned,
+                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
                max(orders.order_time) as last_time
 
-        from orders 
-             inner join line_items on orders.id = line_items.order_id 
-             left outer join coupons on coupons.id = orders.coupon_id 
+        from orders
+             inner join line_items on orders.id = line_items.order_id
+             left outer join coupons on coupons.id = orders.coupon_id
 
-        where status = 'C' and payment_type != 'Free'
+        where status = 'C' and lower(payment_type) != 'free'
 
         group by year, month, day
 
@@ -112,14 +112,14 @@ class AdminController < ApplicationController
         select date_part('year', orders.order_time) as year,
                date_part('month', orders.order_time) as month,
                sum(line_items.unit_price * quantity) - sum(coalesce(coupons.amount, 0))
-                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as earned,
+                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
                max(orders.order_time) as last_time
 
         from orders
              inner join line_items on orders.id = line_items.order_id
              left outer join coupons on coupons.id = orders.coupon_id
 
-        where status = 'C' and payment_type != 'Free'
+        where status = 'C' and lower(payment_type) != 'free'
 
         group by year, month
 
@@ -135,10 +135,56 @@ class AdminController < ApplicationController
     days_in_current_month = Date.civil(today.year, today.month, -1).day
 
     if @monthly != nil and @monthly.length > 0
-      @month_estimate = @monthly.first.earned.to_f + @report_totals['Last 30 Days'] / 30 * (days_in_current_month - today.day)
+      @month_estimate = @monthly.first.revenue.to_f + @report_totals['Last 30 Days'] / 30 * (days_in_current_month - today.day)
       @year_estimate = @month_estimate * 12
     end
 
+    # Gets the revenue for each day over the last 30 days for the chart
+
+    query_results = Order.find_by_sql(
+#         "select extract('day' from age(orders.order_time)) as days_ago,
+#                 sum(line_items.unit_price * quantity) - sum(coalesce(coupons.amount, 0))
+#                     - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue
+
+#         from orders
+#              inner join line_items on orders.id = line_items.order_id
+#              left outer join coupons on coupons.id = orders.coupon_id
+
+#         where status = 'C' and lower(payment_type) != 'free' and age(order_time) < interval '30 days'
+
+#         group by days_ago
+
+#         order by days_ago desc limit 30")
+        "select date_part('year', orders.order_time) as year,
+                date_part('month', orders.order_time) as month,
+                date_part('day', orders.order_time) as day,
+                extract('day' from age(orders.order_time)) as days_ago,
+                sum(line_items.unit_price * quantity) - sum(coalesce(coupons.amount, 0))
+                    - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
+                max(orders.order_time) as last_time
+
+         from orders
+              inner join line_items on orders.id = line_items.order_id
+              left outer join coupons on coupons.id = orders.coupon_id
+
+         where status = 'C' and lower(payment_type) != 'free' and current_date - 30 <= order_time
+
+         group by year, month, day, days_ago
+
+         order by last_time desc limit 30")
+
+    # initialize the list
+    @one_month_sales = []
+    0.upto(30) {|day| @one_month_sales += [[day, 0, "0/0"]]}
+
+    query_results.each {|day|
+      xindex = -day.days_ago.to_i + 29
+      revenue = day.revenue.to_f
+      label = "#{day.month}/#{day.day}"
+      @one_month_sales[xindex] = [xindex, revenue, label]
+    }
+#     @one_month_sales.map! {|day| [-day.days_ago.to_i + 30, day.revenue.to_f]}
+#     @one_month_sales.map! {|day| ["#{day.month}/#{day.day}", day.revenue.to_f]}
   end
 
   # Coupon actions
@@ -213,12 +259,12 @@ class AdminController < ApplicationController
 #         order.cc_code = 'n/a'
 
 #         order.comment = ''
-        
+
 #         order.status = 'C'
 #         order.save()
 
 #         coupons = order.add_promo_coupons()
-        
+
 #         email = OrderMailer.deliver_thankyou(order)
 #       end
 #     end
