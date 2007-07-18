@@ -5,51 +5,85 @@ table tr th { text-align: left; }
 .clear { clear: both; }
 table tr td { padding-right: 10px; }
 </style>
+<%
+layout_options = '{"xTicks" : ['
+@one_month_sales.each {|day| layout_options += "{v:#{day[0]}, label:\"#{day[2]}\"},"}
+layout_options += ']}'
+
+draw_script = <<JS
+function drawGraph() {
+    var layout = new PlotKit.Layout("bar", #{layout_options});
+    layout.addDataset("sales",#{@one_month_sales.inspect});
+    layout.evaluate();
+    var canvas = MochiKit.DOM.getElement("graph");
+    var plotter = new PlotKit.SweetCanvasRenderer(canvas, layout, {});
+    plotter.render();
+}
+MochiKit.DOM.addLoadEvent(drawGraph);
+JS
+ %>
+
+<%= javascript_tag(draw_script) %>
+
+<div class="box">
+    <h2>Revenue for Trailing Thirty Days</h2>
+    <div>
+        <canvas id="graph" height="150" width="900" />
+    </div>
+</div>
+
+<br class="clear" />
 
 <%
      for key in ['Today', 'Last 7 Days', 'Last 30 Days', 'Last 365 Days']
      reports = @reports[key] -%>
 <div class="box">
-	<h2><%= key -%></h2>
-	<table>
-		<tr><td class="rightalign">Orders:</td><td><%= @report_num_orders[key] %></td></tr>
-		<% for product in reports -%>
-		<tr>
-			<td class="rightalign"><%= product.product %></td>
-			<td><%= product.q -%></td>
-		</tr>
-		<% end -%>
-		<tr><td class="rightalign"><strong>Total:</strong></td><td><%= number_to_currency @report_totals[key] %></td></tr>
-	</table>
+    <h2><%= key -%></h2>
+    <table>
+        <tr><td class="rightalign">Orders:</td><td><%= @report_num_orders[key] %></td></tr>
+        <% for product in reports -%>
+        <tr>
+            <td class="rightalign"><%= product.product %></td>
+            <td><%= product.q -%></td>
+        </tr>
+        <% end -%>
+        <tr><td class="rightalign"><strong>Total:</strong></td><td><%= number_to_currency @report_totals[key] %></td></tr>
+    </table>
 </div>
 <% end -%>
 
 <br class="clear" />
 
 <div class="box">
-	<h2>Daily</h2>
-	<table>
-		<tr><th>Date</th><th>Revenue</th></tr>
-		<% for p in @daily -%>
-		<tr><td><%= "%02d" % p.month -%>/<%= "%02d" % p.day -%>/<%= p.year -%></td><td><%= number_to_currency p.earned -%></td></tr>
-		<% end -%>
-	</table>
+    <h2>Daily</h2>
+    <table>
+        <tr><th>Date</th><th>Revenue</th></tr>
+        <% for p in @daily -%>
+        <tr>
+            <td><%= "%02d" % p.month -%>/<%= "%02d" % p.day -%>/<%= p.year -%></td>
+            <td><%= number_to_currency p.revenue -%></td>
+        </tr>
+        <% end -%>
+    </table>
 </div>
 
 <div class="box">
-	<h2>Monthly</h2>
-	<table>
-		<tr><th>Date</th><th>Revenue</th></tr>
-		<% for p in @monthly -%>
-		<tr><td><%= "%02d" % p.month %>/<%= p.year %></td><td><%= number_to_currency p.earned %></td></tr>
-		<% end -%>
-	</table>
+    <h2>Monthly</h2>
+    <table>
+        <tr><th>Date</th><th>Revenue</th></tr>
+        <% for p in @monthly -%>
+        <tr>
+            <td><%= "%02d" % p.month %>/<%= p.year %></td>
+            <td><%= number_to_currency p.revenue %></td>
+        </tr>
+        <% end -%>
+    </table>
 </div>
 
 <div class="box">
-	<h2>Projections</h2>
-	<table>
-		<tr><td>Month</td><td><%= number_to_currency @month_estimate %></td></tr>
-		<tr><td>Year</td><td><%= number_to_currency @year_estimate %></td></tr>
-	</table>
+    <h2>Projections</h2>
+    <table>
+        <tr><td>Month</td><td><%= number_to_currency @month_estimate %></td></tr>
+        <tr><td>Year</td><td><%= number_to_currency @year_estimate %></td></tr>
+    </table>
 </div>
