@@ -1,42 +1,42 @@
 <h1>Orders</h1>
 
 <div class="pagination">
-	<%= link_to 'Prev', { :page => @order_pages.current.previous } if @order_pages.current.previous %>
-	<%= pagination_links(@order_pages) %>
-	<%= link_to 'Next', { :page => @order_pages.current.next } if @order_pages.current.next %>
+    <%= link_to 'Prev', { :page => @order_pages.current.previous } if @order_pages.current.previous %>
+    <%= pagination_links(@order_pages) %>
+    <%= link_to 'Next', { :page => @order_pages.current.next } if @order_pages.current.next %>
 </div>
 
 <table id="orders" class="list">
     <tr>
-	<th class=="status"></th>
-	<th class="ordernum">#</th>
-	<th class="date">Date</th>
-	<th class="name">Name</th>
-	<th class="email">Email</th>
-	<th class="address">Address</th>
-	<th class="total">Total</th>
-	<th class="paytype">Paytype</th>
-	<th class="faildesc">Failure</th>
+    <th class=="status"></th>
+    <th class="ordernum">#</th>
+    <th class="date">Date</th>
+    <th class="name">Name</th>
+    <th class="email">Email</th>
+    <th class="address">Address</th>
+    <th class="total">Total</th>
+    <th class="paytype">Paytype</th>
+    <th class="faildesc">Failure</th>
     </tr>
 <%
      last_day = 0
      for order in @orders -%>
     <tr class="<%= if last_day != order.order_time.yday; order.status + ' newday'; else; order.status; end %>">
-	<td><%= order.status -%></td>
-	<td>
-		<%= link_to order.id, :action => "show", :id => order %><%= "*" if order.comment != '' %>
-	</td>
-	<td><%= order.order_time.strftime("%m/%d/%y&nbsp;%H:%M") -%></td>
-	<td><%= order.licensee_name ? order.licensee_name : order.name -%></td>
-	<td><%= order.email -%></td>
-	<td><% if order.cc_order? %><%= order.address -%>, <%= order.city -%>, <%= order.state -%> <%= order.zipcode -%>,<% end %> <%= order.country -%>
-	<td><%= number_to_currency order.total -%></td>
-	<td><%= order.payment_type -%></td>
-	<% if order.failure_code -%>
-	<td><%= order.failure_code -%>: <%= order.failure_reason -%></td>
-	<% else -%>
-	<td></td>
-	<% end -%>
+    <td><%= order.status -%></td>
+    <td>
+        <%= link_to order.id, :action => "show", :id => order %><%= "*" if !order.comment.blank? %>
+    </td>
+    <td><%= order.order_time.strftime("%m/%d/%y&nbsp;%H:%M") -%></td>
+    <td><%= order.licensee_name ? order.licensee_name : order.name -%></td>
+    <td><%= order.email -%></td>
+    <td><% if order.cc_order? %><%= order.address -%>, <%= order.city -%>, <%= order.state -%> <%= order.zipcode -%>,<% end %> <%= order.country -%>
+    <td><%= number_to_currency order.total -%></td>
+    <td><%= order.payment_type -%></td>
+    <% if order.failure_code -%>
+    <td><%= order.failure_code -%>: <%= order.failure_reason -%></td>
+    <% else -%>
+    <td></td>
+    <% end -%>
     </tr>
 </a>
 <%
@@ -45,9 +45,9 @@
 </table>
 
 <div class="pagination">
-	<%= link_to 'Prev', { :page => @order_pages.current.previous } if @order_pages.current.previous %>
-	<%= pagination_links(@order_pages) %>
-	<%= link_to 'Next', { :page => @order_pages.current.next } if @order_pages.current.next %>
+    <%= link_to 'Prev', { :page => @order_pages.current.previous } if @order_pages.current.previous %>
+    <%= pagination_links(@order_pages) %>
+    <%= link_to 'Next', { :page => @order_pages.current.next } if @order_pages.current.next %>
 </div>
 
 <br />
