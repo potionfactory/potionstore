@@ -22,8 +22,8 @@ Features:
 
 == Installation
 
-This is a brief outline of the steps required to get Potion Store up and running.
-I'll assume that you have basic rails knowledge or some Google skills.
+This is a brief outline of the steps required to get Potion Store up and running.  I'll assume that
+you have basic rails knowledge or some Google skills.
 
 - Edit the following config files to suit your needs
 
@@ -43,6 +43,9 @@ I'll assume that you have basic rails knowledge or some Google skills.
   gem install ruby-debug
 
 - Install PayPal API access certificates into config/certs
+
+  For detailed instructions on how to do this Google "paypal api certificate"
+  Read vendor/plugins/paypal/README for more PayPal details
 
 - Run script/server and test through
   http://localhost:3000/store and
