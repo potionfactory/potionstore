@@ -1,12 +1,54 @@
 <script type="text/javascript">
 
 function validate() {
-  $('#submit').get(0).disabled = true;
-  return true;
+	$('#submit').get(0).disabled = true;
+	return true;
 }
 
 function reset() {
-  $('#submit').get(0).disabled = false;
+	$('#submit').get(0).disabled = false;
+	choose_cc();
+}
+
+function determine_cc_type(cc_number) {
+	if (cc_number.length < 1) return null;
+	switch (true) {
+	case (cc_number[0] == '3'):
+		// Diners (Mastercard) (36) or Amex (34 or 37)
+		if (cc_number.length < 2) return null;
+		else if (cc_number[1] == '6') return 'MasterCard';
+		else return 'Amex';
+	case (cc_number[0] == '4'):
+		return 'Visa';
+	case (cc_number[0] == '5'): 
+		return 'MasterCard';
+	case (cc_number[0] == '6'): 
+		return 'Discover';
+	}
+}
+
+function select_cc(card) { $("#"+card).get(0).checked = "checked"; }
+
+function choose_cc() {
+	cc_number = $('#order_cc_number').val().replace(/\s/g, ''); // Get the credit card number and strip white spaces
+	cc_type = determine_cc_type(cc_number);
+	if (cc_type) select_cc(cc_type);
+
+	var card_types = new Array("Visa", "MasterCard", "Amex", "Discover");
+	for (i in card_types) {
+		input = $('#'+card_types[i]).get(0);
+		image = $('#'+card_types[i]).next().get(0);
+ 		input.style.display = "none";
+		
+		if (card_types[i] == cc_type) {
+			image.style.opacity = 1;
+			image.style.filter="alpha(opacity=100)"; // for stupid IE
+		}
+		else {
+			image.style.opacity = 0.3;
+			image.style.filter="alpha(opacity=30)";
+		}
+	}
 }
 
 function update_licensee_name() {
@@ -21,7 +63,10 @@ onunload = reset;
 
 $(document).ready(function(){
 	$('#order_last_name').blur(update_licensee_name);
+	$('#order_cc_number').change(choose_cc);
+	$('#order_cc_number').keyup(choose_cc);
 });
+
 </script>
 
 <h1>Checkout</h1>
@@ -115,14 +160,10 @@ $(document).ready(function(){
 
 <div class="d"></div>
 
-<script type="text/javascript">
-function select_cc(card) { $("#"+card).get(0).checked = "checked"; }
-</script>
-    
 <div class="narrow">
 	<h2>Credit Card</h2>
     <p id="cards"><span>Card Type:</span>
-	<input id="Visa" type="radio" name="order[payment_type]" value="Visa" checked="checked"/>
+	<input id="Visa" type="radio" name="order[payment_type]" value="Visa"/>
 	<img src="/images/store/visa.gif" alt="Visa" onclick="select_cc('Visa')"/>
 	
 	<input id="MasterCard" type="radio" name="order[payment_type]" value="MasterCard"/>
