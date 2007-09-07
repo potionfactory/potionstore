@@ -188,6 +188,11 @@ input { margin-left: 0; }
 #countries { margin-left: 0; }
 #company { margin-top: 0; padding-top:10px; }
 
+#order_cc_month, #order_cc_year { width: 30px; text-align: center; }
+
+#order_cc_month { margin-right: 5px; }
+#order_cc_year { margin-left: 5px; margin-right: 10px; }
+
 input#submit { margin: 10px 0 0 192px; }
 
 #final_step { color: #999; font-family:helvetica, sans-serif; font-size: 11px; margin-left: 15px; }
