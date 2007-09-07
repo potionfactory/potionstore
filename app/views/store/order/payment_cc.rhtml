@@ -8,6 +8,7 @@ function validate() {
 function reset() {
 	$('#submit').get(0).disabled = false;
 	choose_cc();
+	style_cc_exp();
 }
 
 function determine_cc_type(cc_number) {
@@ -51,6 +52,33 @@ function choose_cc() {
 	}
 }
 
+function style_cc_exp() {
+	month = $('#order_cc_month').get(0);
+	year = $('#order_cc_year').get(0);
+	if (month.value == 'mm')
+		month.style.color = '#aaa';
+	else
+		month.style.color = '#000';
+	if (year.value == 'yy')
+		year.style.color = '#aaa';
+	else
+		year.style.color = '#000';
+}
+
+function cc_month_changed_focus() {
+	month = $('#order_cc_month').get(0);
+	if (month.value == 'mm') month.value = '';
+	else if (month.value == '') month.value = 'mm';
+	style_cc_exp();
+}
+
+function cc_year_changed_focus() {
+	year = $('#order_cc_year').get(0);
+	if (year.value == 'yy') year.value = '';
+	else if (year.value == '') year.value = 'yy';
+	style_cc_exp();
+}
+
 function update_licensee_name() {
 	if ($('#order_licensee_name').val() == '') {
 		var name = $('#order_first_name').val() + ' ' + $('#order_last_name').val();
@@ -65,6 +93,10 @@ $(document).ready(function(){
 	$('#order_last_name').blur(update_licensee_name);
 	$('#order_cc_number').change(choose_cc);
 	$('#order_cc_number').keyup(choose_cc);
+	$('#order_cc_month').focus(cc_month_changed_focus);
+	$('#order_cc_month').blur(cc_month_changed_focus);
+	$('#order_cc_year').focus(cc_year_changed_focus);
+	$('#order_cc_year').blur(cc_year_changed_focus);
 });
 
 </script>
@@ -120,9 +152,6 @@ $(document).ready(function(){
 <% end -%>
 <%= hidden_field_tag("coupon", @order.coupon_text) if @order.coupon -%>
 
-<!-- I don't think we need this -->
-<!-- <input type="hidden" name="order_total" value="<%= number_to_currency @order.total %>" id="total_amount"/> -->
-
 <div class="d"></div>
 
 <div class="narrow">
@@ -176,15 +205,12 @@ $(document).ready(function(){
 	<img src="/images/store/discover.gif" alt="Discover" onclick="select_cc('Discover')" />
     </p>
 
-    <p><label><span>Credit Card Number:</span><%= text_field 'order', 'cc_number', :size=>24  %></label></p>
+    <p><label><span>Credit Card Number:</span><%= text_field 'order', 'cc_number', :size=>24 %></label></p>
 
     <p>
         <label><span>Expiration Date:</span>
-            <%= render :partial => "form_months" %> /
-            <%= select_year Date.today, :prefix => 'order', :field_name => 'cc_year', :start_year => Date.today.year, :end_year => Date.today.year + 10 %>
-        </label>
-    </p>
-    <p><label><span>Card Security Code:</span><%= text_field 'order', 'cc_code', :size => 4 %></label>
+		<%= text_field 'order', 'cc_month', :value => 'mm', :maxlength => 2 %></label>/<%= text_field 'order', 'cc_year', :value => 'yy', :maxlength=>2 %>
+		<label>CSC: <%= text_field 'order', 'cc_code', :size => 4 %></label>
         <img src="/images/store/cvv.png" alt="CVV" style="vertical-align:middle;position:relative; top:-2px;"/>
     </p>
 </div>
