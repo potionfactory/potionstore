@@ -1,6 +1,7 @@
 <table>
 	<% for product in Product.find(:all) -%>
 	<tr>
+		<% next if params[:action] == "new" && product.active == 0 -%>
 		<% if @order && @order.has_item_with_product_id(product.id) -%>
 		<% item = @order.line_item_with_product_id(product.id) -%>
 		<td><%= item.product.name -%></td>
