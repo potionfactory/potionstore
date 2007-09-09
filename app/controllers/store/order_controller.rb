@@ -107,6 +107,10 @@ class Store::OrderController < ApplicationController
       render :action => 'failed', :layout => 'error' and return      
     end
 
+    # We need the next two ugly lines because Safari's autofill sucks
+    params[:order][:address1] = params[:address1]
+    params[:order][:address2] = params[:address2]
+    
     params[:order].keys.each { |x| params[:order][x] = params[:order][x].strip }
     
     @order = Order.new(params[:order])
