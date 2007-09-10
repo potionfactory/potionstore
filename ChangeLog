@@ -1,22 +1,22 @@
+9/9/2007
+- Fixed the Safari address autofill problem
+- Don't show inactive products when adding a new order through the admin interface
+- Pagination within order search results works now
+    
+9/8/2007
+- Don't show inactive products when adding a new order through the admin interface
 
-Any volunteers?
+9/7/2007
+- Credit card expiration date fields improved
+- Auto-selects credit card type as credit card number is typed in
+- Updated to jQuery 1.1.4
+- Updated payment type icon images
+    
+7/27/2007
+- Orders with null comments no longer marked on the admin order list
 
-- Fix order pagination problem in admin interface
-  http://code.google.com/p/potionstore/issues/detail?id=5
-- Upgrade google4r to the lastest version and test everything to make sure it still works.
-  Or perhaps move away from google4r altogether and just parse the xml?
-- Write more unit tests, especially for the store, paypal and google checkout parts
-- Show sales graphs instead of tables in the dashboard
-- PayPal Website Payments Standard integration (very low priority for me -AK)
-- MySQL compatibility (again, very low priority for me -AK)
-- A smarter algorithm for projection of future sales
-- Refactor code to be RESTful and well structured. orders_controller could use some help in that department
-- Refactor to allow plugging in other checkout methods easier
-- A desktop client someday after the REST refactoring is done?
-
-
-
-Changes:
+7/18/2007
+- Charts patch from Jamie Hardt applied
 
 7/16/2007
 - Access keys 1, 2, 3, 4, 5, and F added to the admin menu
