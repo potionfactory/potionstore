@@ -1,9 +1,9 @@
 <h1>Orders</h1>
 
 <div class="pagination">
-    <%= link_to 'Prev', { :page => @order_pages.current.previous } if @order_pages.current.previous %>
-    <%= pagination_links(@order_pages) %>
-    <%= link_to 'Next', { :page => @order_pages.current.next } if @order_pages.current.next %>
+    <%= link_to 'Prev', { :page => @order_pages.current.previous, :params => params } if @order_pages.current.previous %>
+    <%= pagination_links(@order_pages, {:params => params}) %>
+    <%= link_to 'Next', { :page => @order_pages.current.next, :params => params } if @order_pages.current.next %>
 </div>
 
 <table id="orders" class="list">
@@ -45,9 +45,9 @@
 </table>
 
 <div class="pagination">
-    <%= link_to 'Prev', { :page => @order_pages.current.previous } if @order_pages.current.previous %>
-    <%= pagination_links(@order_pages) %>
-    <%= link_to 'Next', { :page => @order_pages.current.next } if @order_pages.current.next %>
+    <%= link_to 'Prev', { :page => @order_pages.current.previous, :params => params } if @order_pages.current.previous %>
+    <%= pagination_links(@order_pages, {:params => params}) %>
+    <%= link_to 'Next', { :page => @order_pages.current.next, :params => params } if @order_pages.current.next %>
 </div>
 
 <br />

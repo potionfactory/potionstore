@@ -17,7 +17,7 @@ class Admin::OrdersController < ApplicationController
                                        licensee_name ~* '%#{q}.*' OR
                                        id ~* '#{q}')"
     end
-    @order_pages, @orders = paginate :orders, :per_page => 100, :order => 'order_time DESC', :conditions => conditions
+    @order_pages, @orders = paginate :orders, :per_page => 100, :conditions => conditions, :order => 'order_time DESC'
 
     respond_to do |format|
       format.html # index.rhtml
