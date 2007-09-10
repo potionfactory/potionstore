@@ -1,84 +1,81 @@
 <style type="text/css">
 .box { float:left; border:1px dotted #999; padding:10px; margin:10px; }
-table tr td.rightalign { text-align:right; }
-table tr th { text-align: left; }
-.clear { clear: both; }
-table tr td { padding-right: 10px; }
+.rightalign { text-align:right; }
+table tr th { text-align:left; }
+.clear { clear:both; }
+table tr td { padding-right:10px; }
+#rsummary { border-collapse:collapse; }
+#rsummary td, #rsummary th { padding:2px 15px; margin:0; }
+#rsummary td { border-top:1px solid #ccc; text-align:right; }
 </style>
-<%
-layout_options = '{"xTicks" : ['
-@one_month_sales.each {|day| layout_options += "{v:#{day[0]}, label:\"#{day[2]}\"},"}
-layout_options += ']}'
 
-draw_script = <<JS
-function drawGraph() {
-    var layout = new PlotKit.Layout("bar", #{layout_options});
-    layout.addDataset("sales",#{@one_month_sales.inspect});
-    layout.evaluate();
-    var canvas = MochiKit.DOM.getElement("graph");
-    var plotter = new PlotKit.SweetCanvasRenderer(canvas, layout, {});
-    plotter.render();
-}
-MochiKit.DOM.addLoadEvent(drawGraph);
-JS
- %>
-
-<%= javascript_tag(draw_script) %>
+<div class="box" style="width:500px">
+	<h2>Revenue Summary</h2>
+	<table id="rsummary">
+		<tr>
+			<% for cell in @table.shift -%>
+			<th><%= cell %></th>
+			<% end -%>
+		</tr>
+		<% for row in @table -%>
+		<tr>
+			<th class="rightalign"><%= row.shift %></th>
+			<% for cell in row -%>
+			<td><%= cell %></td>
+			<% end -%>
+		</tr>
+		<% end -%>
+		<tr>
+			<th class="rightalign">Total</th>
+			<% for key in ['Today', '7 Days', '30 Days', '365 Days'] -%>
+			<td><%= number_to_currency @report_totals[key] %></td>
+			<% end -%>
+		</tr>
+	</table>
+</div>
 
 <div class="box">
-    <h2>Revenue for Trailing Thirty Days</h2>
+    <h2>Last 30 Days</h2>
     <div>
-        <canvas id="graph" height="150" width="900" />
+		<%= @graph_days %>
     </div>
 </div>
 
-<br class="clear" />
-
-<%
-     for key in ['Today', 'Last 7 Days', 'Last 30 Days', 'Last 365 Days']
-     reports = @reports[key] -%>
 <div class="box">
-    <h2><%= key -%></h2>
-    <table>
-        <tr><td class="rightalign">Orders:</td><td><%= @report_num_orders[key] %></td></tr>
-        <% for product in reports -%>
-        <tr>
-            <td class="rightalign"><%= product.product %></td>
-            <td><%= product.q -%></td>
-        </tr>
-        <% end -%>
-        <tr><td class="rightalign"><strong>Total:</strong></td><td><%= number_to_currency @report_totals[key] %></td></tr>
-    </table>
-</div>
-<% end -%>
-
-<br class="clear" />
-
-<div class="box">
-    <h2>Daily</h2>
-    <table>
-        <tr><th>Date</th><th>Revenue</th></tr>
-        <% for p in @daily -%>
-        <tr>
-            <td><%= "%02d" % p.month -%>/<%= "%02d" % p.day -%>/<%= p.year -%></td>
-            <td><%= number_to_currency p.revenue -%></td>
-        </tr>
-        <% end -%>
-    </table>
+    <h2>Last 12 Months</h2>
+    <div>
+		<%= @graph_months %>
+    </div>
 </div>
 
-<div class="box">
-    <h2>Monthly</h2>
-    <table>
-        <tr><th>Date</th><th>Revenue</th></tr>
-        <% for p in @monthly -%>
-        <tr>
-            <td><%= "%02d" % p.month %>/<%= p.year %></td>
-            <td><%= number_to_currency p.revenue %></td>
-        </tr>
-        <% end -%>
-    </table>
-</div>
+
+<!-- <br class="clear" /> -->
+
+<!-- <div class="box"> -->
+<!--     <h2>Daily</h2> -->
+<!--     <table> -->
+<!--         <tr><th>Date</th><th>Revenue</th></tr> -->
+<!--         <% for p in @daily -%> -->
+<!--         <tr> -->
+<!--             <td><%= "%02d" % p.month -%>/<%= "%02d" % p.day -%>/<%= p.year -%></td> -->
+<!--             <td><%= number_to_currency p.revenue -%></td> -->
+<!--         </tr> -->
+<!--         <% end -%> -->
+<!--     </table> -->
+<!-- </div> -->
+
+<!-- <div class="box"> -->
+<!--     <h2>Monthly</h2> -->
+<!--     <table> -->
+<!--         <tr><th>Date</th><th>Revenue</th></tr> -->
+<!--         <% for p in @monthly -%> -->
+<!--         <tr> -->
+<!--             <td><%= "%02d" % p.month %>/<%= p.year %></td> -->
+<!--             <td><%= number_to_currency p.revenue %></td> -->
+<!--         </tr> -->
+<!--         <% end -%> -->
+<!--     </table> -->
+<!-- </div> -->
 
 <div class="box">
     <h2>Projections</h2>
