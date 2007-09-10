@@ -5,21 +5,6 @@
     <title>Admin: <%= controller.action_name %></title>
     <%= stylesheet_link_tag "scaffold" %>
     <%= stylesheet_link_tag "admin" %>
-<%
-# I had to unroll these because the auto-loaders in MochKit and PlotKit weren't
-# working in Safari.
-
-mochiKitHeaders = ["Base","Iter","Logging","DateTime","Format",
-    "Async","DOM","LoggingPane","Color","Signal","Visual"]
-
-plotKitHeaders = ['PlotKit_Packed','Base','Layout','Canvas','SweetCanvas']
--%>
-<% mochiKitHeaders.each {|h| -%>
-    <%= javascript_include_tag("MochiKit/#{h}.js") %>
-<% } -%>
-<% plotKitHeaders.each {|h| -%>
-    <%= javascript_include_tag("PlotKit/#{h}.js") %>
-<% } -%>
 </head>
 <body>
     <% if session[:logged_in] -%>

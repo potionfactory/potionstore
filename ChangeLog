@@ -1,3 +1,7 @@
+9/10/2007
+- Got revenue charts working with Open Flash Charts
+- Took out all the PlotKit files
+
 9/9/2007
 - Fixed the Safari address autofill problem
 - Don't show inactive products when adding a new order through the admin interface

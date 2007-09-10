@@ -55,8 +55,8 @@ class AdminController < ApplicationController
                sum(line_items.unit_price * quantity)
                  - sum(coalesce(coupons.amount, 0))
                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
-               sum(quantity) as q,
-               products.name as product
+               sum(quantity) as quantity,
+               products.name as product_name
 
         from orders
              inner join line_items on orders.id = line_items.order_id
@@ -65,18 +65,23 @@ class AdminController < ApplicationController
 
         where status = 'C' and lower(payment_type) != 'free' and current_date - #{days} <= order_time
 
-        group by product"
+        group by product_name"
     end
 
     @reports['Today'] = Order.find_by_sql(last_n_days_sql(1))
-    @reports['Last 7 Days'] = Order.find_by_sql(last_n_days_sql(7))
-    @reports['Last 30 Days'] = Order.find_by_sql(last_n_days_sql(30))
-    @reports['Last 365 Days'] = Order.find_by_sql(last_n_days_sql(365))
+    @reports['7 Days'] = Order.find_by_sql(last_n_days_sql(7))
+    @reports['30 Days'] = Order.find_by_sql(last_n_days_sql(30))
+    @reports['365 Days'] = Order.find_by_sql(last_n_days_sql(365))
 
     @report_num_orders = {}
     @report_totals = {}
 
-    for key in ['Today', 'Last 7 Days', 'Last 30 Days', 'Last 365 Days']
+    @products = @reports['365 Days'].map{|p| p.product_name}
+
+    @table = []
+    @table += [['', 'Today', '7 Days', '30 Days', '365 Days']]
+
+    for key in ['Today', '7 Days', '30 Days', '365 Days']
       report = @reports[key]
       orders = 0
       total = 0
@@ -86,6 +91,26 @@ class AdminController < ApplicationController
       end
       @report_num_orders[key] = orders
       @report_totals[key] = total
+    end
+
+    row = ['Orders']
+    for key in ['Today', '7 Days', '30 Days', '365 Days']
+      row += [@report_num_orders[key]]
+    end
+    @table += [row]
+
+    for product_name in @products
+      row = [product_name]
+      for key in ['Today', '7 Days', '30 Days', '365 Days']
+        qty = 0
+        for product in @reports[key]
+          if product.product_name == product_name
+            qty = product.quantity
+          end
+        end
+        row += [qty]
+      end
+      @table += [row]
     end
 
     # NOTE: mysql uses year, month, and day functions instead of date_part
@@ -135,56 +160,12 @@ class AdminController < ApplicationController
     days_in_current_month = Date.civil(today.year, today.month, -1).day
 
     if @monthly != nil and @monthly.length > 0
-      @month_estimate = @monthly.first.revenue.to_f + @report_totals['Last 30 Days'] / 30 * (days_in_current_month - today.day)
+      @month_estimate = @monthly.first.revenue.to_f + @report_totals['30 Days'] / 30 * (days_in_current_month - today.day)
       @year_estimate = @month_estimate * 12
     end
 
-    # Gets the revenue for each day over the last 30 days for the chart
-
-    query_results = Order.find_by_sql(
-#         "select extract('day' from age(orders.order_time)) as days_ago,
-#                 sum(line_items.unit_price * quantity) - sum(coalesce(coupons.amount, 0))
-#                     - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue
-
-#         from orders
-#              inner join line_items on orders.id = line_items.order_id
-#              left outer join coupons on coupons.id = orders.coupon_id
-
-#         where status = 'C' and lower(payment_type) != 'free' and age(order_time) < interval '30 days'
-
-#         group by days_ago
-
-#         order by days_ago desc limit 30")
-        "select date_part('year', orders.order_time) as year,
-                date_part('month', orders.order_time) as month,
-                date_part('day', orders.order_time) as day,
-                extract('day' from age(orders.order_time)) as days_ago,
-                sum(line_items.unit_price * quantity) - sum(coalesce(coupons.amount, 0))
-                    - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
-                max(orders.order_time) as last_time
-
-         from orders
-              inner join line_items on orders.id = line_items.order_id
-              left outer join coupons on coupons.id = orders.coupon_id
-
-         where status = 'C' and lower(payment_type) != 'free' and current_date - 30 <= order_time
-
-         group by year, month, day, days_ago
-
-         order by last_time desc limit 30")
-
-    # initialize the list
-    @one_month_sales = []
-    0.upto(30) {|day| @one_month_sales += [[day, 0, "0/0"]]}
-
-    query_results.each {|day|
-      xindex = -day.days_ago.to_i + 29
-      revenue = day.revenue.to_f
-      label = "#{day.month}/#{day.day}"
-      @one_month_sales[xindex] = [xindex, revenue, label]
-    }
-#     @one_month_sales.map! {|day| [-day.days_ago.to_i + 30, day.revenue.to_f]}
-#     @one_month_sales.map! {|day| ["#{day.month}/#{day.day}", day.revenue.to_f]}
+    @graph_days = OpenFlashChart.swf_object(500, 150, '/admin/charts/last_30_days')
+    @graph_months = OpenFlashChart.swf_object(500, 150, '/admin/charts/last_12_months')
   end
 
   # Coupon actions
