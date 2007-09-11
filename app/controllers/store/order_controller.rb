@@ -111,7 +111,7 @@ class Store::OrderController < ApplicationController
     params[:order][:address1] = params[:address1]
     params[:order][:address2] = params[:address2]
     
-    params[:order].keys.each { |x| params[:order][x] = params[:order][x].strip }
+    params[:order].keys.each { |x| params[:order][x] = params[:order][x].strip if params[:order][x] != nil }
     
     @order = Order.new(params[:order])
 

@@ -305,6 +305,12 @@ class Order < ActiveRecord::Base
     ip_address = request.env['REMOTE_ADDR']
     ip_address = ip_address.split(',')[0] if ip_address.count(",") != 0
 
+    cc_year = self.cc_year.to_s
+    if cc_year.length == 2
+      cc_year = '20' + cc_year
+    elsif cc_year.length == 1
+      cc_year = '200' + cc_year
+    end
     res = Paypal.directcharge(:firstName => self.first_name,
                               :lastName => self.last_name,
                               :ip => ip_address,
@@ -321,7 +327,7 @@ class Order < ActiveRecord::Base
                               :creditCardNumber => self.cc_number,
                               :cVV2 => self.cc_code,
                               :expMonth => self.cc_month,
-                              :expYear => self.cc_year)
+                              :expYear => cc_year)
     success = (res.ack == 'Success')
     if success
       self.transaction_number = res.transactionID
@@ -403,6 +409,7 @@ class Order < ActiveRecord::Base
       res = command.send_to_google_checkout()
       return res.redirect_url
     rescue
+      logger.error("An error while talking to google checkout: #{$!}")
       return nil
     end
   end
