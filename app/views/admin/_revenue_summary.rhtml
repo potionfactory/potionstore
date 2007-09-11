@@ -1,5 +1,5 @@
 	<table>
-		<tr>
+		<tr class="top">
 			<th></th>
 			<th>Today</th>
 			<th>7 Days</th>
@@ -7,14 +7,14 @@
 			<th>365 Days</th>
 		</tr>
 		<tr>
-			<th class="rightalign">Orders</th>
+			<th class="first">Orders</th>
 			<% for val in @num_orders -%>
 			<td><%= val %></td>
 			<% end -%>
 		</tr>
 		<% for product in @products -%>
 		<tr>
-			<th class="rightalign"><%= product %></th>
+			<th class="first"><%= product %></th>
 			<% for i in 0..3 -%>
 			<% if @type == nil || @type == "quantity" -%>
 			<td><%= @product_quantity[product][i] %></td>
@@ -27,7 +27,7 @@
 		</tr>
 		<% end -%>
 		<tr class="total">
-			<th class="rightalign">Total</th>
+			<th class="first">Total</th>
 			<% for val in @revenue -%>
 			<td><%= number_to_currency(val) %></td>
 			<% end -%>
