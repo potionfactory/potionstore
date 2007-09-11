@@ -1,0 +1,42 @@
+	<table>
+		<tr>
+			<th></th>
+			<th>Today</th>
+			<th>7 Days</th>
+			<th>30 Days</th>
+			<th>365 Days</th>
+		</tr>
+		<tr>
+			<th class="rightalign">Orders</th>
+			<% for val in @num_orders -%>
+			<td><%= val %></td>
+			<% end -%>
+		</tr>
+		<% for product in @products -%>
+		<tr>
+			<th class="rightalign"><%= product %></th>
+			<% for i in 0..3 -%>
+			<% if @type == nil || @type == "quantity" -%>
+			<td><%= @product_quantity[product][i] %></td>
+			<% elsif @type == "amount" -%>
+			<td><%= number_to_currency(@product_revenue[product][i]) %></td>
+			<% elsif @type == "percentage" -%>
+			<td><%= number_to_percentage @product_percentage[product][i], :precision => 0 %></td>
+			<% end -%>
+			<% end -%>
+		</tr>
+		<% end -%>
+		<tr class="total">
+			<th class="rightalign">Total</th>
+			<% for val in @revenue -%>
+			<td><%= number_to_currency(val) %></td>
+			<% end -%>
+		</tr>
+		<tr>
+			<th></th>
+			<td colspan="4" id="projections">
+				Projections — This month: <%= number_to_currency(@month_estimate, :precision => 0) %> &nbsp; / &nbsp;
+				Next 365 Days: <%= number_to_currency(@year_estimate, :precision => 0) %>
+			</td>
+		</tr>
+	</table>

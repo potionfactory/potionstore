@@ -95,3 +95,7 @@ table.list tr.X { background-color:#999; }
 table.list tr.X td { border:1px dotted #bbb; }
 table.list .address { width:150px; }
 table.list tr.newday { border-top:3px double #ccc; }
+
+.fl { float: left; }
+.fr { float: right; }
+  
