@@ -1,86 +1,39 @@
 <style type="text/css">
-.box { float:left; border:1px dotted #999; padding:10px; margin:10px; }
+.box { float:left; border:1px dotted #999; padding:10px; margin:10px; width:500px; }
 .rightalign { text-align:right; }
 table tr th { text-align:left; }
 .clear { clear:both; }
+.boxmenu { float:right; font-size:10px; }
 table tr td { padding-right:10px; }
-#rsummary { border-collapse:collapse; }
+#rsummary table { border-collapse:collapse; }
 #rsummary td, #rsummary th { padding:2px 15px; margin:0; }
 #rsummary td { border-top:1px solid #ccc; text-align:right; }
+#rsummary .total td { border-top: 3px double #ccc; }
+#projections { text-align:right; font-size:11px; color:#888; }
 </style>
 
-<div class="box" style="width:500px">
-	<h2>Revenue Summary</h2>
-	<table id="rsummary">
-		<tr>
-			<% for cell in @table.shift -%>
-			<th><%= cell %></th>
-			<% end -%>
-		</tr>
-		<% for row in @table -%>
-		<tr>
-			<th class="rightalign"><%= row.shift %></th>
-			<% for cell in row -%>
-			<td><%= cell %></td>
-			<% end -%>
-		</tr>
-		<% end -%>
-		<tr>
-			<th class="rightalign">Total</th>
-			<% for key in ['Today', '7 Days', '30 Days', '365 Days'] -%>
-			<td><%= number_to_currency @report_totals[key] %></td>
-			<% end -%>
-		</tr>
-	</table>
+<div class="box">
+	<h2 class="fl">Summary</h2>
+	<div class="boxmenu">
+		<%= link_to_remote "Units", :url => { :action => "revenue_summary_quantity" }, :update => "rsummary" %> /
+		<%= link_to_remote "Amount", :url => { :action => "revenue_summary_amount" }, :update => "rsummary" %> /
+		<%= link_to_remote "Percentage", :url => { :action => "revenue_summary_percentage" }, :update => "rsummary" %>
+	</div>
+	<div class="clear"></div>
+	<div id="rsummary">
+		<%= render_partial "revenue_summary" %>
+	</div>
 </div>
 
 <div class="box">
-    <h2>Last 30 Days</h2>
-    <div>
-		<%= @graph_days %>
+    <h2 class="fl">History</h2>
+	<div class="boxmenu">
+		<%= link_to_remote "30 Days", :url => { :action => "revenue_history_days" }, :update => "rhistory" %> /
+		<%= link_to_remote "26 Weeks", :url => { :action => "revenue_history_weeks" }, :update => "rhistory" %> /
+		<%= link_to_remote "12 Months ", :url => { :action => "revenue_history_months" }, :update => "rhistory" %>
+	</div>
+	<div class="clear"></div>
+	<div id="rhistory">
+		<%= render_partial "revenue_history" %>
     </div>
-</div>
-
-<div class="box">
-    <h2>Last 12 Months</h2>
-    <div>
-		<%= @graph_months %>
-    </div>
-</div>
-
-
-<!-- <br class="clear" /> -->
-
-<!-- <div class="box"> -->
-<!--     <h2>Daily</h2> -->
-<!--     <table> -->
-<!--         <tr><th>Date</th><th>Revenue</th></tr> -->
-<!--         <% for p in @daily -%> -->
-<!--         <tr> -->
-<!--             <td><%= "%02d" % p.month -%>/<%= "%02d" % p.day -%>/<%= p.year -%></td> -->
-<!--             <td><%= number_to_currency p.revenue -%></td> -->
-<!--         </tr> -->
-<!--         <% end -%> -->
-<!--     </table> -->
-<!-- </div> -->
-
-<!-- <div class="box"> -->
-<!--     <h2>Monthly</h2> -->
-<!--     <table> -->
-<!--         <tr><th>Date</th><th>Revenue</th></tr> -->
-<!--         <% for p in @monthly -%> -->
-<!--         <tr> -->
-<!--             <td><%= "%02d" % p.month %>/<%= p.year %></td> -->
-<!--             <td><%= number_to_currency p.revenue %></td> -->
-<!--         </tr> -->
-<!--         <% end -%> -->
-<!--     </table> -->
-<!-- </div> -->
-
-<div class="box">
-    <h2>Projections</h2>
-    <table>
-        <tr><td>Month</td><td><%= number_to_currency @month_estimate %></td></tr>
-        <tr><td>Year</td><td><%= number_to_currency @year_estimate %></td></tr>
-    </table>
 </div>

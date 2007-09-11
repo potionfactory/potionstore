@@ -30,144 +30,57 @@ class AdminController < ApplicationController
     redirect_to home_url
   end
 
+  def test
+    render_text "test"
+  end
+  
   # Dashboard page
   def index
-
-    @reports = {}
-
     if Product.count == 0
       flash[:notice] = "This store doesn't have any products! Add some!"
       redirect_to :action => 'products' and return
     end
 
-    # NOTE: We have to use SQL because performance is completely unacceptable otherwise
-
-    # helper function
-    def last_n_days_sql(days)
-      # NOTE: mysql should use IFNULL instead of COALESCE
-      days = days - 1
-      return "
-        select (select count(*)
-                  from orders
-                 where status = 'C' and
-                       lower(payment_type) != 'free' and
-                       current_date - #{days} <= order_time) as orders,
-               sum(line_items.unit_price * quantity)
-                 - sum(coalesce(coupons.amount, 0))
-                 - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
-               sum(quantity) as quantity,
-               products.name as product_name
-
-        from orders
-             inner join line_items on orders.id = line_items.order_id
-             left outer join products on products.id = line_items.product_id
-             left outer join coupons on coupons.id = orders.coupon_id
-
-        where status = 'C' and lower(payment_type) != 'free' and current_date - #{days} <= order_time
-
-        group by product_name"
-    end
-
-    @reports['Today'] = Order.find_by_sql(last_n_days_sql(1))
-    @reports['7 Days'] = Order.find_by_sql(last_n_days_sql(7))
-    @reports['30 Days'] = Order.find_by_sql(last_n_days_sql(30))
-    @reports['365 Days'] = Order.find_by_sql(last_n_days_sql(365))
-
-    @report_num_orders = {}
-    @report_totals = {}
-
-    @products = @reports['365 Days'].map{|p| p.product_name}
-
-    @table = []
-    @table += [['', 'Today', '7 Days', '30 Days', '365 Days']]
-
-    for key in ['Today', '7 Days', '30 Days', '365 Days']
-      report = @reports[key]
-      orders = 0
-      total = 0
-      for product in report
-        orders = product.orders
-        total += product.revenue if product
-      end
-      @report_num_orders[key] = orders
-      @report_totals[key] = total
-    end
-
-    row = ['Orders']
-    for key in ['Today', '7 Days', '30 Days', '365 Days']
-      row += [@report_num_orders[key]]
-    end
-    @table += [row]
-
-    for product_name in @products
-      row = [product_name]
-      for key in ['Today', '7 Days', '30 Days', '365 Days']
-        qty = 0
-        for product in @reports[key]
-          if product.product_name == product_name
-            qty = product.quantity
-          end
-        end
-        row += [qty]
-      end
-      @table += [row]
-    end
-
-    # NOTE: mysql uses year, month, and day functions instead of date_part
-
-    last_8_days_sql = "
-        select date_part('year', orders.order_time) as year,
-               date_part('month', orders.order_time) as month,
-               date_part('day', orders.order_time) as day,
-               sum(line_items.unit_price * quantity) - sum(coalesce(coupons.amount, 0))
-                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
-               max(orders.order_time) as last_time
-
-        from orders
-             inner join line_items on orders.id = line_items.order_id
-             left outer join coupons on coupons.id = orders.coupon_id
-
-        where status = 'C' and lower(payment_type) != 'free'
-
-        group by year, month, day
-
-        order by last_time desc limit 8"
-
-    last_8_months_sql = "
-        select date_part('year', orders.order_time) as year,
-               date_part('month', orders.order_time) as month,
-               sum(line_items.unit_price * quantity) - sum(coalesce(coupons.amount, 0))
-                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
-               max(orders.order_time) as last_time
-
-        from orders
-             inner join line_items on orders.id = line_items.order_id
-             left outer join coupons on coupons.id = orders.coupon_id
-
-        where status = 'C' and lower(payment_type) != 'free'
-
-        group by year, month
-
-        order by last_time desc limit 8"
-
-    @daily = Order.find_by_sql(last_8_days_sql)
-    @monthly = Order.find_by_sql(last_8_months_sql)
-
-    # Calculate a very simple projection.
-    # Takes the average daily sales from the last 30 days to extrapolate the sales
-    # for the remaining days of the current month
-    today = Date.today
-    days_in_current_month = Date.civil(today.year, today.month, -1).day
-
-    if @monthly != nil and @monthly.length > 0
-      @month_estimate = @monthly.first.revenue.to_f + @report_totals['30 Days'] / 30 * (days_in_current_month - today.day)
-      @year_estimate = @month_estimate * 12
-    end
-
-    @graph_days = OpenFlashChart.swf_object(500, 150, '/admin/charts/last_30_days')
-    @graph_months = OpenFlashChart.swf_object(500, 150, '/admin/charts/last_12_months')
+    revenue_summary()
+    @chart = OpenFlashChart.swf_object(500, 150, '/admin/charts/revenue_history_days')
   end
 
+  def revenue_summary_amount
+    revenue_summary()
+    @type = "amount"
+    render_partial "revenue_summary"
+  end
+
+  def revenue_summary_quantity
+    revenue_summary()
+    @type = "quantity"
+    render_partial "revenue_summary"
+  end
+
+  def revenue_summary_percentage
+    revenue_summary()
+    @type = "percentage"
+    render_partial "revenue_summary"
+  end
+
+  def revenue_history_days
+    @type = "30 Day"
+    @chart = OpenFlashChart.swf_object(500, 150, '/admin/charts/revenue_history_days')
+    render_partial "revenue_history"
+  end
+
+  def revenue_history_weeks
+    @type = "26 Week"
+    @chart = OpenFlashChart.swf_object(500, 150, '/admin/charts/revenue_history_weeks')
+    render_partial "revenue_history"
+  end
+
+  def revenue_history_months
+    @type = "12 Month"
+    @chart = OpenFlashChart.swf_object(500, 150, '/admin/charts/revenue_history_months')
+    render_partial "revenue_history"
+  end
+  
   # Coupon actions
   def generate_coupons
     if params[:form]
@@ -250,5 +163,105 @@ class AdminController < ApplicationController
 #       end
 #     end
 #   end
+
+  # Revenue summary
+  private
+  def revenue_summary
+    # NOTE: We have to use SQL because performance is completely unacceptable otherwise
+
+    # helper function
+    def last_n_days_sql(days)
+      # NOTE: mysql should use IFNULL instead of COALESCE
+      return "
+        select (select count(*)
+                  from orders
+                 where status = 'C' and
+                       lower(payment_type) != 'free' and
+                       current_date - #{days-1} <= order_time) as orders,
+               sum(line_items.unit_price * quantity)
+                 - sum(coalesce(coupons.amount, 0))
+                 - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
+               sum(quantity) as quantity,
+               products.name as product_name
+
+        from orders
+             inner join line_items on orders.id = line_items.order_id
+             left outer join products on products.id = line_items.product_id
+             left outer join coupons on coupons.id = orders.coupon_id
+
+        where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time
+
+        group by product_name"
+    end
+
+    query_results = []
+    @num_orders = []
+    @revenue = []
+    @product_revenue = {}
+    @product_quantity = {}
+    @product_percentage = {}
+
+    for days in [1, 7, 30, 365]
+      query_results << Order.connection.select_all(last_n_days_sql(days))
+    end
+    @products = query_results[-1].map{|p| p["product_name"]}
+
+    # calculate the numbers to report
+    for result in query_results
+      orders = 0
+      total = 0
+      for row in result
+        name = row["product_name"]
+        @product_revenue[name] = [] if @product_revenue[name] == nil
+        @product_quantity[name] = [] if @product_quantity[name] == nil
+        @product_revenue[name] << row["revenue"]
+        @product_quantity[name] << row["quantity"]
+        orders = row["orders"]
+        total += row["revenue"]
+      end
+      @num_orders << orders
+      @revenue << total
+    end
+
+    for product in @products
+      @product_revenue[product].insert(0, 0) while @product_revenue[product].length < 4
+      @product_quantity[product].insert(0, 0) while @product_quantity[product].length < 4
+      @product_percentage[product] = []
+      for i in 0..3
+        @product_percentage[product] << @product_revenue[product][i] / @revenue[i].to_f * 100
+      end
+    end
+
+    def last_n_days_revenue(days)
+      last_n_days_sql = "
+        select sum(line_items.unit_price * quantity)
+                  - sum(coalesce(coupons.amount, 0))
+                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue
+
+          from orders
+               inner join line_items on orders.id = line_items.order_id
+               left outer join coupons on coupons.id = orders.coupon_id
+
+         where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time"
+      result = Order.connection.select_all(last_n_days_sql)
+      return (result != nil and result.length > 0) ? result[0]["revenue"] : 0
+    end
+
+    @month_estimate = 0
+    @year_estimate = 0
+
+    daily_avg = last_n_days_revenue(90) / 90.0
+
+    # Calculate a very simple projection.
+    # Takes the average daily sales from the last 3 months to extrapolate the sales
+    # for the remaining days of the current month
+    today = Date.today
+    days_in_current_month = Date.civil(today.year, today.month, -1).day
+    
+    if result != nil and result.length > 0
+      @month_estimate = last_n_days_revenue(today.day) + daily_avg * (days_in_current_month - today.day)
+      @year_estimate = daily_avg * 365
+    end
+  end
 
 end

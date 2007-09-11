@@ -5,11 +5,12 @@
     <title>Admin: <%= controller.action_name %></title>
     <%= stylesheet_link_tag "scaffold" %>
     <%= stylesheet_link_tag "admin" %>
+	<%= javascript_include_tag "prototype" %>
 </head>
 <body>
     <% if session[:logged_in] -%>
     <ul id="topmenu">
-        <li><%= link_to("Dashboard", {:controller => "/admin", :action => "index"}, {:accesskey => "1"}) %></li>
+        <li><%= link_to("Reports", {:controller => "/admin", :action => "index"}, {:accesskey => "1"}) %></li>
         <li><%= link_to("Orders", {:controller => "admin/orders", :action => "index"}, {:accesskey => "2"}) %></li>
         <li><%= link_to("Add Order", {:controller => "admin/orders", :action => "new"}, {:accesskey => "3"}) %></li>
         <li><%= link_to("Products", {:controller => "admin/products", :action => "index"}, {:accesskey => "4"}) %></li>
