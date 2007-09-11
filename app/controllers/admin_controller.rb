@@ -244,7 +244,7 @@ class AdminController < ApplicationController
 
          where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time"
       result = Order.connection.select_all(last_n_days_sql)
-      return (result != nil and result.length > 0) ? result[0]["revenue"] : 0
+      return (result != nil && result.length > 0 && result[0]["revenue"] != nil) ? result[0]["revenue"] : 0
     end
 
     @month_estimate = 0
