@@ -42,9 +42,10 @@ class AdminController < ApplicationController
     end
 
     revenue_summary()
-    @chart = OpenFlashChart.swf_object(500, 150, '/admin/charts/revenue_history_days')
+    @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_days')
   end
 
+  # The revenue_xxx functions get called through ajax when user chooses different types of reports
   def revenue_summary_amount
     revenue_summary()
     @type = "amount"
@@ -65,19 +66,19 @@ class AdminController < ApplicationController
 
   def revenue_history_days
     @type = "30 Day"
-    @chart = OpenFlashChart.swf_object(500, 150, '/admin/charts/revenue_history_days')
+    @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_days')
     render_partial "revenue_history"
   end
 
   def revenue_history_weeks
     @type = "26 Week"
-    @chart = OpenFlashChart.swf_object(500, 150, '/admin/charts/revenue_history_weeks')
+    @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_weeks')
     render_partial "revenue_history"
   end
 
   def revenue_history_months
     @type = "12 Month"
-    @chart = OpenFlashChart.swf_object(500, 150, '/admin/charts/revenue_history_months')
+    @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_months')
     render_partial "revenue_history"
   end
   
@@ -252,9 +253,9 @@ class AdminController < ApplicationController
 
     daily_avg = last_n_days_revenue(90) / 90.0
 
-    # Calculate a very simple projection.
-    # Takes the average daily sales from the last 3 months to extrapolate the sales
-    # for the remaining days of the current month
+    # Calculate a very simple sales projection.
+    # Takes the average daily sales from the last 90 days to extrapolate the sales
+    # for the remaining days of the current month and the next 365 days
     today = Date.today
     days_in_current_month = Date.civil(today.year, today.month, -1).day
     

@@ -14,6 +14,6 @@
     <li><%= link_to "Uncancel Order", :action => "uncancel", :id => @order.id %></li>
     <% end -%>
     <% if @order.complete? -%>
-    <li><%= link_to "Send Confirmation Email", :action => "send_emails", :id => @order.id %></li>
+    <li><%= link_to "Email Purchase Receipt", :action => "send_emails", :id => @order.id %></li>
     <% end -%>
 </ul>
