@@ -1,6 +1,8 @@
 <script type="text/javascript">
 
 function validate() {
+	cc_month_changed_focus();
+	cc_year_changed_focus();
 	$('#submit').get(0).disabled = true;
 	return true;
 }
@@ -8,7 +10,8 @@ function validate() {
 function reset() {
 	$('#submit').get(0).disabled = false;
 	choose_cc();
-	style_cc_exp();
+	cc_month_changed_focus();
+	cc_year_changed_focus();
 }
 
 function determine_cc_type(cc_number) {
@@ -206,9 +209,9 @@ $(document).ready(function(){
 
     <p><label><span>Credit Card Number:</span><%= text_field 'order', 'cc_number', :size=>24 %></label></p>
 
-    <p>
+    <p id="ccexp">
         <label><span>Expiration Date:</span>
-		<%= text_field 'order', 'cc_month', :value => 'mm', :maxlength => 2 %></label>/<%= text_field 'order', 'cc_year', :value => 'yy', :maxlength=>2 %>
+		<%= text_field 'order', 'cc_month', :maxlength => 2 %></label>/<%= text_field 'order', 'cc_year', :maxlength=>2 %>
 		<label>CSC: <%= text_field 'order', 'cc_code', :size => 4 %></label>
         <img src="/images/store/cvv.png" alt="CVV" style="vertical-align:middle;position:relative; top:-2px;"/>
     </p>
