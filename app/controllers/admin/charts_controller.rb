@@ -38,7 +38,7 @@ class Admin::ChartsController < ApplicationController
       next if xindex < 0 || xindex > limit-1
       revenue = x['revenue'].to_f.round
 
-      d = Date.strptime("#{x['month']}/#{x['day']}", '%m/%d')
+      d = Date.strptime("#{x['month']}/#{x['day']}/#{x['year']}", '%m/%d/%Y')
       labels[xindex] = d.wday == 0 ? "#{x['month']}/#{x['day']}" : ""
       data[xindex] = revenue
     }
@@ -127,7 +127,6 @@ class Admin::ChartsController < ApplicationController
       next if xindex < 0 || xindex > limit-1
       revenue = x['revenue'].to_f.round
 
-      d = Date.strptime("#{x['month']}/#{x['year']}", '%m/%y')
       labels[xindex] = "#{x['month']}/#{x['year']}"
       data[xindex] = revenue
     }
