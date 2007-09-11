@@ -42,9 +42,9 @@ class Admin::ChartsController < ApplicationController
       labels[xindex] = d.wday == 0 ? "#{x['month']}/#{x['day']}" : ""
       data[xindex] = revenue
     }
-    
+
     g = new_chart(data, labels)
-    
+
     render :text => g.render
   end
 
@@ -150,7 +150,12 @@ class Admin::ChartsController < ApplicationController
     g.set_x_label_style(10, '#000000', 0, 1)
     g.set_x_axis_steps(0)
 
-    g.set_y_max((data.max.to_f/100).ceil * 100)
+    if data.max == 0
+      g.set_y_max(100)
+    else
+      g.set_y_max((data.max.to_f/100).ceil * 100)
+    end
+    
     g.set_y_label_steps(5)
 
     g.instance_variable_set :@y_axis_color, '#AAAAAA'
