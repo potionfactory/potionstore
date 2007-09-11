@@ -229,7 +229,11 @@ class AdminController < ApplicationController
       @product_quantity[product].insert(0, 0) while @product_quantity[product].length < 4
       @product_percentage[product] = []
       for i in 0..3
-        @product_percentage[product] << @product_revenue[product][i] / @revenue[i].to_f * 100
+        if @revenue[i].to_f == 0
+          @product_percentage[product] << 0
+        else
+          @product_percentage[product] << @product_revenue[product][i] / @revenue[i].to_f * 100
+        end
       end
     end
 
