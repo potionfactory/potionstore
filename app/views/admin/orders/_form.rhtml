@@ -1,15 +1,15 @@
 <% if @order -%>
-<%= hidden_field "order", "id" %>
-<%= hidden_field "order", "status" %>
+<%= form.hidden_field :id %>
+<%= form.hidden_field :status %>
 <% end -%>
 <table class="form">
 	<tr>
 		<td>Licensee Name:</td>
-		<td><%= text_field "order", "licensee_name" %></td>
+		<td><%= form.text_field :licensee_name %></td>
 	</tr>
 	<tr>
 		<td>Email:</td>
-		<td><%= text_field "order", "email" %></td>
+		<td><%= form.text_field :email %></td>
 	</tr>
 	<tr>
 		<td>Items:</td>
@@ -21,47 +21,46 @@
 	</tr>
 	<tr>
 		<td>Company:</td>
-		<td><%= text_field "order", "company" %></td>
+		<td><%= form.text_field :company %></td>
 	</tr>
 	<tr>
 		<td>Billing First Name:</td>
-		<td><%= text_field "order", "first_name" %></td>
+		<td><%= form.text_field :first_name %></td>
 	</tr>
 	<tr>
 		<td>Billing Last Name:</td>
-		<td><%= text_field "order", "last_name" %></td>
+		<td><%= form.text_field :last_name %></td>
 	</tr>
 	<tr>
 		<td>Address 1:</td>
-		<td><%= text_field "order", "address1" %></td>
+		<td><%= form.text_field :address1 %></td>
 	</tr>
 	<tr>
 		<td>Address 2:</td>
-		<td><%= text_field "order", "address2" %></td>
+		<td><%= form.text_field :address2 %></td>
 	</tr>
 	<tr>
 		<td>City:</td>
-		<td><%= text_field "order", "city" %></td>
+		<td><%= form.text_field :city %></td>
 	</tr>
 	<tr>
 		<td>State:</td>
-		<td><%= text_field "order", "state" %></td>
+		<td><%= form.text_field :state %></td>
 	</tr>
 	<tr>
 		<td>Postal/Zipcode:</td>
-		<td><%= text_field "order", "zipcode" %></td>
+		<td><%= form.text_field :zipcode %></td>
 	</tr>
 	<tr>
 		<td>Country 2 letter Code:</td>
-		<td><%= text_field "order", "country", :size => 2 %></td>
+		<td><%= form.text_field :country, :size => 2 %></td>
 	</tr>
 	<tr>
 		<td>Comment:</td>
-		<td><%= text_field "order", "comment" %></td>
+		<td><%= form.text_field :comment %></td>
 	</tr>
 	<tr>
 		<td>Payment Method:</td>
-		<td><%= text_field "order", "payment_type" %></td>
+		<td><%= form.text_field :payment_type %></td>
 	</tr>
 </table>
-

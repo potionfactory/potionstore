@@ -1,8 +1,8 @@
 <h1>Editing product</h1>
 
-<% form_tag :action => 'update', :id => @product do %>
-  <%= render :partial => 'form' %>
-  <%= submit_tag 'Edit' %>
+<% form_for(:product, :url => product_path(@product), :html => {:method => :put}) do |f| %>
+    <%= render :partial => 'form', :object => f %>
+    <%= submit_tag "Update" %>
 <% end %>
 
 <%= link_to 'Show', product_path %> |
