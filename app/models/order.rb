@@ -168,7 +168,6 @@ class Order < ActiveRecord::Base
     if coupon != nil &&
         self.coupon == nil &&
         (coupon.product_code == 'all' || has_item_with_code(coupon.product_code)) &&
-        coupon.used_count < coupon.use_limit &&
         !coupon.expired?
       self.coupon = coupon
     end
