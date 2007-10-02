@@ -53,3 +53,11 @@ you have basic rails knowledge or some Google skills.
 
 - Replace the default license key generator in lib/licensekey.rb with your own
 
+- If you are setting up Google Checkout, log into your Google Checkout account
+  (sandbox or live), go to Settings->Integration and put in your URL that
+  corresponds to the following:
+
+  https://secure.potionfactory.com/store/notification/gcheckout
+
+  That is the URL that Google uses to make callbacks. If you don't set this up,
+  your customers will not get their orders delivered.
