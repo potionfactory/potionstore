@@ -17,7 +17,7 @@
         <li><%= link_to("Products", {:controller => "admin/products", :action => "index"}, {:accesskey => "5"}) %></li>
         <li id="search">
             <% form_tag({:controller => "admin/orders", :action => "index"}, {:method => "GET"}) do -%>
-            <%= text_field_tag("query", nil, {:accesskey => "F"}) %>
+            <%= text_field_tag("query", nil, {:accesskey => "S"}) %>
             <%= submit_tag "Search" %>
             <% end -%>
         </li>
