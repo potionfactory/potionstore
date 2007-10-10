@@ -1,16 +1,29 @@
 <script type="text/javascript">
 
 function validate() {
-  $('#submit').get(0).disabled = true;
-  return true;
+	setup_help_values();
+	$('#submit').get(0).disabled = true;
+	return true;
 }
 
 function reset() {
-  $('#submit').get(0).disabled = false;
+	$('#submit').get(0).disabled = false;
+	setup_help_values();
 }
+
+var HELP_VALUES = new Array();
+HELP_VALUES['#order_company'] = 'optional';
+HELP_VALUES['#order_comment'] = 'optional';
 
 onload = reset;
 onunload = reset;
+
+$(document).ready(function(){
+	$('#order_company').focus( function() { setup_help_value('#order_company'); });
+	$('#order_company').blur(  function() { setup_help_value('#order_company'); });
+	$('#order_comment').focus( function() { setup_help_value('#order_comment'); });
+	$('#order_comment').blur(  function() { setup_help_value('#order_comment'); });
+});
 
 </script>
 
@@ -70,12 +83,10 @@ onunload = reset;
 
     <p id="company" style="margin-top:10px">
         <label><span>Company:</span><%= text_field "order", "company" %></label>
-        <span class="optional">(optional)</span>
     </p>
 
     <p>
-	<label><span>Comment:</span><%= text_field "order", "comment" %></label>
-        <span class="optional">(optional)</span>
+		<label><span>Comment:</span><%= text_field "order", "comment" %></label>
     </p>
     
     <p><span>&nbsp;</span><label><input type="checkbox" name="extra[subscribe]" value="checked"/>

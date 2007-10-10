@@ -1,15 +1,26 @@
 <script type="text/javascript">
 
 function validate() {
-  $('submit').disabled = true;
-  return true;
+	setup_help_values();
+	$('submit').disabled = true;
+	return true;
 }
 
 function reset() {
-  $('submit').disabled = false;
+	$('submit').disabled = false;
+	setup_help_values();
 }
 
-$('body').onunload = reset;
+var HELP_VALUES = new Array();
+HELP_VALUES['#order_comment'] = 'optional';
+
+onload = reset;
+onunload = reset;
+
+$(document).ready(function(){
+	$('#order_comment').focus( function() { setup_help_value('#order_comment'); });
+	$('#order_comment').blur(  function() { setup_help_value('#order_comment'); });
+});
 
 </script>
 
@@ -91,9 +102,8 @@ $('body').onunload = reset;
 		<span>Name on License:</span> <%= text_field "order", "licensee_name" %>
 	</p>
     <p>
-	<label><span>Comment:</span><%= text_field "order", "comment" %></label>
-        <span class="optional">(optional)</span>
-    </p>
+		<label><span>Comment:</span><%= text_field "order", "comment" %></label>
+	</p>
 </div>
 
 <p>

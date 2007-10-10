@@ -196,7 +196,6 @@ input { margin-left: 0; }
 input#submit { margin: 10px 0 0 192px; }
 
 #final_step { color: #999; font-family:helvetica, sans-serif; font-size: 11px; margin-left: 15px; }
-span.optional { position:relative; top:-2px; float:none; color:#888; font-size:10px; }
 
 #errors
 {
