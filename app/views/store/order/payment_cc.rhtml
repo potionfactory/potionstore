@@ -2,8 +2,7 @@
 
 function validate() {
 	choose_cc();
-	cc_month_changed_focus();
-	cc_year_changed_focus();
+	setup_help_values();
 	$('#submit').get(0).disabled = true;
 	return true;
 }
@@ -11,10 +10,16 @@ function validate() {
 function reset() {
 	$('#submit').get(0).disabled = false;
 	choose_cc();
-	cc_month_changed_focus();
-	cc_year_changed_focus();
+	setup_help_values();
 }
 
+var HELP_VALUES = new Array();
+HELP_VALUES['#order_cc_month'] = 'mm';
+HELP_VALUES['#order_cc_year'] = 'yy';
+HELP_VALUES['#order_company'] = 'optional';
+HELP_VALUES['#order_address2'] = 'optional';
+HELP_VALUES['#order_comment'] = 'optional';
+	
 function determine_cc_type(cc_number) {
 	if (cc_number.length < 1) return null;
 	switch (true) {
@@ -56,33 +61,6 @@ function choose_cc() {
 	}
 }
 
-function style_cc_exp() {
-	month = $('#order_cc_month').get(0);
-	year = $('#order_cc_year').get(0);
-	if (month.value == 'mm')
-		month.style.color = '#aaa';
-	else
-		month.style.color = '#000';
-	if (year.value == 'yy')
-		year.style.color = '#aaa';
-	else
-		year.style.color = '#000';
-}
-
-function cc_month_changed_focus() {
-	month = $('#order_cc_month').get(0);
-	if (month.value == 'mm') month.value = '';
-	else if (month.value == '') month.value = 'mm';
-	style_cc_exp();
-}
-
-function cc_year_changed_focus() {
-	year = $('#order_cc_year').get(0);
-	if (year.value == 'yy') year.value = '';
-	else if (year.value == '') year.value = 'yy';
-	style_cc_exp();
-}
-
 function update_licensee_name() {
 	if ($('#order_licensee_name').val() == '') {
 		var name = $('#order_first_name').val() + ' ' + $('#order_last_name').val();
@@ -97,10 +75,17 @@ $(document).ready(function(){
 	$('#order_last_name').blur(update_licensee_name);
 	$('#order_cc_number').change(choose_cc);
 	$('#order_cc_number').keyup(choose_cc);
-	$('#order_cc_month').focus(cc_month_changed_focus);
-	$('#order_cc_month').blur(cc_month_changed_focus);
-	$('#order_cc_year').focus(cc_year_changed_focus);
-	$('#order_cc_year').blur(cc_year_changed_focus);
+
+	$('#order_cc_month').focus(function() { setup_help_value('#order_cc_month'); });
+	$('#order_cc_month').blur( function() { setup_help_value('#order_cc_month'); });
+	$('#order_cc_year').focus( function() { setup_help_value('#order_cc_year'); });
+	$('#order_cc_year').blur(  function() { setup_help_value('#order_cc_year'); });
+	$('#order_company').focus( function() { setup_help_value('#order_company'); });
+	$('#order_company').blur(  function() { setup_help_value('#order_company'); });
+	$('#order_address2').focus(function() { setup_help_value('#order_address2'); });
+	$('#order_address2').blur( function() { setup_help_value('#order_address2'); });
+	$('#order_comment').focus( function() { setup_help_value('#order_comment'); });
+	$('#order_comment').blur(  function() { setup_help_value('#order_comment'); });
 });
 
 </script>
@@ -168,11 +153,10 @@ $(document).ready(function(){
     <div class="cl"></div>
     <p id="company">
         <label><span>Company:</span><%= text_field "order", "company" %></label>
-        <span class="optional">(optional)</span>
     </p>
 
     <p><label><span>Address Line 1:</span><input id="order_address1" name="address1" size="30" type="text" /></label></p>
-    <p><label><span>Address Line 2:</span><input id="order_address2" name="address2" size="30" type="text" /></label><span class="optional">(optional)</span></p>
+    <p><label><span>Address Line 2:</span><input id="order_address2" name="address2" size="30" type="text" /></label></p>
 
     <p>
         <label id="city"><span>City:</span><%= text_field "order", "city", :size=>15 %></label>
@@ -223,9 +207,7 @@ $(document).ready(function(){
 <div class="narrow">
 	<h2>Almost There</h2>
 	<p><span>Name on License:</span> <%= text_field "order", "licensee_name" %></p>
-	<p><label><span>Comment:</span><%= text_field 'order', 'comment' %></label>
-        <span class="optional">(optional)</span>
-    </p>
+	<p><label><span>Comment:</span><%= text_field 'order', 'comment' %></label></p>
     <p><span>&nbsp;</span><label><input type="checkbox" name="extra[subscribe]" value="checked"/>
         Keep me updated with <%=$STORE_PREFS['company_name']%> news.</label></p>
 </div>
