@@ -373,6 +373,12 @@ class Order < ActiveRecord::Base
       if res.respond_to? 'cVV2Code'
         self.failure_reason += "\nThe card security code did not match." if res.cVV2Code == 'N'
       end
+
+      # The 127 limit comes from the schema.
+      # TODO: figure out a way to get the limit from the db schema
+      if self.failure_reason.length > 127
+        self.failure_reason = self.failure_reason[0...127]
+      end
     end
   end
 
