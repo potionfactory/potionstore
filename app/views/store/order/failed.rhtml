@@ -4,11 +4,13 @@
 
 <p style="font-size:14px; margin-bottom:25px; line-height:22px;">
 	<% if @order.status == 'C' -%>
-	You placed this order already.
+		You placed this order already.
 	<% elsif @order.status == 'X' -%>
-	This order has been cancelled.
+		This order has been cancelled.
+	<% elsif @order.failure_reason == nil -%>
+		This order failed for an unknown reason
 	<% else -%>
-	<%= @order.failure_reason.gsub("\n", "<br/>") %>
+		<%= @order.failure_reason.gsub("\n", "<br/>") -%>
 	<% end -%>
 </p>
 <div class="cl"></div>
