@@ -272,7 +272,7 @@ class Order < ActiveRecord::Base
   end
 
   def subscribe_to_list
-    ListSubscriber.find_by_email(self.email) == nil
+    return if ListSubscriber.find_by_email(self.email) != nil
     subscriber = ListSubscriber.new
     subscriber.email = self.email
     subscriber.save()
