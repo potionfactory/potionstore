@@ -72,7 +72,7 @@ class Store::OrderController < ApplicationController
                                      :returnURL => url_for(:action => 'confirm_paypal'),
                                      :noShipping => 1,
                                      :cpp_header_image => $STORE_PREFS['paypal_express_checkout_header_image'])
-      if res.ack == 'Success'
+      if res.ack == 'Success' || res.ack == 'SuccessWithWarning'
         # Need to copy the string. For some reason, it tries to render the payment action otherwise
         @order.paypal_token = String.new(res.token)
         session[:order] = @order
@@ -157,7 +157,7 @@ class Store::OrderController < ApplicationController
     # Suck the info from PayPal
     res = Paypal.express_checkout_details(:token => @order.paypal_token)
     
-    if res.ack != 'Success'
+    if res.ack != 'Success' && res.ack != 'SuccessWithWarning'
       flash[:notice] = 'Could not retrieve order information from PayPal'
       redirect_to :action => 'index' and return
     end

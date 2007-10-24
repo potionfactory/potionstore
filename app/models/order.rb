@@ -330,7 +330,7 @@ class Order < ActiveRecord::Base
                               :cVV2 => self.cc_code,
                               :expMonth => self.cc_month,
                               :expYear => cc_year)
-    success = (res.ack == 'Success')
+    success = (res.ack == 'Success' || res.ack == 'SuccessWithWarning')
     if success
       self.transaction_number = res.transactionID
     else
@@ -343,7 +343,7 @@ class Order < ActiveRecord::Base
     res = Paypal.express_checkout_payment(:token => self.paypal_token,
                                           :payerID => self.paypal_payer_id,
                                           :amount => self.total)
-    success = (res.ack == 'Success')
+    success = (res.ack == 'Success' || res.ack == 'SuccessWithWarning')
     if success
       self.transaction_number = res.doExpressCheckoutPaymentResponseDetails.paymentInfo.transactionID
     else
@@ -353,7 +353,7 @@ class Order < ActiveRecord::Base
   end
 
   def set_order_errors_with_paypal_response(res)
-    if res.ack == 'Failure'
+    if res.ack == 'Failure' || res.ack == 'FailureWithWarning'
       self.failure_reason = ''
       if res.errors.respond_to? 'length'
         errors = res.errors
