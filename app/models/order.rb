@@ -292,7 +292,7 @@ class Order < ActiveRecord::Base
       end
       self.address2 = '' if self.address2 != nil && self.address2.strip == 'optional'
       self.company = '' if self.company != nil && self.company.strip == 'optional'
-      self.comment = '' if self.comment != nil && self.address2.strip == 'optional'
+      self.comment = '' if self.comment != nil && self.comment.strip == 'optional'
     end
 
     self.save()
