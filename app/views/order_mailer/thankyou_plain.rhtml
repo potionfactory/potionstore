@@ -14,6 +14,8 @@ Dear <%= @order.first_name %> <%= @order.last_name %>,
 Thank you for purchasing <%=$STORE_PREFS['company_name']%> software.
 Below are your application license keys. To activate, please copy
 and paste the code to the registration window in the application.
+We recommend that you save this email in case you need to activate
+again in the future.
 
 <% for item in @order.line_items -%>
 <%=item.product.name%>:
