@@ -44,8 +44,8 @@ class Store::NotificationController < ApplicationController
     order.last_name = words.join(' ')
 
     order.email = _xmlval(ba, 'email')
-    if order.email == nil
-      order.status = 'C'
+    if order.email == nil # This shouldn't happen, but just in case
+      order.status = 'F'
       order.failure_reason = 'Did not get email from Google Checkout'
       order.finish_and_save()
       return
