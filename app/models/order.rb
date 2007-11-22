@@ -11,7 +11,6 @@ COUNTRY_MAPPING = {
   'SE' => 'Sweden', 'CH' => 'Switzerland', 'TW' => 'Taiwan', 'TH' => 'Thailand', 'TR' => 'Turkey',
   'GB' => 'United Kingdom', 'US' => 'United States', 'UY' => 'Uruguay', 'VE' => 'Venezuela'}
 
-def round_currency()
   
 class Order < ActiveRecord::Base
   has_many :line_items
