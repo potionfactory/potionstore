@@ -29,6 +29,9 @@ end
 
 load_store_prefs()
 
+def round_money(amount)
+  return ("%01.2f" % amount).to_f()
+end
 
 # Make the debugger available in development
 require 'ruby-debug' if not is_live()

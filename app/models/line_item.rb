@@ -8,7 +8,7 @@ class LineItem < ActiveRecord::Base
   validates_numericality_of :unit_price
 
   def total
-    return quantity * self.unit_price
+    return round_money(quantity * self.unit_price)
   end
 
   def volume_price
