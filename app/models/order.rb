@@ -11,6 +11,8 @@ COUNTRY_MAPPING = {
   'SE' => 'Sweden', 'CH' => 'Switzerland', 'TW' => 'Taiwan', 'TH' => 'Thailand', 'TR' => 'Turkey',
   'GB' => 'United Kingdom', 'US' => 'United States', 'UY' => 'Uruguay', 'VE' => 'Venezuela'}
 
+def round_currency()
+  
 class Order < ActiveRecord::Base
   has_many :line_items
   belongs_to :coupon
@@ -41,7 +43,7 @@ class Order < ActiveRecord::Base
   end
 
   def total
-    return total_before_applying_coupons() - coupon_amount()
+    return round_money(total_before_applying_coupons() - coupon_amount())
   end
 
   def total_before_applying_coupons
@@ -49,7 +51,7 @@ class Order < ActiveRecord::Base
     for item in self.line_items
         total = total + item.total
     end
-    return total
+    return round_money(total)
   end
 
   ## tax and shipping are hard-wired to 0 for now
@@ -66,11 +68,11 @@ class Order < ActiveRecord::Base
     return coupon.amount if coupon.percentage == nil
     for item in self.line_items
       if coupon && coupon.percentage != nil && coupon.product_code == item.product.code
-        return (item.total * coupon.percentage / 100.0)
+        return round_money(item.total * coupon.percentage / 100.0)
       end
     end
     if coupon && coupon.percentage != nil && coupon.product_code == 'all'
-      return total_before_applying_coupons() * (coupon.percentage / 100.0)
+      return round_money(total_before_applying_coupons() * (coupon.percentage / 100.0))
     end
     return 0
   end    
