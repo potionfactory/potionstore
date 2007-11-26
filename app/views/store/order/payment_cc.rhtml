@@ -155,8 +155,8 @@ $(document).ready(function(){
         <label><span>Company:</span><%= text_field "order", "company" %></label>
     </p>
 
-    <p><label><span>Address Line 1:</span><input id="order_address1" name="address1" size="30" type="text" /></label></p>
-    <p><label><span>Address Line 2:</span><input id="order_address2" name="address2" size="30" type="text" /></label></p>
+    <p><label><span>Address Line 1:</span><input id="order_address1" name="address1" size="30" type="text" value="<%= params['address1'] %>"/></label></p>
+    <p><label><span>Address Line 2:</span><input id="order_address2" name="address2" size="30" type="text" value="<%= params['address2'] %>" /></label></p>
 
     <p>
         <label id="city"><span>City:</span><%= text_field "order", "city", :size=>15 %></label>
