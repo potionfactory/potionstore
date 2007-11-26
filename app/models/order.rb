@@ -21,9 +21,10 @@ class Order < ActiveRecord::Base
   attr_accessor :skip_cc_validation
   attr_writer :promo_coupons
 
-  validates_presence_of :licensee_name, :payment_type
+  validates_presence_of :payment_type
 
   def validate
+    ## Validate credit card order
     if self.cc_order? && !skip_cc_validation
       errors.add_on_blank(['first_name', 'last_name', 'address1', 'city', 'country', 'email'])
       if self.status == 'P'
@@ -34,15 +35,18 @@ class Order < ActiveRecord::Base
         errors.add_on_blank('zipcode')
         errors.add('state', msg = 'must be a 2 character abbreviation for USA and Canada') if self.state.size != 2
       end
-
-      ## If licensee name is all alpha-numeric, require it to be at least 8 characters.
-      if (self.licensee_name =~ /^[\w ]*$/) != nil && self.licensee_name.length < 8
-        errors.add('licensee_name', msg= 'must be at least 8 characters long')
-      end
     end
-    
+
+    ## Validate PayPal order
     if self.paypal_order?
       errors.add_on_blank(['email'])
+    end
+
+    ## If licensee name is all alpha-numeric, require it to be at least 8 characters.
+    if self.licensee_name == nil || self.licensee_name.strip == ''
+      errors.add_on_blank(['licensee_name'])
+    elsif (self.licensee_name =~ /^[\w ]*$/) != nil && self.licensee_name.length < 8
+      errors.add('licensee_name', msg= 'must be at least 8 characters long')
     end
   end
 
