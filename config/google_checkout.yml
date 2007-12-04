@@ -1,8 +1,6 @@
-# settings for google checkout
+# Settings for Google Checkout
 
-production:
-  gcheckout_merchant_id: "XXXXXXXXXXXXXXX"
-  gcheckout_merchant_key: "XXXXXXXXXXXXXXXXXXXXXX"
+# Get these by logging into Google Checkout's merchant site and the sandbox equivalent
 
 development:
   gcheckout_merchant_id: "XXXXXXXXXXXXXXX"
@@ -11,3 +9,8 @@ development:
 test:
   gcheckout_merchant_id: "XXXXXXXXXXXXXXX"
   gcheckout_merchant_key: "XXXXXXXXXXXXXXXXXXXXXX"
+
+production:
+  gcheckout_merchant_id: "XXXXXXXXXXXXXXX"
+  gcheckout_merchant_key: "XXXXXXXXXXXXXXXXXXXXXX"
+

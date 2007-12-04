@@ -1,16 +1,36 @@
-# Live settings
-production:
-  paypal_username: "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
-  paypal_password: "XXXXXXXXXXXXXXXX"
-  client_cert: "certs/live_api.crt"
-  client_keys: "certs/live_api.key"
+# PayPal API Access Setup
+#
+# Instructions:
+#
+# 1. Go to https://www.sandbox.paypal.com.
+# 2. Click the "Sandbox" link or the "Sandbox" tab.
+# 3. Select the Test Account and click the "Launch Sandbox" button.
+# 4. Once you log in, click "Profile."
+# 5. Click on "API Access" under the 'Account Information' column.
+# 6. Click the "Request API Credentials" link.
+# 7. Select the radio button next to "API SSL client-side certificate".
+# 8. Check the box next to "I agree to the API Certificate Terms of Use, and terms incorporated therein."
+# 9. Click "Submit."
+# 10. Fill in api_username and api_password below with the information on this page
+# 11. Click on "Download Certificate." and save to locations in client_key and client_cert
 
 # Test settings
 development:
-  paypal_username: "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
-  paypal_password: "XXXXXXXXXXXXXXXX"
+  api_username: "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  api_password: "XXXXXXXXXXXXXXXX"
   client_cert: "certs/sandbox_api.crt"
   client_keys: "certs/sandbox_api.key"
 
+# Follow steps 4 to 11 but with your real PayPal account.
+# NOTE: Your PayPal account must have Website Payments Pro already for this to work.
+  
+# Live settings
+production:
+  api_username: "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  api_password: "XXXXXXXXXXXXXXXX"
+  client_cert: "certs/live_api.crt"
+  client_keys: "certs/live_api.key"
+
 # Common setting
+# NOTE: This file is already provided for you. You don't need to download it again.
 ca_file: "certs/api_cert_chain.crt"
