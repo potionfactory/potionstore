@@ -73,7 +73,7 @@ Internaly used function
     client.options['protocol.http.ssl_config.ca_file'] = "#{File.expand_path(config_dir)+'/'+@ca_file}"
     client.options['protocol.http.ssl_config.client_cert'] = "#{File.expand_path(config_dir)+'/'+@client_cert}"
     client.options['protocol.http.ssl_config.client_key'] = "#{File.expand_path(config_dir)+'/'+@client_keys}"
-    client.headerhandler << RequesterCredentialsHandler.new(@paypal_username, @paypal_password,'')
+    client.headerhandler << RequesterCredentialsHandler.new(@api_username, @api_password,'')
     
     # run ruby with -d to see SOAP wiredumps.
     client.wiredump_dev = STDERR if $DEBUG
