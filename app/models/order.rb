@@ -240,8 +240,16 @@ class Order < ActiveRecord::Base
       if litem == nil
         return false if not self.add_form_items({product_id => items[product_id]})
       else
-        litem.quantity = Integer(items[product_id])
-        litem.update
+        quantity = Integer(items[product_id])
+        if quantity < 0
+          return false
+        elsif quantity == 0
+          litem.destroy()
+          self.line_items.delete(litem)
+        else
+          litem.quantity = quantity
+          litem.update
+        end
       end
     end
     return true

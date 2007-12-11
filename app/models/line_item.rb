@@ -7,6 +7,15 @@ class LineItem < ActiveRecord::Base
   validates_numericality_of :quantity
   validates_numericality_of :unit_price
 
+  def quantity=(qty)
+    regenerate_keys = (self.quantity != qty)
+    write_attribute(:quantity, qty)
+    if regenerate_keys
+      self.license_key = generate_license_key()
+      save() if !new_record?
+    end
+  end
+
   def total
     return round_money(quantity * self.unit_price)
   end
