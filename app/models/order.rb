@@ -241,8 +241,9 @@ class Order < ActiveRecord::Base
         return false if not self.add_form_items({product_id => items[product_id]})
       else
         quantity = Integer(items[product_id])
+        # just ignore negative quantity
         if quantity < 0
-          return false
+          next
         elsif quantity == 0
           litem.destroy()
           self.line_items.delete(litem)
