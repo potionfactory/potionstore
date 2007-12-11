@@ -10,9 +10,10 @@ class LineItem < ActiveRecord::Base
   def quantity=(qty)
     regenerate_keys = (self.quantity != qty)
     write_attribute(:quantity, qty)
-    if regenerate_keys
+    # Regenerate the license key if this is not a new record and the quantity changes
+    if regenerate_keys && !new_record?
       self.license_key = generate_license_key()
-      save() if !new_record?
+      save()
     end
   end
 
