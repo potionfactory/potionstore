@@ -309,10 +309,11 @@ class Order < ActiveRecord::Base
         self.coupon.used_count += 1
         self.coupon.save()
       end
-      self.address2 = '' if self.address2 != nil && self.address2.strip == 'optional'
-      self.company = '' if self.company != nil && self.company.strip == 'optional'
-      self.comment = '' if self.comment != nil && self.comment.strip == 'optional'
     end
+
+    self.address2 = '' if self.address2 != nil && self.address2.strip == 'optional'
+    self.company = '' if self.company != nil && self.company.strip == 'optional'
+    self.comment = '' if self.comment != nil && self.comment.strip == 'optional'
 
     self.save()
   end
