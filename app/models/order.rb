@@ -297,6 +297,20 @@ class Order < ActiveRecord::Base
     subscriber.save()
   end
 
+  def save
+    # Insert a dash for Japanese zipcodes if it doesn't have one
+    if self.country == 'JP' && self.zipcode != nil && self.zipcode.count('-') == 0 && self.zipcode.length > 3
+      self.zipcode.insert(3, '-')
+    end
+
+    # Take out optional strings
+    self.address2 = '' if self.address2 != nil && self.address2.strip == 'optional'
+    self.company = '' if self.company != nil && self.company.strip == 'optional'
+    self.comment = '' if self.comment != nil && self.comment.strip == 'optional'
+
+    super()
+  end
+
   def finish_and_save
     if self.status == 'C'
       self.add_promo_coupons()
@@ -310,10 +324,6 @@ class Order < ActiveRecord::Base
         self.coupon.save()
       end
     end
-
-    self.address2 = '' if self.address2 != nil && self.address2.strip == 'optional'
-    self.company = '' if self.company != nil && self.company.strip == 'optional'
-    self.comment = '' if self.comment != nil && self.comment.strip == 'optional'
 
     self.save()
   end
