@@ -27,6 +27,9 @@ Rails::Initializer.run do |config|
   # Use the database for sessions instead of the file system
   # (create the session table with 'rake db:sessions:create')
   # config.action_controller.session_store = :active_record_store
+  
+  # If wanting Rails 2 with cookie store:
+  config.action_controller.session = { :session_key => "_roobasoft_store_session", :secret => "u'@R4@ck{Ikwjhum}&QHoJ,{cvrlyOZ11" }
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 
@@ -40,6 +43,10 @@ Rails::Initializer.run do |config|
   # config.active_record.default_timezone = :utc
   
   # See Rails::Configuration for more options
+  
+  config.load_paths += Dir["#{RAILS_ROOT}/vendor/gems/**"].map do |dir| 
+    File.directory?(lib = "#{dir}/lib") ? lib : dir
+  end
 end
 
 # Add new inflection rules using the following format 

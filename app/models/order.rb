@@ -20,7 +20,7 @@ class Order < ActiveRecord::Base
   attr_accessor :paypal_token, :paypal_payer_id
   attr_accessor :skip_cc_validation
   attr_writer :promo_coupons
-
+  
   validates_presence_of :payment_type
 
   def validate
@@ -49,7 +49,7 @@ class Order < ActiveRecord::Base
       errors.add('licensee_name', msg= 'must be at least 8 characters long')
     end
   end
-
+  
   def total
     return round_money(total_before_applying_coupons() - coupon_amount())
   end
@@ -249,7 +249,7 @@ class Order < ActiveRecord::Base
           self.line_items.delete(litem)
         else
           litem.quantity = quantity
-          litem.update
+          litem.save if !litem.new_record?
         end
       end
     end
@@ -262,7 +262,7 @@ class Order < ActiveRecord::Base
       litem = self.line_item_with_product_id(product_id)
       next if litem == nil
       litem.unit_price = item_prices[product_id]
-      litem.update
+      litem.save if !litem.new_record?
     end
   end
 
@@ -325,13 +325,15 @@ class Order < ActiveRecord::Base
     # The following is needed because MediaTemple puts in two ip addresses in the REMOTE_ADDR for some reason
     ip_address = request.env['REMOTE_ADDR']
     ip_address = ip_address.split(',')[0] if ip_address.count(",") != 0
-
+    ip_address = "127.0.0.1" if ip_address == "::1"
+    
     cc_year = self.cc_year.to_s
     if cc_year.length == 2
       cc_year = '20' + cc_year
     elsif cc_year.length == 1
       cc_year = '200' + cc_year
     end
+    
     res = Paypal.directcharge(:firstName => self.first_name,
                               :lastName => self.last_name,
                               :ip => ip_address,

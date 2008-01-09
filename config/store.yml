@@ -12,6 +12,9 @@ google_analytics_account: ""
 include_mint: false
 paypal_express_checkout_header_image: "https://www.mycompany.com/images/mylogo.png"
 
+# Google checkout?
+allow_google_checkout: false
+
 # Email addresses
 support_email: "support@mycompany.com"
 sales_email: "sales@mycompany.com"

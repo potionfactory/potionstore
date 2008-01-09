@@ -58,7 +58,7 @@
 	<p>- <%=$STORE_PREFS['company_name']%></p>
   
 	<div class="d"></div>
-	<%= render :partial => '../store/order/receipt', :order => @order %>
+	<%= render :partial => '/store/order/receipt', :order => @order %>
 
 	<% if coupons && coupons.length > 0 -%>
 	<div class="d"></div>

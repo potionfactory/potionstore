@@ -1,10 +1,10 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class OrderTest < Test::Unit::TestCase
-  fixtures :orders
+  fixtures :orders, :line_items, :products
   
   def setup
-    @order = Order.find(1)
+    @order = orders(:first)
   end
   
   def test_status_description

@@ -1,4 +1,4 @@
-<% if @order -%>
+<% if @order && !@order.new_record? -%>
 <%= form.hidden_field :id %>
 <%= form.hidden_field :status %>
 <% end -%>

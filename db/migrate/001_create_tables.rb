@@ -95,9 +95,9 @@ class CreateTables < ActiveRecord::Migration
   end
 
   def self.down
-    remove_foreign_key_constraint "line_items", :foreign_key => "order_id"
-    remove_foreign_key_constraint "line_items", :foreign_key => "product_id"
-    remove_foreign_key_constraint "orders", :foreign_key => "coupon_id"
+    remove_foreign_key_constraint "line_items", "line_items_ibfk_order_id"
+    remove_foreign_key_constraint "line_items", "line_items_ibfk_product_id"
+    remove_foreign_key_constraint "orders", "orders_ibfk_coupon_id"
     
     drop_table :list_subscribers
     drop_table :line_items

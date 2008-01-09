@@ -1,6 +1,5 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 first:
-  id: 1
   coupon_id:
   status: "C"
   email: "test@test.com"
@@ -21,3 +20,26 @@ first:
   failure_code: 0
   failure_reason: ""
   transaction_number: "012123AAAAJDHHDGUTQWQOOA1"
+
+taxed:
+  coupon_id:
+  status: "C"
+  email: "test@test.com"
+  order_time: "2007-07-01 12:00:00+08:00"
+  first_name: "Princess"
+  licensee_name: "Barf the Mog"
+  last_name: "Vespa"
+  company: "Druid Royal Family"
+  address1: "c/o Dot Matrix"
+  address2: "1 Royal Palace"
+  city: "Druidia City"
+  state: "CA"
+  zipcode: "90035"
+  country:  "US"
+  payment_type: "Visa"
+  ccnum: "XXXXXXXXXXXXXXXX3456"
+  comment: "Don't call" 
+  failure_code: 0
+  failure_reason: ""
+  transaction_number: "012124AAAAJDHHDGUTQWQOOA1"
+  

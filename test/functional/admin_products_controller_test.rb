@@ -50,7 +50,7 @@ class AdminProductsControllerTest < Test::Unit::TestCase
   def test_should_create_product
     num_products = Product.count
 
-    post :create, {:product => {}}, {:logged_in => true}
+    post :create, {:product => {:code => "product_new_1", :name => "New Product v1"}}, {:logged_in => true}
 
     assert_response :redirect
     assert_redirected_to :controller => 'admin/products' , :action => 'show'
@@ -79,6 +79,8 @@ class AdminProductsControllerTest < Test::Unit::TestCase
       Product.find(@first_id)
     }
 
+    LineItem.destroy_all
+    
     post :destroy, {:id => @first_id}, {:logged_in => true}
     assert_response :redirect
     assert_redirected_to :controller => 'admin/products', :action => 'index'

@@ -1,8 +1,15 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 first:
-  id: 1
-  order_id: 1
-  product_id: 1
+  order: first
+  product: first
   quantity: 1
   unit_price: 100
   license_key: "AB-0000000001"
+
+taxed:
+  order: taxed
+  product: first
+  quantity: 1
+  unit_price: 100
+  license_key: "AB-0000000001"
+
