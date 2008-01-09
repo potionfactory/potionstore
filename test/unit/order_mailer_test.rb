@@ -5,7 +5,7 @@ class OrderMailerTest < Test::Unit::TestCase
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   CHARSET = "utf-8"
   
-  fixtures :orders
+  fixtures :orders, :products, :line_items
   include ActionMailer::Quoting
 
   def setup

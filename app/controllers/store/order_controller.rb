@@ -1,3 +1,4 @@
+
 class Store::OrderController < ApplicationController
   layout "store"
 
@@ -66,7 +67,6 @@ class Store::OrderController < ApplicationController
 
     # Handle Paypal orders
     if params[:payment_type] == 'paypal'
-
       res =  Paypal.express_checkout(:amount => String(@order.total),
                                      :cancelURL => url_for(:action => 'index'),
                                      :returnURL => url_for(:action => 'confirm_paypal'),

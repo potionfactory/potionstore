@@ -1,2 +1,2 @@
-module ChartsHelper
+module Admin::ChartsHelper
 end

@@ -49,37 +49,37 @@ class AdminController < ApplicationController
   def revenue_summary_amount
     revenue_summary()
     @type = "amount"
-    render_partial "revenue_summary"
+    render :partial =>  "revenue_summary"
   end
 
   def revenue_summary_quantity
     revenue_summary()
     @type = "quantity"
-    render_partial "revenue_summary"
+    render :partial =>  "revenue_summary"
   end
 
   def revenue_summary_percentage
     revenue_summary()
     @type = "percentage"
-    render_partial "revenue_summary"
+    render :partial =>  "revenue_summary"
   end
 
   def revenue_history_days
     @type = "30 Day"
     @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_days')
-    render_partial "revenue_history"
+    render :partial =>  "revenue_history"
   end
 
   def revenue_history_weeks
     @type = "26 Week"
     @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_weeks')
-    render_partial "revenue_history"
+    render :partial =>  "revenue_history"
   end
 
   def revenue_history_months
     @type = "12 Month"
     @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_months')
-    render_partial "revenue_history"
+    render :partial =>  "revenue_history"
   end
   
   # Coupon actions
@@ -218,7 +218,7 @@ class AdminController < ApplicationController
         @product_revenue[name] << row["revenue"]
         @product_quantity[name] << row["quantity"]
         orders = row["orders"]
-        total += row["revenue"]
+        total = total.to_f + row["revenue"].to_f
       end
       @num_orders << orders
       @revenue << total
@@ -232,7 +232,7 @@ class AdminController < ApplicationController
         if @revenue[i].to_f == 0
           @product_percentage[product] << 0
         else
-          @product_percentage[product] << @product_revenue[product][i] / @revenue[i].to_f * 100
+          @product_percentage[product] << @product_revenue[product][i].to_f / @revenue[i].to_f * 100.0
         end
       end
     end
@@ -255,7 +255,7 @@ class AdminController < ApplicationController
     @month_estimate = 0
     @year_estimate = 0
 
-    daily_avg = last_n_days_revenue(90) / 90.0
+    daily_avg = last_n_days_revenue(90).to_f / 90.0
 
     # Calculate a very simple sales projection.
     # Takes the average daily sales from the last 90 days to extrapolate the sales
@@ -264,7 +264,7 @@ class AdminController < ApplicationController
     days_in_current_month = Date.civil(today.year, today.month, -1).day
     
     if result != nil and result.length > 0
-      @month_estimate = last_n_days_revenue(today.day) + daily_avg * (days_in_current_month - today.day)
+      @month_estimate = last_n_days_revenue(today.day).to_f + daily_avg * (days_in_current_month - today.day)
       @year_estimate = daily_avg * 365
     end
   end

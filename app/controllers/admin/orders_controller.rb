@@ -17,7 +17,7 @@ class Admin::OrdersController < ApplicationController
                                        licensee_name ~* '%#{q}.*' OR
                                        id ~* '#{q}')"
     end
-    @order_pages, @orders = paginate :orders, :per_page => 100, :conditions => conditions, :order => 'order_time DESC'
+    @orders = Order.paginate :page => (params[:page] || 1), :per_page => 100, :conditions => conditions, :order => 'order_time DESC'
 
     respond_to do |format|
       format.html # index.rhtml
@@ -110,14 +110,14 @@ class Admin::OrdersController < ApplicationController
   def cancel
     @order = Order.find(params[:id])
     @order.status = 'X'
-    @order.update()
+    @order.save
     redirect_to :action => 'show', :id => @order.id
   end
 
   def uncancel
     @order = Order.find(params[:id])
     @order.status = 'C'
-    @order.update()
+    @order.save
     redirect_to :action => 'show', :id => @order.id
   end
 
@@ -146,7 +146,7 @@ class Admin::OrdersController < ApplicationController
         end
         return true
       end
-    rescue
+    rescue Exception => e
       return false
     end
   end

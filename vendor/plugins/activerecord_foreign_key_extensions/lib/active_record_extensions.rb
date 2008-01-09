@@ -37,18 +37,8 @@ module ActiveRecord
     
     class PostgreSQLAdapter < AbstractAdapter
       def foreign_key_constraints(table, name = nil)
-        # sql =  "SELECT conname, pg_catalog.pg_get_constraintdef(oid) AS consrc FROM pg_catalog.pg_constraint WHERE contype='f' "
-        #sql += "AND conrelid = (SELECT oid FROM pg_catalog.pg_class WHERE relname='#{table}')"
-
-        # Modified to the following 2 lines from the advice of
-        # http://wiki.rubyonrails.org/rails/pages/Foreign+Key+Schema+Dumper+Plugin
-        
-        sql =  "SELECT f.conname, pg_get_constraintdef(f.oid) AS consrc FROM pg_class t, pg_constraint f " 
-        sql += "WHERE f.conrelid = t.oid AND f.contype = 'f' AND t.relname = '#{table}'"         
-        
-        # NOTE: There is also discussion in the mentioned link about code supporting more
-        #       postgres foreign relationships
-        # -AK
+        sql =  "SELECT conname, pg_catalog.pg_get_constraintdef(oid) AS consrc FROM pg_catalog.pg_constraint WHERE contype='f' "
+        sql += "AND conrelid = (SELECT oid FROM pg_catalog.pg_class WHERE relname='#{table}')"
         
         query(sql,name).collect do |row| 
           if row[1] =~ /FOREIGN KEY \((.+)\) REFERENCES (.+)\((.+)\)(?: ON UPDATE (\w+))?(?: ON DELETE (\w+))?/
@@ -63,10 +53,11 @@ module ActiveRecord
         execute "ALTER TABLE #{table_name} DROP CONSTRAINT #{constraint_name}"
       end
       
-      alias old_default_value default_value
+      # Fails with no menthod 'default_value' in rails2
+      # alias old_default_value default_value
       def default_value(value)
         return ":now" if value =~ /^now\(\)|^\('now'::text\)::(date|timestamp)/i
-        return old_default_value(value) 
+        #return old_default_value(value) 
       end
     end
     
@@ -165,9 +156,9 @@ module ActiveRecord
         constraint_name = options[:name] || "#{table_name}_ibfk_#{foreign_key}"
 
         # oracle chokes on constraints longer than 30 chars
-        if adapter_name =~ /^(oci|oracle)$/i
-          constraint_name = 'c'+Digest::SHA1.hexdigest(constraint_name)[0,29]
-        end
+	if adapter_name =~ /^(oci|oracle)$/i
+	  constraint_name = 'c'+Digest::SHA1.hexdigest(constraint_name)[0,29]
+	end
         
         sql = "ALTER TABLE #{table_name} ADD CONSTRAINT #{constraint_name} FOREIGN KEY (#{foreign_key}) REFERENCES #{reference_table} (#{reference_column})"
     
