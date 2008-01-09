@@ -206,7 +206,7 @@ $(document).ready(function(){
 
 <div class="narrow">
 	<h2>Almost There</h2>
-	<p><span>Name on License:</span> <%= text_field "order", "licensee_name" %></p>
+	<p><label><span>Name on License:</span> <%= text_field "order", "licensee_name" %></label></p>
 	<p><label><span>Comment:</span><%= text_field 'order', 'comment' %></label></p>
 	<p><span>&nbsp;</span><label><input type="checkbox" name="subscribe" value="checked"/>
         Keep me updated with <%=$STORE_PREFS['company_name']%> news.</label></p>
