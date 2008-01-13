@@ -1,0 +1,67 @@
+=google4r-checkout Changelog
+
+== 1.0.2 (2007-08-18)
+
+* Moved Address from notifications.rb to shared.rb
+* Added AnonymousAddress class, now Address is extended from it
+* Added merchant calcuations callback and result support
+* Added unit tests for merchant calculation callback and result
+* Added merchant calculations tag support in Shopping Cart XML
+* Updated checkout_command_test.rb and checkout_command_xml_generator_test.rb after for testing merchant calculations tag support
+
+== 1.0.1 (2007-08-16)
+
+* Fixed text.to_s.gsub(/[^0-9]/, '') to (...text.to_f*100).to_i so dollar amount is now handled correctly
+
+== 1.0.0 (2007-08-04)
+
+* Added refund-amount-notification
+* Added chargeback-amount-notification
+* Added authorization-amount-notification
+* Added refund command
+* Added authorize command
+* Added add-merchant-number command
+* Added add-tracking-data command
+* Added send-buyer-message command
+* Added archive-order command
+* Added unarchive-order command
+* Refactored to_xml in the Command class
+* Added CommandXmlGenerator base class
+* Added ChargeOrderCommand, DeliverOrderCommand, CancelOrderCommand, ChargeAmountNotification and RiskInfoNotification (all contributed by Dan Dukeson).
+* Attributes are not retrieved via XPaths with "tag/@attribute" any more but with REXML's Element#attributes. This should fix problems with Ruby 1.8.6.
+
+== 0.1.0 (2007-05-12)
+* Added property "shipping_taxed" to TaxRule (contributed by Dan Dukeson).
+* Added XML generation for the tax tables in the shopping cart (contributed by Dan Dukeson).
+* Added Area subclasses WorldArea and PostalArea (contributed by Dan Dukeson).
+* Changed time zones in tests to UTC.
+* Added Test::Unit::TestCase#assert_strings_equal to test_helper.rb.
+* Added "rake test" (alias of "rake test:all")
+* Added GoogleCheckoutError#to_s to return verbose representation.
+* Split google4r into google4r-checkout and google4r-maps.
+* MerchantCode#create_from_element raises an ArgumentError instead of a RuntimeError on invalid elements now.
+* Changed the #create_from_element code to set the properties directly into the objects instead of building Hashes to collect the values first.
+* "Resolved" the problem of converting currency amounts which are fractional numbers into the amount of the minor currency to be passed into the Money class: Instead of converting the fractional number into a float and multiplying by 100, all nonnumeric characters are stripped from the string, the resulting number is converted into an integer and this integer is then passed to Money.new.
+* Added example to NotificationHandler of how to use the class.
+* Added link to simple_http_auth plugin in NotificationHandler which allows for easy HTTP Auth Basic protection of Rails controllers.
+* Renamed CheckoutCommand#cart to CheckoutCommand#shopping_cart
+* CheckoutCommand raises ArgumentError instead of RuntimeError on invalid clazz parameter.
+* Added "Howto freeze google4r in a Rails project" to README
+* Google4R::Checkout::Command#to_xml raises an NotImplementedError instead of a RuntimeError now.
+* Geocoder returns nil on 603 (G_UNAVAILABLE_ADDRESS) results now.
+* Added support for registering GUnload() to be called on window's unload event.
+* The generated Javascript that creates the GMap2() instance (and thus modifies the map div) has been put into a function <var name>_loader that is called in  an onload handler. This should remove a problem with MSIE.
+* Using Syck as the YAML parser now. However, a workaround is needed because of http://code.whytheluckystiff.net/syck/ticket/27.
+* Only require the json gem if objects have no "to_json" method already added to them. This solves a problem with converting arbitrary objects to json because the json gem seemingly only converts simple types.
+* Added GMarker#info_window_html.
+* Added support for onclick handlers in markers.
+* Added support for the value :auto of GMap2#zoom and GMap2#center.
+* Fixed buggy generation of GMarker Javascript.
+* Adding website folder to contain a webgen based website.
+* Fixed a problem with generating XML from Hashes in the "private" data of shopping carts and items.
+* The parse for the <order-adjustment> tag does not expect to see a <shipping> tag in every case any more.
+* Extending Google4R::Maps by the classes GMap2, GIcon and GMarker to allow for easy Google Maps HTML generation.
+
+== 0.0.1 (2007-02-17)
+  
+* initial release, be prepared for some API changes that move the API closer to the XML API
