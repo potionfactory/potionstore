@@ -7,7 +7,9 @@ $(document).ready(function(){
 //	update_prices();
 	$('.creditcards img').click(function() { $('#creditcard').get(0).checked = 'checked'; });
 	$('.paypal img').click(function() { $('#paypal').get(0).checked = 'checked'; });
+<% if $STORE_PREFS['allow_google_checkout'] then -%>
 	$('.gcheckout img').click(function() { $('#gcheckout').get(0).checked = 'checked'; });
+<% end -%>
 //	$('#items_3').keyup(update_prices);
 //	$('#items_3').change(update_prices);
 });
@@ -55,10 +57,12 @@ $(document).ready(function(){
 				<img src="/images/store/paypal.gif" alt="PayPal" />
 				Shop without sharing your financial information
 			</p>
+			<% if $STORE_PREFS['allow_google_checkout'] then -%>
 			<p class="gcheckout">
 				<%= radio_button_tag 'payment_type', 'gcheckout', @payment_type == 'gcheckout', :id => 'gcheckout' %>
 				<img src="/images/store/gcheckout.gif" alt="Google Checkout" />
 			</p>
+			<% end -%>
 		</td>
     </tr>
     <tr>
@@ -71,4 +75,3 @@ $(document).ready(function(){
 </table>
 
 <% end -%>
-

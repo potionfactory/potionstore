@@ -234,6 +234,9 @@ module Google4R #:nodoc:
         
         @tax_table = table
       end
+
+      # DigitalContent object. Optional.
+      attr_accessor :digital_content
      
       # Create a new Item in the given Cart. You should not instantize this class directly
       # but use Cart#create_item instead.
@@ -264,11 +267,52 @@ module Google4R #:nodoc:
         unit_price = (element.elements['unit-price'].text.to_f * 100).to_i
         unit_price_currency = element.elements['unit-price'].attributes['currency']
         result.unit_price = Money.new(unit_price, unit_price_currency)
+
+        digital_content_element = element.elements['digital-content']
+        if not digital_content_element.nil? then
+          result.digital_content = DigitalContent.create_from_element(digital_content_element)
+        end
         
         return result
       end
     end
-    
+
+    # A DigitalContent object is set to an Item object when the item is... digital
+    # See http://code.google.com/apis/checkout/developer/Google_Checkout_Digital_Delivery.html for more details
+    class DigitalContent
+
+      # Description to show to the shopper. Can contain HTML tags. Optional.
+      attr_accessor :description
+
+      # Either 'OPTIMISTIC' or 'PESSIMISTIC'. If OPTIMISTIC, then Google will display instructions for accessing the digital content as soon as the buyer confirms the order. Optional, but default is PESSIMISTIC
+      attr_reader :display_disposition
+
+      def display_disposition=(disposition)
+        raise "display_disposition can only be set to PESSIMISTIC or OPTIMISTIC" unless disposition == 'PESSIMISTIC' || disposition == 'OPTIMISTIC'
+        @display_disposition = disposition
+      end
+
+      # Boolean that indicates whether merchant will send email to the buyer explaining how to
+      # access the digital content. Optional
+      attr_accessor :email_delivery
+
+      # A key needed to download or unlock a digital content item. Optional.
+      attr_accessor :key
+
+      # URL that shopper can click on to retrieve the purchase. Optional.
+      attr_accessor :url
+
+      # Creates a new DigitalContent object from a REXML::Element object
+      def self.create_from_element(element)
+        result = DigitalContent.new()
+        result.description = element.elements['description'] rescue nil
+        result.display_disposition = element.elements['display-disposition'] rescue nil
+        result.email_delivery = element.elements['email-delivery'] rescue nil
+        result.key = element.elements['key'] rescue nil
+        result.url = element.elements['url'] rescue nil
+      end
+    end        
+      
     # A TaxTable is an ordered array of TaxRule objects. You should create the TaxRule
     # instances using #create_rule
     #

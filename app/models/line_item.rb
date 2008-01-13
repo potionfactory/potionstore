@@ -40,5 +40,9 @@ class LineItem < ActiveRecord::Base
   def generate_license_key
     return make_license(self.product.code, self.order.licensee_name, self.quantity)
   end
+
+  def license_url
+    return self.product.license_url_scheme + '://' + self.license_key rescue nil
+  end
     
 end

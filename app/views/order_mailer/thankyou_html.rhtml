@@ -48,7 +48,7 @@
 <% for item in @order.line_items -%>
 <pre>
 <%=item.product.name%>:
-<%= item.license_key %> <a href="<%= item.product.license_url_scheme %>://<%= item.license_key %>">Activate Now</a>
+<%= item.license_key %> <a href="<%= item.license_url %>">Activate Now</a>
 </pre>
 <% end -%>
 

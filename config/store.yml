@@ -13,7 +13,7 @@ include_mint: false
 paypal_express_checkout_header_image: "https://www.mycompany.com/images/mylogo.png"
 
 # Google checkout?
-allow_google_checkout: false
+allow_google_checkout: true
 
 # Email addresses
 support_email: "support@mycompany.com"
