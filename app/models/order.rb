@@ -1,17 +1,54 @@
 COUNTRY_MAPPING = {
-  'AI' => 'Anguilla', 'AR' => 'Argentina', 'AU' => 'Australia', 'AT' => 'Austria', 'BE' => 'Belgium',
-  'BR' => 'Brazil', 'CA' => 'Canada', 'CL' => 'Chile', 'CN' => 'China', 'CR' => 'Costa Rica', 'CY' => 'Cyprus',
-  'CZ' => 'Czech Republic', 'DK' => 'Denmark', 'DO' => 'Dominican Republic', 'EC' => 'Ecuador', 'EE' => 'Estonia',
-  'FI' => 'Finland', 'FR' => 'France', 'DE' => 'Germany', 'GR' => 'Greece', 'HK' => 'Hong Kong',
-  'HU' => 'Hungary', 'IS' => 'Iceland', 'IN' => 'India', 'IE' => 'Ireland', 'IL' => 'Israel',
-  'IT' => 'Italy', 'JM' => 'Jamaica', 'JP' => 'Japan', 'LV' => 'Latvia', 'LT' => 'Lithuania',
-  'LU' => 'Luxembourg', 'MY' => 'Malaysia', 'MT' => 'Malta', 'MX' => 'Mexico', 'NL' => 'Netherlands',
-  'NZ' => 'New Zealand', 'NO' => 'Norway', 'PL' => 'Poland', 'PT' => 'Portugal', 'SG' => 'Singapore',
-  'SK' => 'Slovakia', 'SI' => 'Slovenia', 'ZA' => 'South Africa', 'KR' => 'South Korea', 'ES' => 'Spain',
-  'SE' => 'Sweden', 'CH' => 'Switzerland', 'TW' => 'Taiwan', 'TH' => 'Thailand', 'TR' => 'Turkey',
-  'GB' => 'United Kingdom', 'US' => 'United States', 'UY' => 'Uruguay', 'VE' => 'Venezuela'}
+  "US" => "United States", "AL" => "Albania", "DZ" => "Algeria", "AD" => "Andorra", "AO" => "Angola",
+  "AI" => "Anguilla", "AG" => "Antigua and Barbuda", "AR" => "Argentina", "AM" => "Armenia",
+  "AW" => "Aruba", "AU" => "Australia", "AT" => "Austria", "AZ" => "Azerbaijan Republic",
+  "BS" => "Bahamas", "BH" => "Bahrain", "BB" => "Barbados", "BE" => "Belgium", "BZ" => "Belize",
+  "BJ" => "Benin", "BM" => "Bermuda", "BT" => "Bhutan", "BO" => "Bolivia",
+  "BA" => "Bosnia and Herzegovina", "BW" => "Botswana", "BR" => "Brazil",
+  "VG" => "British Virgin Islands", "BN" => "Brunei", "BG" => "Bulgaria", "BF" => "Burkina Faso",
+  "BI" => "Burundi", "KH" => "Cambodia", "CA" => "Canada", "CV" => "Cape Verde",
+  "KY" => "Cayman Islands", "TD" => "Chad", "CL" => "Chile", "C2" => "China", "CO" => "Colombia",
+  "KM" => "Comoros", "CK" => "Cook Islands", "CR" => "Costa Rica", "HR" => "Croatia",
+  "CY" => "Cyprus", "CZ" => "Czech Republic", "CD" => "Democratic Republic of the Congo",
+  "DK" => "Denmark", "DJ" => "Djibouti", "DM" => "Dominica", "DO" => "Dominican Republic",
+  "EC" => "Ecuador", "SV" => "El Salvador", "ER" => "Eritrea", "EE" => "Estonia", "ET" => "Ethiopia",
+  "FK" => "Falkland Islands", "FO" => "Faroe Islands", "FM" => "Federated States of Micronesia",
+  "FJ" => "Fiji", "FI" => "Finland", "FR" => "France", "GF" => "French Guiana",
+  "PF" => "French Polynesia", "GA" => "Gabon Republic", "GM" => "Gambia", "DE" => "Germany",
+  "GI" => "Gibraltar", "GR" => "Greece", "GL" => "Greenland", "GD" => "Grenada",
+  "GP" => "Guadeloupe", "GT" => "Guatemala", "GN" => "Guinea", "GW" => "Guinea Bissau",
+  "GY" => "Guyana", "HN" => "Honduras", "HK" => "Hong Kong", "HU" => "Hungary", "IS" => "Iceland",
+  "IN" => "India", "ID" => "Indonesia", "IE" => "Ireland", "IL" => "Israel", "IT" => "Italy",
+  "JM" => "Jamaica", "JP" => "Japan", "JO" => "Jordan", "KZ" => "Kazakhstan", "KE" => "Kenya",
+  "KI" => "Kiribati", "KW" => "Kuwait", "KG" => "Kyrgyzstan", "LA" => "Laos", "LV" => "Latvia",
+  "LS" => "Lesotho", "LI" => "Liechtenstein", "LT" => "Lithuania", "LU" => "Luxembourg",
+  "MG" => "Madagascar", "MW" => "Malawi", "MY" => "Malaysia", "MV" => "Maldives", "ML" => "Mali",
+  "MT" => "Malta", "MH" => "Marshall Islands", "MQ" => "Martinique", "MR" => "Mauritania",
+  "MU" => "Mauritius", "YT" => "Mayotte", "MX" => "Mexico", "MN" => "Mongolia", "MS" => "Montserrat",
+  "MA" => "Morocco", "MZ" => "Mozambique", "NA" => "Namibia", "NR" => "Nauru", "NP" => "Nepal",
+  "NL" => "Netherlands", "AN" => "Netherlands Antilles", "NC" => "New Caledonia",
+  "NZ" => "New Zealand", "NI" => "Nicaragua", "NE" => "Niger", "NU" => "Niue",
+  "NF" => "Norfolk Island", "NO" => "Norway", "OM" => "Oman", "PW" => "Palau", "PA" => "Panama",
+  "PG" => "Papua New Guinea", "PE" => "Peru", "PH" => "Philippines", "PN" => "Pitcairn Islands",
+  "PL" => "Poland", "PT" => "Portugal", "QA" => "Qatar", "CG" => "Republic of the Congo",
+  "RE" => "Reunion", "RO" => "Romania", "RU" => "Russia", "RW" => "Rwanda",
+  "VC" => "Saint Vincent and the Grenadines", "WS" => "Samoa", "SM" => "San Marino",
+  "ST" => "São Tomé and Príncipe", "SA" => "Saudi Arabia", "SN" => "Senegal", "SC" => "Seychelles",
+  "SL" => "Sierra Leone", "SG" => "Singapore", "SK" => "Slovakia", "SI" => "Slovenia",
+  "SB" => "Solomon Islands", "SO" => "Somalia", "ZA" => "South Africa", "KR" => "South Korea",
+  "ES" => "Spain", "LK" => "Sri Lanka", "SH" => "St. Helena", "KN" => "St. Kitts and Nevis",
+  "LC" => "St. Lucia", "PM" => "St. Pierre and Miquelon", "SR" => "Suriname",
+  "SJ" => "Svalbard and Jan Mayen Islands", "SZ" => "Swaziland", "SE" => "Sweden",
+  "CH" => "Switzerland", "TW" => "Taiwan", "TJ" => "Tajikistan", "TZ" => "Tanzania",
+  "TH" => "Thailand", "TG" => "Togo", "TO" => "Tonga", "TT" => "Trinidad and Tobago",
+  "TN" => "Tunisia", "TR" => "Turkey", "TM" => "Turkmenistan", "TC" => "Turks and Caicos Islands",
+  "TV" => "Tuvalu", "UG" => "Uganda", "UA" => "Ukraine", "AE" => "United Arab Emirates",
+  "GB" => "United Kingdom", "UY" => "Uruguay", "VU" => "Vanuatu", "VA" => "Vatican City State",
+  "VE" => "Venezuela", "VN" => "Vietnam", "WF" => "Wallis and Futuna Islands", "YE" => "Yemen",
+  "ZM" => "Zambia"
+}
 
-  
+ 
 class Order < ActiveRecord::Base
   has_many :line_items
   belongs_to :coupon
@@ -426,7 +463,7 @@ class Order < ActiveRecord::Base
     command.edit_cart_url = edit_cart_url
 
     for line_item in self.line_items
-      command.cart.create_item do |item|
+      command.shopping_cart.create_item do |item|
         item.name = line_item.product.name
         item.description = ""
         item.unit_price = Money.new(line_item.unit_price * 100)
@@ -435,7 +472,7 @@ class Order < ActiveRecord::Base
     end
 
     if self.coupon
-      command.cart.create_item do |item|
+      command.shopping_cart.create_item do |item|
         item.name = "Coupon"
         item.description = coupon.description
         item.unit_price = Money.new(-coupon_amount() * 100)
@@ -443,7 +480,7 @@ class Order < ActiveRecord::Base
       end
     end
 
-    command.cart.private_data = { 'order-id' => [self.id] }
+    command.shopping_cart.private_data = { 'order-id' => [self.id] }
 
     begin
       res = command.send_to_google_checkout()
