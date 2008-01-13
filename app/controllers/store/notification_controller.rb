@@ -23,7 +23,7 @@ class Store::NotificationController < ApplicationController
       render :text => 'Unauthorized', :status => 401 and return
     end
 
-    # Authentication. Parse the xml now
+    # Authenticated. Parse the xml now
     notification = XmlSimple.xml_in(request.raw_post, 'KeepRoot' => true, 'ForceArray' => false)
       
     notification_name = notification.keys[0]
