@@ -30,10 +30,6 @@ class AdminController < ApplicationController
     redirect_to home_url
   end
 
-  def test
-    render_text "test"
-  end
-  
   # Dashboard page
   def index
     if Product.count == 0

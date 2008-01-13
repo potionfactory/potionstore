@@ -3,6 +3,7 @@
 
 class ApplicationController < ActionController::Base
 
+  # Don't log any credit card data
   filter_parameter_logging "cc_number|cc_code|cc_month|cc_year"
 
   def check_authentication
@@ -14,9 +15,16 @@ class ApplicationController < ActionController::Base
   end
 end
 
+
+# Convenience global function to check if we're running in production mode
 def is_live
   return ENV['RAILS_ENV'] == 'production'
 end
+
+
+# Make the debugger available in development
+require 'ruby-debug' if not is_live()
+
 
 # Load username and password for admin user
 def load_store_prefs
@@ -29,6 +37,8 @@ end
 
 load_store_prefs()
 
+
+# Convenience global function for rounding to monetary amount
 def round_money(amount)
   return ("%01.2f" % amount).to_f()
 end
@@ -54,7 +64,7 @@ if $STORE_PREFS['allow_google_checkout']
     end
   end
 
-  def _initialize_frontend
+  def _initialize_google_checkout
     environment = ENV['RAILS_ENV'] || 'production'
 
     app_root = File.dirname(__FILE__) + '/../..'
@@ -62,23 +72,23 @@ if $STORE_PREFS['allow_google_checkout']
 
     prefs = File.expand_path(config_dir + '/google_checkout.yml')
     if File.exists?(prefs)
-      y = YAML.load(File.open(prefs))
-      y.each {|pref, value| eval("@#{pref} =\"#{value}\"")}
-      y[environment].each {|pref, value| eval("@#{pref} =\"#{value}\"")}
+      y = YAML.load(File.open(prefs))[environment]
+
+      # Save the merchant id and key. It gets used in notification_controller for authenticating Google's notifications
+      $STORE_PREFS['gcheckout_merchant_id'] = y['gcheckout_merchant_id']
+      $STORE_PREFS['gcheckout_merchant_key'] = y['gcheckout_merchant_key']
+      
+      $GCHECKOUT_FRONTEND = Google4R::Checkout::Frontend.new(:merchant_id => y['gcheckout_merchant_id'],
+                                                             :merchant_key => y['gcheckout_merchant_key'],
+                                                             :use_sandbox => !is_live())
+
+      $GCHECKOUT_FRONTEND.tax_table_factory = TaxTableFactory.new
+    else
+      logger.error("Could not load Google Checkout configuration even though it's enabled")
     end
-
-    $GCHECKOUT_FRONTEND = Google4R::Checkout::Frontend.new(:merchant_id => @gcheckout_merchant_id,
-                                                           :merchant_key => @gcheckout_merchant_key,
-                                                           :use_sandbox => !is_live())
-
-    $GCHECKOUT_FRONTEND.tax_table_factory = TaxTableFactory.new
   end
 
+  # Go ahead and call the Google Checkout initialization function
+  _initialize_google_checkout()
 
-  _initialize_frontend()
 end
-
-
-# Make the debugger available in development
-require 'ruby-debug' if not is_live()
-

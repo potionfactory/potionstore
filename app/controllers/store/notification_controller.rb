@@ -1,3 +1,5 @@
+require 'base64'
+
 def _xmlval(hash, key)
   if hash[key] == {}
     nil
@@ -12,8 +14,18 @@ class Store::NotificationController < ApplicationController
   ## Google Checkout notification
 
   def gcheckout
-    notification = XmlSimple.xml_in(request.raw_post, 'KeepRoot' => true, 'ForceArray' => false)
+    # Check HTTP basic authentication first
+    my_auth_key = Base64.encode64($STORE_PREFS['gcheckout_merchant_id'] + ':' + $STORE_PREFS['gcheckout_merchant_key']).strip()
+    http_auth = request.headers['HTTP_AUTHORIZATION']
+    if http_auth.nil? || http_auth.split(' ')[0] != 'Basic' || http_auth.split(' ')[1] != my_auth_key then
+      debugger
+      logger.warn('Got unauthorized Google Checkout notification')
+      render :text => 'Unauthorized', :status => 401 and return
+    end
 
+    # Authentication. Parse the xml now
+    notification = XmlSimple.xml_in(request.raw_post, 'KeepRoot' => true, 'ForceArray' => false)
+      
     notification_name = notification.keys[0]
     notification_data = notification[notification_name]
 
@@ -28,7 +40,7 @@ class Store::NotificationController < ApplicationController
 #   when 'risk-information-notification'
     end
 
-    render_text ''
+    render :text => ''
   end
 
   private
@@ -76,9 +88,8 @@ class Store::NotificationController < ApplicationController
 
     order.status = 'C'
     order.finish_and_save()
-    OrderMailer.deliver_thankyou(order)
+    OrderMailer.deliver_thankyou(order) if is_live()
 
-    order.send_to_google_deliver_order_command()
     order.send_to_google_archive_order_command()
   end
   

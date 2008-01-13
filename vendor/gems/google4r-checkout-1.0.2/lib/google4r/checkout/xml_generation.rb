@@ -256,6 +256,38 @@ module Google4R #:nodoc:
         if not item.tax_table.nil? then
           item_element.add_element('tax-table-selector').text = item.tax_table.name
         end
+
+        if not item.digital_content.nil? then
+          self.process_digital_content(item_element, item.digital_content)
+        end
+      end
+      
+      # Adds a <digital-content> tag to an item
+      def process_digital_content(parent, digital_content)
+        dc_element = parent.add_element('digital-content')
+        if not digital_content.description.nil? then
+          dc_element.add_element('description').text = REXML::CData.new(digital_content.description)
+        end
+
+        if not digital_content.display_disposition.nil? then
+          dc_element.add_element('display-disposition').text = digital_content.display_disposition
+        end
+
+        if not digital_content.email_delivery.nil? then
+          if digital_content.email_delivery then
+            dc_element.add_element('email-delivery').text = 'true'
+          else
+            dc_element.add_element('email-delivery').text = 'false'
+          end
+        end
+
+        if not digital_content.key.nil? then
+          dc_element.add_element('key').text = digital_content.key
+        end
+
+        if not digital_content.url.nil? then
+          dc_element.add_element('url').text = digital_content.url
+        end
       end
       
       # Adds an item for the given shipping method.
