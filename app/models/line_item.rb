@@ -4,7 +4,7 @@ class LineItem < ActiveRecord::Base
   belongs_to :order
   belongs_to :product
 
-  validates_numericality_of :quantity
+  validates_numericality_of :quantity, :only_integer => true
   validates_numericality_of :unit_price
 
   def quantity=(qty)
