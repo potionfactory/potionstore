@@ -8,7 +8,7 @@ class AdminController < ApplicationController
 
   def login
     unless params[:username] && params[:password]
-      render :action => "login", :layout => 'error' and return
+      render :action => "login" and return
     end
 
     if params[:username] == $STORE_PREFS['admin_username'] &&
@@ -21,7 +21,7 @@ class AdminController < ApplicationController
       end
     else
       flash[:notice] = "Go home kid. This ain't for you."
-      render :action => "login", :layout => 'error'
+      render :action => "login"
     end
   end
 
