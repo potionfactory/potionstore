@@ -176,7 +176,7 @@ class Order < ActiveRecord::Base
   end
 
   def cc_order?
-    return ['Visa', 'MasterCard', 'Amex', 'Discover'].member?(self.payment_type)
+    return ['visa', 'mastercard', 'amex', 'discover'].member?(self.payment_type.downcase)
   end
 
   def paypal_order?
