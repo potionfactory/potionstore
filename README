@@ -13,8 +13,8 @@ Features:
 
 == Dependencies
 
-- Rails 1.2 or higher
-- Postgresql
+- Rails 2.0 or higher
+- Postgresql, although a lot of people have gotten it to work with MySQL
 - ruby-debug rubygem (I'm forcing this on you, but you really owe it
   to yourself to try it out. It's way better than the built-in
   breakpointer)
