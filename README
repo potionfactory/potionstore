@@ -5,7 +5,7 @@ Features:
 - PayPal Website Payments Pro support
 - PayPal Express Checkout support
 - Google Checkout support
-- Administration interface
+- Administration interface with some simple sales charts
 - Coupons
 - Send lost license page (http://mycompany.com/store/lost_license)
 - Google Analytics e-commerce transaction tracking support for PayPal and credit card orders
@@ -14,7 +14,7 @@ Features:
 == Dependencies
 
 - Rails 2.0 or higher
-- Postgresql, although a lot of people have gotten it to work with MySQL
+- Postgresql (a lot of people have gotten it to work with MySQL though)
 - ruby-debug rubygem (I'm forcing this on you, but you really owe it
   to yourself to try it out. It's way better than the built-in
   breakpointer)
@@ -55,3 +55,9 @@ you have basic rails knowledge or some Google skills.
 
   That is the URL that Google uses to make callbacks. If you don't set this up, your customers will
   not get their orders delivered by email.
+
+
+== Final Notes
+
+- I'd appreciate it if you kept the "Powered by Potion Store" link in the footer. It'll help more developers find the project.
+
