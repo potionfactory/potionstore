@@ -8,6 +8,11 @@ class LineItem < ActiveRecord::Base
   validates_numericality_of :unit_price
 
   def quantity=(qty)
+    # take care of leading zeroes so that the quantity does not get treated as an octal number
+    qty = qty.strip.sub(/^0+/, '')
+    qty = 0 if qty == ''
+    qty = Integer(Float(qty).ceil)
+
     regenerate_keys = (self.quantity != qty)
     write_attribute(:quantity, qty)
     # Regenerate the license key if this is not a new record and the quantity changes

@@ -253,7 +253,7 @@ class Order < ActiveRecord::Base
         item.order
         item.order = self
         item.product_id = product_id
-        item.quantity = Integer(items[product_id].sub(/^0+/, '')) # take care of leading zeroes so that the quantity does not get treated as an octal number
+        item.quantity = items[product_id]
         next if item.quantity == 0
         if item.quantity < 0
           return false
@@ -277,7 +277,7 @@ class Order < ActiveRecord::Base
       if litem == nil
         return false if not self.add_form_items({product_id => items[product_id]})
       else
-        quantity = Integer(items[product_id])
+        quantity = items[product_id]
         # just ignore negative quantity
         if quantity < 0
           next
