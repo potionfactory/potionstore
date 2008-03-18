@@ -35,7 +35,7 @@ $(document).ready(function(){
 		</td>
 		<td>
 			<%= text_field "items", product.id, :size => "3", :value => @qty[product.code], :autocomplete => "off", :class => "qty" -%>
-			<strong id="item_<%=product.id %>_price">$<%=product.price %></strong>&nbsp; each
+			<strong id="item_<%=product.id %>_price">@ $<%=product.price %></strong>&nbsp; each
 		</td>
 	</tr>
 <% end -%>
