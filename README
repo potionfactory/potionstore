@@ -31,6 +31,9 @@ you have basic rails knowledge or some Google skills.
   config/paypal.yml
   config/google_checkout.yml
 
+- Set session store secret
+  Edit config/environment.rb and modify the config.action_controller.session setting
+
 - Setup database
   - Install Postgresql if you haven't
   - Create the store_development database.
