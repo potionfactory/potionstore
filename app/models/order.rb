@@ -175,6 +175,18 @@ class Order < ActiveRecord::Base
     self.ccnum = 'X' * (t.length - 4) + t[t.length-4 .. t.length-1]
   end
 
+  def payment_type=(type)
+    val = type
+    if type
+      if ['visa', 'amex', 'discover'].member?(type.downcase())
+        val = type.capitalize()
+      elsif type.downcase() == 'mastercard'
+        val = 'MasterCard'
+      end
+    end
+    write_attribute(:payment_type, val)
+  end
+
   def cc_order?
     return ['visa', 'mastercard', 'amex', 'discover'].member?(self.payment_type.downcase)
   end
