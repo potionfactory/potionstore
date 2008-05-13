@@ -10,12 +10,12 @@ class Admin::OrdersController < ApplicationController
     q = params[:query]
     conditions = "status != 'P'"
     if q
-      q.strip!
-      conditions = conditions + " AND (email ~* '#{q}' OR
-                                       first_name ~* '#{q}.*' OR
-                                       last_name ~* '#{q}.*' OR
-                                       licensee_name ~* '%#{q}.*' OR
-                                       id ~* '#{q}')"
+      q = q.strip().downcase()
+      conditions = conditions + " AND (LOWER(email) LIKE '#{q}%' OR
+                                       LOWER(first_name) LIKE '#{q}%' OR
+                                       LOWER(last_name) LIKE '#{q}%' OR
+                                       LOWER(licensee_name) LIKE '%#{q}%' OR
+                                       id LIKE '#{q}')"
     end
     @orders = Order.paginate :page => (params[:page] || 1), :per_page => 100, :conditions => conditions, :order => 'order_time DESC'
 
