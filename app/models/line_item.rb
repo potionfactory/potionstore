@@ -13,10 +13,11 @@ class LineItem < ActiveRecord::Base
     qty = 0 if qty == ''
     qty = Integer(Float(qty).ceil)
 
-    regenerate_keys = (self.quantity != qty)
+    # Don't automatically generate a new key for pending orders
+    regenerate_keys = (self.quantity != qty) && self.order.status != 'P'
     write_attribute(:quantity, qty)
-    # Regenerate the license key if this is not a new record and the quantity changes
-    if regenerate_keys && !new_record?
+
+    if regenerate_keys
       self.license_key = generate_license_key()
       save()
     end
