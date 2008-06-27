@@ -8,7 +8,7 @@
 		<td><%= text_field "items", item.product.id, :size => 4, :value => item.quantity %></td>
 		<td>$<%= text_field "item_prices", item.product.id, :size => 5, :value => item.unit_price %></td>
 		<td><%= item.license_key -%>
-			<% else -%>
+		<% elsif product.active == 1 -%>
 		<td><%= product.name %></td>
 		<td><%= text_field "items", product.id, :size => 4 %></td>
 		<td>$<%= text_field "item_prices", product.id, :size => 5, :value => product.price %></td>
