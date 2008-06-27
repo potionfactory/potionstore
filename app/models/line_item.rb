@@ -9,7 +9,7 @@ class LineItem < ActiveRecord::Base
 
   def quantity=(qty)
     # take care of leading zeroes so that the quantity does not get treated as an octal number
-    qty = qty.strip.sub(/^0+/, '')
+    qty = qty.to_s.strip.sub(/^0+/, '')
     qty = 0 if qty == ''
     qty = Integer(Float(qty).ceil)
 
