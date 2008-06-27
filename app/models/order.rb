@@ -260,7 +260,7 @@ class Order < ActiveRecord::Base
   def add_form_items(items)
     begin
       for product_id in items.keys
-        next if items[product_id].strip == ''
+        next if items[product_id].to_s.strip == ''
         item = LineItem.new
         item.order
         item.order = self
@@ -284,12 +284,12 @@ class Order < ActiveRecord::Base
 
   def add_or_update_items(items)
     for product_id in items.keys
-      next if items[product_id].strip == ''
+      next if items[product_id].to_s.strip == ''
       litem = self.line_item_with_product_id(product_id)
       if litem == nil
         return false if not self.add_form_items({product_id => items[product_id]})
       else
-        quantity = items[product_id]
+        quantity = items[product_id].to_i
         # just ignore negative quantity
         if quantity < 0
           next

@@ -74,9 +74,13 @@ class Admin::OrdersController < ApplicationController
   def update
     # must delete the licensee name from parameters because we need to set it after the line items are added
     @licensee_name = params[:order][:licensee_name]
-    params[:order].delete("licensee_name")
+    params[:order].delete(:licensee_name)
 
     @order = Order.find(params[:order][:id])
+
+    # Delete the id from the form or ActiveRecord complains about changing it
+    params[:order].delete(:id)
+
     @order.attributes = params[:order]
 
     if not save()
@@ -138,7 +142,7 @@ class Admin::OrdersController < ApplicationController
         end
         @order.update_item_prices(params[:item_prices])
         @order.skip_cc_validation = true
-        @order.licensee_name = @licensee_name
+        @order.licensee_name = @licensee_name # set the saved licensee name
         if not @order.save()
           flash[:notice] = 'Problem saving order'
           logger.warn("Could not save order: #{@order.errors}")
@@ -147,6 +151,8 @@ class Admin::OrdersController < ApplicationController
         return true
       end
     rescue Exception => e
+      logger.error("ERROR -- Could not save order: #{e}")
+      flash[:notice] = 'Problem saving order'
       return false
     end
   end
