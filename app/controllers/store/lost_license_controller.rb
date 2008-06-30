@@ -10,8 +10,8 @@ class Store::LostLicenseController < ApplicationController
       render :action => 'index' and return 
     end
     
-    email = params[:email].strip()
-    orders = Order.find(:all, :conditions => ['status=\'C\' AND email=?', email])
+    email = params[:email].strip().downcase()
+    orders = Order.find(:all, :conditions => ['status=\'C\' AND LOWER(email)=?', email])
     if orders.empty?
       flash[:notice] = "Could not find any orders for " + email
       @email = email
