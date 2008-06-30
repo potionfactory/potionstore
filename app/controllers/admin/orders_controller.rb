@@ -11,11 +11,14 @@ class Admin::OrdersController < ApplicationController
     conditions = "status != 'P'"
     if q
       q = q.strip().downcase()
-      conditions = conditions + " AND (LOWER(email) LIKE '#{q}%' OR
-                                       LOWER(first_name) LIKE '#{q}%' OR
-                                       LOWER(last_name) LIKE '#{q}%' OR
-                                       LOWER(licensee_name) LIKE '%#{q}%' OR
-                                       CAST(id AS char) = '#{q}')" # This should really be CAST(id AS varchar) to be standard SQL but MySQL (5.1) does not support it and thankfully PostgreSQL accepts this
+      if q.to_i != 0
+        conditions = [conditions + "AND id=?", q.to_i]
+      else
+        conditions = [conditions + " AND (LOWER(email) LIKE ? OR
+                                          LOWER(first_name) LIKE ? OR
+                                          LOWER(last_name) LIKE ? OR
+                                          LOWER(licensee_name) LIKE ?)", "#{q}%", "#{q}%", "#{q}%", "%#{q}%"]
+      end
     end
     @orders = Order.paginate :page => (params[:page] || 1), :per_page => 100, :conditions => conditions, :order => 'order_time DESC'
 
