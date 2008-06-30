@@ -15,7 +15,7 @@ class Admin::OrdersController < ApplicationController
                                        LOWER(first_name) LIKE '#{q}%' OR
                                        LOWER(last_name) LIKE '#{q}%' OR
                                        LOWER(licensee_name) LIKE '%#{q}%' OR
-                                       id LIKE '#{q}')"
+                                       CAST(id AS char) = '#{q}')" # This should really be CAST(id AS varchar) to be standard SQL but MySQL (5.1) does not support it and thankfully PostgreSQL accepts this
     end
     @orders = Order.paginate :page => (params[:page] || 1), :per_page => 100, :conditions => conditions, :order => 'order_time DESC'
 
