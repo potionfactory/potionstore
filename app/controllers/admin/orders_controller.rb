@@ -54,9 +54,6 @@ class Admin::OrdersController < ApplicationController
   # POST /orders
   # POST /orders.xml
   def create
-    # must delete the licensee name from parameters because we need to set it after the line items are added
-    @licensee_name = params[:order][:licensee_name]
-    params[:order].delete("licensee_name")
     @order = Order.new(params[:order])
     @order.status = 'C'
 
@@ -75,10 +72,6 @@ class Admin::OrdersController < ApplicationController
   # PUT /orders/1
   # PUT /orders/1.xml
   def update
-    # must delete the licensee name from parameters because we need to set it after the line items are added
-    @licensee_name = params[:order][:licensee_name]
-    params[:order].delete(:licensee_name)
-
     @order = Order.find(params[:order][:id])
 
     # Delete the id from the form or ActiveRecord complains about changing it
@@ -141,21 +134,20 @@ class Admin::OrdersController < ApplicationController
         if not @order.add_or_update_items(params[:items])
           flash[:notice] = 'Order contains no items'
           logger.warn('Order contains no items')
-          raise "Problem"
+          return false
         end
         @order.update_item_prices(params[:item_prices])
         @order.skip_cc_validation = true
-        @order.licensee_name = @licensee_name # set the saved licensee name
+
         if not @order.save()
-          flash[:notice] = 'Problem saving order'
-          logger.warn("Could not save order: #{@order.errors}")
-          raise "Problem"
+          flash[:notice] = 'Could not save order'
+          logger.error("ERROR -- Could not save order: #{@order.errors}")
+          return false
         end
         return true
       end
     rescue Exception => e
-      logger.error("ERROR -- Could not save order: #{e}")
-      flash[:notice] = 'Problem saving order'
+      logger.error("ERROR -- Problem saving order: #{e}")
       return false
     end
   end

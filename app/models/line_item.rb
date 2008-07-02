@@ -19,7 +19,6 @@ class LineItem < ActiveRecord::Base
 
     if regenerate_keys
       self.license_key = generate_license_key()
-      save()
     end
   end
 

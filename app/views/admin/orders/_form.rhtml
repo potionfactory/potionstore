@@ -16,10 +16,6 @@
 		<td><%= render :partial => "product_quantities" -%></td>
 	</tr>
 	<tr>
-		<td>Ordered Time:</td>
-		<td><%= datetime_select("order", "order_time") -%></td>
-	</tr>
-	<tr>
 		<td>Company:</td>
 		<td><%= form.text_field :company %></td>
 	</tr>
@@ -62,5 +58,9 @@
 	<tr>
 		<td>Payment Method:</td>
 		<td><%= form.text_field :payment_type %></td>
+	</tr>
+		<tr>
+		<td>Ordered Time:</td>
+		<td><%= datetime_select("order", "order_time") -%></td>
 	</tr>
 </table>

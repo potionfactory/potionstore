@@ -1,4 +1,5 @@
-== Welcome to Potion Store
+Welcome to Potion Store
+-----------------------
 
 Features:
 
@@ -11,43 +12,39 @@ Features:
 - Google Analytics e-commerce transaction tracking support for PayPal and credit card orders
 
 
-== Dependencies
+Dependencies
+------------
 
-- Rails 2.0 or higher
-- Postgresql (a lot of people have gotten it to work with MySQL though)
-- ruby-debug rubygem (I'm forcing this on you, but you really owe it
-  to yourself to try it out. It's way better than the built-in
-  breakpointer)
+- Rails 2.1 or higher.
+- PostgreSQL or MySQL
 
 
-== Installation
+Installation
+------------
 
-This is a brief outline of the steps required to get Potion Store up and running.  I'll assume that
-you have basic rails knowledge or some Google skills.
+This is a brief outline of the steps required to get the development environment of Potion Store up
+and running on your local machine.
 
 - Edit the following config files to suit your needs
 
-  config/store.yml
-  config/paypal.yml
-  config/google_checkout.yml
+  - config/store.yml
+  - config/paypal.yml
+  - config/google_checkout.yml
 
 - Set session store secret
   Edit config/environment.rb and modify the config.action_controller.session setting
 
 - Setup database
-  - Install Postgresql if you haven't
+  - Install Postgresql or MySQL if you haven't
   - Create the store_development database.
   	Make sure to set the encoding of the database to UTF8.
 	I recommend pgAdmin for Postgresql newcomers.
   - Edit config/database.yml
-  - run "rake db:migrate" to import schema
+  - run "rake db:migrate" to create the database schema
    
-- Install gem dependency:
-  gem install ruby-debug
-
 - Run script/server and test through
-  http://localhost:3000/store and
-  http://localhost:3000/admin
+  <http://localhost:3000/store> and
+  <http://localhost:3000/admin>
 
 - Replace the default license key generator in lib/licensekey.rb with your own
 
@@ -60,7 +57,15 @@ you have basic rails knowledge or some Google skills.
   not get their orders delivered by email.
 
 
-== Final Notes
+Debugging
+---------
 
-- I'd appreciate it if you kept the "Powered by Potion Store" link in the footer. It'll help more developers find the project.
+1. gem install ruby-debugger
+2. Put 'debugger' where you want to break in your source code
+3. Start the app with 'script/server --debugger' to enable breakpoints
 
+  
+Final Notes
+-----------
+
+I'd appreciate it if you kept the "Powered by Potion Store" link in the footer. It'll help more developers find the project.
