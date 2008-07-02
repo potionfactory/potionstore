@@ -145,7 +145,6 @@ class Order < ActiveRecord::Base
     if regenerate_keys
       for item in self.line_items
         item.license_key = item.generate_license_key
-        item.save() if !item.new_record?
       end
     end
   end
@@ -262,7 +261,6 @@ class Order < ActiveRecord::Base
       for product_id in items.keys
         next if items[product_id].to_s.strip == ''
         item = LineItem.new
-        item.order
         item.order = self
         item.product_id = product_id
         item.quantity = items[product_id]
@@ -278,6 +276,7 @@ class Order < ActiveRecord::Base
       end
       return true
     rescue
+      logger.error("Could not add form product items: #{$!}")
       return false
     end
   end
@@ -295,7 +294,6 @@ class Order < ActiveRecord::Base
           self.line_items.delete(litem)
         else
           litem.quantity = quantity
-          litem.save if !litem.new_record?
         end
       end
     end
@@ -308,7 +306,6 @@ class Order < ActiveRecord::Base
       litem = self.line_item_with_product_id(product_id)
       next if litem == nil
       litem.unit_price = item_prices[product_id]
-      litem.save if !litem.new_record?
     end
   end
 
@@ -354,6 +351,17 @@ class Order < ActiveRecord::Base
     self.company = '' if self.company != nil && self.company.strip == 'optional'
     self.comment = '' if self.comment != nil && self.comment.strip == 'optional'
 
+    # Save updated relationships
+    for item in self.line_items
+      if !item.new_record? && item.changed?
+        item.save()
+      end
+    end
+
+    if self.coupon != nil && !self.coupon.new_record? && self.coupon.changed?
+      self.coupon.save()
+    end
+
     super()
   end
 
@@ -363,12 +371,10 @@ class Order < ActiveRecord::Base
       for line_item in self.line_items
         if line_item.license_key.nil? then
           line_item.license_key = line_item.generate_license_key()
-          line_item.save()
         end
       end
       if self.coupon
         self.coupon.used_count += 1
-        self.coupon.save()
       end
     end
 
@@ -482,7 +488,7 @@ class Order < ActiveRecord::Base
         # The order doesn't become status C until we get final notification from Google,
         # but we're still optimistically showing the buyer their license key because otherwise
         # the delay can be as much as 20 minutes on the GCheckout side
-        line_item.license_key = line_item.generate_license_key
+        line_item.license_key = line_item.generate_license_key()
         line_item.save()
 
         digital_content = Google4R::Checkout::DigitalContent.new

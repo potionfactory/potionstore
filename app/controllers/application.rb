@@ -22,10 +22,6 @@ def is_live
 end
 
 
-# Make the debugger available in development
-require 'ruby-debug' if not is_live()
-
-
 # Load username and password for admin user
 def load_store_prefs
   app_root = File.dirname(__FILE__) + '/../..'
