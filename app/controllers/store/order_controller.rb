@@ -204,12 +204,14 @@ class Store::OrderController < ApplicationController
   before_filter :check_completed_order, :only => [:thankyou, :receipt]
 
   def thankyou
-    render :action => 'no_order', :layout => 'error' and return if session[:order] == nil
+    # no need to check for nil order in the session here.
+    # check_completed_order is a before_filter for this method
     @order = session[:order]
   end
 
   def receipt
-    render :action => 'no_order', :layout => 'error' and return if session[:order] == nil
+    # no need to check for nil order in the session here.
+    # check_completed_order is a before_filter for this method
     @order = session[:order]
     @print = true
     render :partial => 'receipt'
