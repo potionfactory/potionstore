@@ -151,6 +151,9 @@ class Store::OrderController < ApplicationController
   end
 
   def confirm_paypal
+    session[:order] = nil
+    render :action => 'no_order', :layout => 'error' and return if session[:order] == nil
+    
     @order = session[:order]
     redirect_to :action => 'index' and return if @order == nil || @order.paypal_token != params[:token]
 
@@ -178,6 +181,8 @@ class Store::OrderController < ApplicationController
   end
 
   def purchase_paypal
+    render :action => 'no_order', :layout => 'error' and return if session[:order] == nil
+
     @order = session[:order]
     @order.attributes = params[:order]
 
@@ -200,10 +205,12 @@ class Store::OrderController < ApplicationController
   before_filter :check_completed_order, :only => [:thankyou, :receipt]
 
   def thankyou
+    render :action => 'no_order', :layout => 'error' and return if session[:order] == nil
     @order = session[:order]
   end
 
   def receipt
+    render :action => 'no_order', :layout => 'error' and return if session[:order] == nil
     @order = session[:order]
     @print = true
     render :partial => 'receipt'
