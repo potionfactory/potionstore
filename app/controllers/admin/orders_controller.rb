@@ -2,7 +2,7 @@ class Admin::OrdersController < ApplicationController
 
   layout "admin"
 
-  before_filter :check_authentication
+  before_filter :redirect_to_ssl, :check_authentication
 
   # GET /orders
   # GET /orders.xml

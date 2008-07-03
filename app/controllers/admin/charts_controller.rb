@@ -1,6 +1,6 @@
 class Admin::ChartsController < ApplicationController
 
-  before_filter :check_authentication
+  before_filter :redirect_to_ssl, :check_authentication
 
   def revenue_history_days
     # NOTE: mysql uses year, month, and day functions instead of date_part

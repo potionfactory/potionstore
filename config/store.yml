@@ -27,3 +27,13 @@ lost_license_sent_notification_recipient_email: "info@mycompany.com"
 
 crash_report_sender_email: "bugs@mycompany.com"
 crash_report_recipient_email: "bugs@mycompany.com"
+
+# Using SSL?
+#
+# Turning this on redirects most requests that come in through http to https
+# In addition, if you're using Apache, you might need to add the following
+# to its SSL configuration:
+#
+#		RequestHeader set X_FORWARDED_PROTO 'https'
+#
+redirect_to_ssl: true

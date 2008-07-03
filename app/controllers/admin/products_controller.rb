@@ -1,7 +1,7 @@
 class Admin::ProductsController < ApplicationController
   layout "admin"
 
-  before_filter :check_authentication
+  before_filter :redirect_to_ssl, :check_authentication
 
   # GET /products
   # GET /products.xml

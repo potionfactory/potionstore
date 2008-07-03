@@ -4,6 +4,7 @@ class AdminController < ApplicationController
   :redirect_to => { :action => :list }
 
   # Authentication stuff
+  before_filter :redirect_to_ssl
   before_filter :check_authentication, :except => [:login]
 
   def login

@@ -13,6 +13,13 @@ class ApplicationController < ActionController::Base
       redirect_to :controller => "/admin", :action => "login"
     end
   end
+
+  def redirect_to_ssl
+    if is_live() && $STORE_PREFS['redirect_to_ssl']
+      redirect_to :protocol => "https://" unless (request.ssl? or local_request?)
+    end
+  end
+
 end
 
 
@@ -22,7 +29,7 @@ def is_live
 end
 
 
-# Load username and password for admin user
+# Load store preferences
 def load_store_prefs
   app_root = File.dirname(__FILE__) + '/../..'
   config_dir = app_root + '/config/'

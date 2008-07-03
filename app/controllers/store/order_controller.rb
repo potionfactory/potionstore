@@ -4,12 +4,6 @@ class Store::OrderController < ApplicationController
 
   before_filter :redirect_to_ssl
   
-  def redirect_to_ssl
-    if is_live()
-      redirect_to :protocol => "https://" unless (request.ssl? or local_request?)
-    end
-  end
-  
   def index
     new
     render :action => 'new'
