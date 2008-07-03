@@ -4,7 +4,7 @@ class EmailController < ApplicationController
                                        params["crashlog"])
     render :text => ''
   end
-  
+
   def support_request
   	SupportMailer.deliver_support_request(params)
     render :text => ''

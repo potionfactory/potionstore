@@ -16,7 +16,7 @@ first:
   country:  "US"
   payment_type: "Visa"
   ccnum: "XXXXXXXXXXXXXXXX3456"
-  comment: "Don't call" 
+  comment: "Don't call"
   failure_code: 0
   failure_reason: ""
   transaction_number: "012123AAAAJDHHDGUTQWQOOA1"
@@ -38,8 +38,7 @@ taxed:
   country:  "US"
   payment_type: "Visa"
   ccnum: "XXXXXXXXXXXXXXXX3456"
-  comment: "Don't call" 
+  comment: "Don't call"
   failure_code: 0
   failure_reason: ""
   transaction_number: "012124AAAAJDHHDGUTQWQOOA1"
-  

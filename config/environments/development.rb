@@ -17,7 +17,7 @@ config.action_view.debug_rjs                         = true
 config.action_mailer.raise_delivery_errors = true
 
 config.action_mailer.smtp_settings = {
-  :address => "localhost", 
+  :address => "localhost",
   :port => 25,
   :domain => "localhost"
 }

@@ -80,7 +80,7 @@ class AdminProductsControllerTest < Test::Unit::TestCase
     }
 
     LineItem.destroy_all
-    
+
     post :destroy, {:id => @first_id}, {:logged_in => true}
     assert_response :redirect
     assert_redirected_to :controller => 'admin/products', :action => 'index'

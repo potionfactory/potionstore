@@ -3,11 +3,11 @@ first:
   id: 1
   code: "RAILS_TEST1"
   description: "Test Coupon NOT FOR REDEMPTION"
-  coupon: "Test 1"      
+  coupon: "Test 1"
   product_code: "TEST1"
   amount: 0.00
-  percentage: 0  
-  used_count: 0  
+  percentage: 0
+  used_count: 0
   use_limit:  1
   creation_time: "2007-01-01 00:00:00+08:00"
   numdays: 365
@@ -15,11 +15,11 @@ expired:
   id: 2
   code: "RAILS_TEST2"
   description: "Test Coupon NOT FOR REDEMPTION, should already be expired"
-  coupon: "Test 2"      
+  coupon: "Test 2"
   product_code: "TEST2"
   amount: 5.00
-  percentage: 0  
-  used_count: 0  
+  percentage: 0
+  used_count: 0
   use_limit:  1
   creation_time: "2006-01-01 00:00:00+08:00"
   numdays: 365

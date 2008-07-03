@@ -1,18 +1,18 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 first:
   code: "TEST1"
-  name: "Test product 1"          
-  price: 100             
-  image_path: ""        
-  url:        ""        
-  download_url: ""      
+  name: "Test product 1"
+  price: 100
+  image_path: ""
+  url:        ""
+  download_url: ""
   license_url_scheme: "x-test-product-fixture"
   active: 1
 second:
   code: "TEST2"
-  name: "Test product 2"          
-  price: 150  
-  image_path: ""        
-  url:        ""        
-  download_url: ""      
+  name: "Test product 2"
+  price: 150
+  image_path: ""
+  url:        ""
+  download_url: ""
   license_url_scheme: "x-test-product-fixture"

@@ -23,7 +23,7 @@ development:
 
 # Follow steps 4 to 11 but with your real PayPal account.
 # NOTE: Your PayPal account must have Website Payments Pro already for this to work.
-  
+
 # Live settings
 production:
   api_username: "XXXXXXXXXXXXXXXXXXXXXXXXXXX"

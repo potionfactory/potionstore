@@ -19,7 +19,7 @@ HELP_VALUES['#order_cc_year'] = 'yy';
 HELP_VALUES['#order_company'] = 'optional';
 HELP_VALUES['#order_address2'] = 'optional';
 HELP_VALUES['#order_comment'] = 'optional';
-	
+
 function determine_cc_type(cc_number) {
 	if (cc_number.length < 1) return null;
 	switch (true) {
@@ -30,9 +30,9 @@ function determine_cc_type(cc_number) {
 		else return 'Amex';
 	case (cc_number[0] == '4'):
 		return 'Visa';
-	case (cc_number[0] == '5'): 
+	case (cc_number[0] == '5'):
 		return 'MasterCard';
-	case (cc_number[0] == '6'): 
+	case (cc_number[0] == '6'):
 		return 'Discover';
 	}
 }
@@ -49,7 +49,7 @@ function choose_cc() {
 		input = $('#'+card_types[i]).get(0);
 		image = $('#'+card_types[i]).next().get(0);
  		input.style.display = "none";
-		
+
 		if (card_types[i] == cc_type) {
 			image.style.opacity = 1;
 			image.style.filter="alpha(opacity=100)"; // for stupid IE
@@ -181,13 +181,13 @@ $(document).ready(function(){
     <p id="cards"><span>Card Type:</span>
 	<input id="Visa" type="radio" name="order[payment_type]" value="Visa" checked="checked" />
 	<img src="/images/store/visa.gif" alt="Visa" onclick="select_cc('Visa')"/>
-	
+
 	<input id="MasterCard" type="radio" name="order[payment_type]" value="MasterCard"/>
 	<img src="/images/store/mc.gif" alt="MasterCard" onclick="select_cc('MasterCard')" />
-	
+
 	<input id="Amex" type="radio" name="order[payment_type]" value="Amex" />
 	<img src="/images/store/amex.gif" alt="Amex" onclick="select_cc('Amex')" />
-	
+
 	<input id="Discover" type="radio" name="order[payment_type]" value="Discover" />
 	<img src="/images/store/discover.gif" alt="Discover" onclick="select_cc('Discover')" />
     </p>
