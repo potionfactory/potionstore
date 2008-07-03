@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to_ssl
-    if is_live() && $STORE_PREFS['redirect_to_ssl']
+    if is_live?() && $STORE_PREFS['redirect_to_ssl']
       redirect_to :protocol => "https://" unless (request.ssl? or local_request?)
     end
   end
@@ -24,7 +24,7 @@ end
 
 
 # Convenience global function to check if we're running in production mode
-def is_live
+def is_live?
   return ENV['RAILS_ENV'] == 'production'
 end
 
@@ -83,7 +83,7 @@ if $STORE_PREFS['allow_google_checkout']
       
       $GCHECKOUT_FRONTEND = Google4R::Checkout::Frontend.new(:merchant_id => y['gcheckout_merchant_id'],
                                                              :merchant_key => y['gcheckout_merchant_key'],
-                                                             :use_sandbox => !is_live())
+                                                             :use_sandbox => !is_live?())
 
       $GCHECKOUT_FRONTEND.tax_table_factory = TaxTableFactory.new
     else

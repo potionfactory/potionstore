@@ -84,7 +84,7 @@ class Store::OrderController < ApplicationController
     # credit card order
 
     # put in a dummy credit card number for testing
-    @order.cc_number = '4916306176169494' if not is_live()
+    @order.cc_number = '4916306176169494' if not is_live?()
 
     render :action => 'payment_cc'
   end
@@ -231,7 +231,7 @@ class Store::OrderController < ApplicationController
     if success
       session[:order] = @order
       redirect_to :action => 'thankyou'
-      OrderMailer.deliver_thankyou(@order) if is_live()
+      OrderMailer.deliver_thankyou(@order) if is_live?()
     else
       render :action => 'failed', :layout => 'error'
     end

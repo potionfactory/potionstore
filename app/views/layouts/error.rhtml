@@ -38,7 +38,7 @@
 			</center>
 		</div>
 	</div>
-	<% if is_live() && $STORE_PREFS['google_analytics_account'] != "" -%>
+	<% if is_live?() && $STORE_PREFS['google_analytics_account'] != "" -%>
 	<script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		_uacct = "<%=$STORE_PREFS['google_analytics_account']%>";
