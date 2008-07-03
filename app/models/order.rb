@@ -48,7 +48,7 @@ COUNTRY_MAPPING = {
   "ZM" => "Zambia"
 }
 
- 
+
 class Order < ActiveRecord::Base
   has_many :line_items
   belongs_to :coupon
@@ -57,7 +57,7 @@ class Order < ActiveRecord::Base
   attr_accessor :paypal_token, :paypal_payer_id
   attr_accessor :skip_cc_validation
   attr_writer :promo_coupons
-  
+
   validates_presence_of :payment_type
 
   def validate
@@ -86,7 +86,7 @@ class Order < ActiveRecord::Base
       errors.add('licensee_name', msg= 'must be at least 8 characters long')
     end
   end
-  
+
   def total
     return round_money(total_before_applying_coupons() - coupon_amount())
   end
@@ -120,7 +120,7 @@ class Order < ActiveRecord::Base
       return round_money(total_before_applying_coupons() * (coupon.percentage / 100.0))
     end
     return 0
-  end    
+  end
 
   def volume_discount_total
     total = self.total()
@@ -148,7 +148,7 @@ class Order < ActiveRecord::Base
       end
     end
   end
-  
+
   def country_name
     return COUNTRY_MAPPING[self.country]
   end
@@ -313,7 +313,7 @@ class Order < ActiveRecord::Base
     return @promo_coupons if @promo_coupons
     return []
   end
-  
+
   # Create new coupons that pertain to this order and return it
   def add_promo_coupons
     self.promo_coupons = []
@@ -388,14 +388,14 @@ class Order < ActiveRecord::Base
     ip_address = request.env['REMOTE_ADDR']
     ip_address = ip_address.split(',')[0] if ip_address.count(",") != 0
     ip_address = "127.0.0.1" if ip_address == "::1"
-    
+
     cc_year = self.cc_year.to_s
     if cc_year.length == 2
       cc_year = '20' + cc_year
     elsif cc_year.length == 1
       cc_year = '200' + cc_year
     end
-    
+
     res = Paypal.directcharge(:firstName => self.first_name,
                               :lastName => self.last_name,
                               :ip => ip_address,
@@ -468,7 +468,7 @@ class Order < ActiveRecord::Base
     end
   end
 
-  
+
   # Google Checkout related methods
   def send_to_google_checkout(edit_cart_url = nil)
     command = $GCHECKOUT_FRONTEND.create_checkout_command

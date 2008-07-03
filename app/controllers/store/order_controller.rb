@@ -3,7 +3,7 @@ class Store::OrderController < ApplicationController
   layout "store"
 
   before_filter :redirect_to_ssl
-  
+
   def index
     new
     render :action => 'new'
@@ -98,15 +98,15 @@ class Store::OrderController < ApplicationController
 
     if session[:order] != nil && session[:order].status == 'C'
       @order = session[:order]
-      render :action => 'failed', :layout => 'error' and return      
+      render :action => 'failed', :layout => 'error' and return
     end
 
     # We need the next two ugly lines because Safari's autofill sucks
     params[:order][:address1] = params[:address1]
     params[:order][:address2] = params[:address2]
-    
+
     params[:order].keys.each { |x| params[:order][x] = params[:order][x].strip if params[:order][x] != nil }
-    
+
     @order = Order.new(params[:order])
 
     # the order in the session is a bogus temporary one
@@ -146,13 +146,13 @@ class Store::OrderController < ApplicationController
 
   def confirm_paypal
     render :action => 'no_order', :layout => 'error' and return if session[:order] == nil
-    
+
     @order = session[:order]
     redirect_to :action => 'index' and return if @order == nil || @order.paypal_token != params[:token]
 
     # Suck the info from PayPal
     res = Paypal.express_checkout_details(:token => @order.paypal_token)
-    
+
     if res.ack != 'Success' && res.ack != 'SuccessWithWarning'
       flash[:notice] = 'Could not retrieve order information from PayPal'
       redirect_to :action => 'index' and return
@@ -183,14 +183,14 @@ class Store::OrderController < ApplicationController
     render :action => 'failed', :layout => 'error' and return if @order.status != 'P'
 
     @order.order_time = Time.now()
-    
+
     if not @order.save()
       flash[:error] = 'Please fill out all fields'
       render :action => 'confirm_paypal' and return
     end
 
     success = @order.paypal_express_checkout_payment()
-    
+
     finish_order(success)
   end
 

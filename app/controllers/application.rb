@@ -80,7 +80,7 @@ if $STORE_PREFS['allow_google_checkout']
       # Save the merchant id and key. It gets used in notification_controller for authenticating Google's notifications
       $STORE_PREFS['gcheckout_merchant_id'] = y['gcheckout_merchant_id']
       $STORE_PREFS['gcheckout_merchant_key'] = y['gcheckout_merchant_key']
-      
+
       $GCHECKOUT_FRONTEND = Google4R::Checkout::Frontend.new(:merchant_id => y['gcheckout_merchant_id'],
                                                              :merchant_key => y['gcheckout_merchant_key'],
                                                              :use_sandbox => !is_live?())

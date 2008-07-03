@@ -82,7 +82,7 @@ $(document).ready(function(){
     form_onsubmit = "javascript:return validate();"
   end
 -%>
-   
+
 <% form_tag({:action => "purchase"}, {:onsubmit => form_onsubmit}) do -%>
 
 <% for item in @order.line_items -%>

@@ -14,7 +14,7 @@
   coupons = @order.promo_coupons
   vc_coupons = coupons.compact()
   vc_coupons.reject!{|x| x.product_code != 'vc'}
-	 
+
 -%>
 <h1>Thank You</h1>
 
@@ -74,7 +74,7 @@
 <% if is_live?() && $STORE_PREFS['google_analytics_account'] != "" -%>
 <!-- Google Analytics Transaction Tracking -->
 <form style="display:none;" name="utmform">
-<% 
+<%
 =begin
 Format for the textarea field:
 
@@ -89,7 +89,7 @@ UTM:I|<%=@order.id %>|<%=item.product.code %>|<%=item.product.name %>||<%=item.u
 <% end -%>
 </textarea>
 </form>
-<script type="text/javascript"> 
-__utmSetTrans(); 
+<script type="text/javascript">
+__utmSetTrans();
 </script>
 <% end -%>

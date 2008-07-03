@@ -25,14 +25,14 @@ class Store::NotificationController < ApplicationController
 
     # Authenticated. Parse the xml now
     notification = XmlSimple.xml_in(request.raw_post, 'KeepRoot' => true, 'ForceArray' => false)
-      
+
     notification_name = notification.keys[0]
     notification_data = notification[notification_name]
 
     case notification_name
     when 'new-order-notification'
       process_new_order_notification(notification_data)
-      
+
     when 'charge-amount-notification'
       process_charge_amount_notification(notification_data)
     # Ignore the other notifications
@@ -48,7 +48,7 @@ class Store::NotificationController < ApplicationController
     order = Order.find(Integer(n['shopping-cart']['merchant-private-data']['order-id']))
 
     return if order == nil or order.payment_type != 'Google Checkout'
-    
+
     ba = n['buyer-billing-address']
 
     words = ba['contact-name'].split(' ')
@@ -70,7 +70,7 @@ class Store::NotificationController < ApplicationController
     order.country  = _xmlval(ba, 'country-code')
     order.zipcode  = _xmlval(ba, 'postal-code')
     order.state    = _xmlval(ba, 'region')
-    
+
     order.transaction_number = n['google-order-number']
 
     order.save()
@@ -92,5 +92,5 @@ class Store::NotificationController < ApplicationController
 
     order.send_to_google_archive_order_command()
   end
-  
+
 end

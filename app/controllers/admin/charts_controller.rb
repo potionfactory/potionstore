@@ -27,7 +27,7 @@ class Admin::ChartsController < ApplicationController
 
     labels = []
     data = []
-    
+
     0.upto(limit-1) {
       labels << ''
       data << 0
@@ -69,14 +69,14 @@ class Admin::ChartsController < ApplicationController
 
     labels = []
     data = []
-    
+
     0.upto(limit-1) {
       labels << ''
       data << 0
     }
 
     today = Date.today
-    
+
     query_results.each {|x|
       weeks_ago = today.cweek - x['week'].to_i
       xindex = -weeks_ago + limit-1
@@ -86,10 +86,10 @@ class Admin::ChartsController < ApplicationController
       labels[xindex] = x['week']
       data[xindex] = revenue
     }
-    
+
     g = new_chart(data, labels)
     g.set_x_label_style(10, '#000000', 0, 2)
-    
+
     render :text => g.render
   end
 
@@ -116,7 +116,7 @@ class Admin::ChartsController < ApplicationController
 
     labels = []
     data = []
-    
+
     0.upto(limit-1) {
       labels << ''
       data << 0
@@ -130,10 +130,10 @@ class Admin::ChartsController < ApplicationController
       labels[xindex] = "#{x['month']}/#{x['year']}"
       data[xindex] = revenue
     }
-    
+
     g = new_chart(data, labels)
     g.set_x_label_style(10, '#000000', 0, 2)
-    
+
     render :text => g.render
   end
 
@@ -154,7 +154,7 @@ class Admin::ChartsController < ApplicationController
     else
       g.set_y_max((data.max.to_f/100).ceil * 100)
     end
-    
+
     g.set_y_label_steps(5)
 
     g.instance_variable_set :@y_axis_color, '#AAAAAA'
@@ -163,7 +163,7 @@ class Admin::ChartsController < ApplicationController
     g.instance_variable_set :@x_grid_color, '#FFFFFF'
 
     g.set_tool_tip('#x_label#<br>$#val#');
-    
+
     return g
   end
 end

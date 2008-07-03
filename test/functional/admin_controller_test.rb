@@ -29,7 +29,7 @@ class AdminControllerTest < Test::Unit::TestCase
     post :login, {
        :username => $STORE_PREFS['admin_username'],
        :password => $STORE_PREFS['admin_password']}
-       
+
     assert_redirected_to :action => 'index'
   end
 

@@ -78,7 +78,7 @@ class AdminController < ApplicationController
     @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_months')
     render :partial =>  "revenue_history"
   end
-  
+
   # Coupon actions
   def generate_coupons
     if params[:form]
@@ -259,7 +259,7 @@ class AdminController < ApplicationController
     # for the remaining days of the current month and the next 365 days
     today = Date.today
     days_in_current_month = Date.civil(today.year, today.month, -1).day
-    
+
     if result != nil and result.length > 0
       @month_estimate = last_n_days_revenue(today.day).to_f + daily_avg * (days_in_current_month - today.day)
       @year_estimate = daily_avg * 365

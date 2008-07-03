@@ -4,7 +4,7 @@ require 'order_mailer'
 class OrderMailerTest < Test::Unit::TestCase
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   CHARSET = "utf-8"
-  
+
   fixtures :orders, :products, :line_items
   include ActionMailer::Quoting
 
@@ -16,18 +16,18 @@ class OrderMailerTest < Test::Unit::TestCase
     @expected = TMail::Mail.new
     @expected.set_content_type "text", "plain", { "charset" => CHARSET }
   end
-  
-  def test_thankyou    
+
+  def test_thankyou
     @actual = OrderMailer.create_thankyou(orders(:first))
-    
-    #From: is correct 
+
+    #From: is correct
     assert_equal(@actual.header['from'].to_s,$STORE_PREFS['purchase_receipt_sender_email'])
-    #To: is correct 
+    #To: is correct
    assert_equal(@actual.header['to'].to_s,orders(:first).email)
-    
+
     #Make sure we're polite
     assert(@actual.body.match(/thank you/i))
-    
+
   end
 
   def test_truth

@@ -9,7 +9,7 @@ class Coupon < ActiveRecord::Base
   def expired?
     (self.used_count >= self.use_limit) || (self.numdays != 0 && self.creation_time + self.numdays.days < Time.now)
   end
-    
+
   private
   def random_string_of_length(len)
     chars = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a

@@ -10,9 +10,9 @@ will be sent by email.
 <% if flash[:notice] -%>
 <h3 style="color:red"><%= flash[:notice] %></h3>
 <% end -%>
-  
+
 <div style="margin-top:40px"></div>
-  
+
 <div>
   Email address: <%= text_field_tag 'email', @email, :size => 40 %>
   <%= submit_tag 'Submit' %>

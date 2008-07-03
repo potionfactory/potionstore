@@ -2,7 +2,7 @@
 
 <% form_tag :action => "generate_coupons" do -%>
 
-<table class="form">	
+<table class="form">
 	<tr>
 		<td># to Generate:</td>
 		<td><%= text_field 'form', 'quantity', 'value' => '1' %></td>
@@ -43,7 +43,7 @@
 		<td><%= submit_tag 'Generate Coupons' %></td>
 	</tr>
 </table>
-	
+
 <% end -%>
 
 <% if @coupons -%>
