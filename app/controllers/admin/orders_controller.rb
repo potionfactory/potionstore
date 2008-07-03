@@ -123,7 +123,7 @@ class Admin::OrdersController < ApplicationController
 
   def send_emails
     @order = Order.find(params[:id])
-    OrderMailer.deliver_thankyou(@order) # if is_live()
+    OrderMailer.deliver_thankyou(@order)
     redirect_to :action => 'show', :id => @order.id
   end
 

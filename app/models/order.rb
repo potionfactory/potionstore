@@ -384,9 +384,7 @@ class Order < ActiveRecord::Base
 
   # PayPal related methods
   def paypal_directcharge(request)
-    #    return true if not is_live()
-
-    # The following is needed because MediaTemple puts in two ip addresses in the REMOTE_ADDR for some reason
+    # The following is needed because MediaTemple puts in two ip addresses in REMOTE_ADDR for some reason
     ip_address = request.env['REMOTE_ADDR']
     ip_address = ip_address.split(',')[0] if ip_address.count(",") != 0
     ip_address = "127.0.0.1" if ip_address == "::1"

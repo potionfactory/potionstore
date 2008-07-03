@@ -71,7 +71,7 @@
     The contents of this page are being sent to you by email.
 </p>
 
-<% if is_live() && $STORE_PREFS['google_analytics_account'] != "" -%>
+<% if is_live?() && $STORE_PREFS['google_analytics_account'] != "" -%>
 <!-- Google Analytics Transaction Tracking -->
 <form style="display:none;" name="utmform">
 <% 

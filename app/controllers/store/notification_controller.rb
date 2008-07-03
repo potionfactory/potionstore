@@ -88,7 +88,7 @@ class Store::NotificationController < ApplicationController
 
     order.status = 'C'
     order.finish_and_save()
-    OrderMailer.deliver_thankyou(order) if is_live()
+    OrderMailer.deliver_thankyou(order) if is_live?()
 
     order.send_to_google_archive_order_command()
   end

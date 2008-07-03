@@ -35,7 +35,7 @@ class SupportMailer < ActionMailer::Base
   end
 
   def crash_report(product, report)
-    if is_live()
+    if is_live?()
       subject "#{product} Crash Report"
     else
       subject "#{product} Crash Report (this is a test)"
