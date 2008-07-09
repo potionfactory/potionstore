@@ -77,6 +77,7 @@ Internaly used function
     
     # run ruby with -d to see SOAP wiredumps.
     client.wiredump_dev = STDERR if $DEBUG
+    client.wiredump_dev = STDERR if @wiredump == "true"
     return client
   end
 
