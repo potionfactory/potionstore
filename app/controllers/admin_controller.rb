@@ -169,7 +169,7 @@ class AdminController < ApplicationController
 
     # helper function
     def last_n_days_sql(days)
-      # NOTE: mysql should use IFNULL instead of COALESCE
+      # NOTE: Older mysql should use IFNULL instead of COALESCE
       return "
         select (select count(*)
                   from orders
