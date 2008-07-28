@@ -13,6 +13,8 @@ ActionController::Routing::Routes.draw do |map|
   # -- just remember to delete public/index.html.
   map.connect 'store', :controller => "store/order"
   map.connect '', :controller => "store/order"
+  map.resource 'order', :path_prefix => 'store', :controller => 'store/order'
+  map.resources 'products', :path_prefix => 'store', :controller => 'store/products'
 
   # admin stuff
   map.resources :products, :path_prefix => 'admin', :controller => 'admin/products'

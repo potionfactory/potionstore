@@ -93,6 +93,39 @@ class Store::OrderController < ApplicationController
     redirect_to :action => 'index'
   end
 
+  def create
+    if params[:order] == nil
+      render :json => '["What?"]', :status => :unprocessable_entity and return
+    end
+
+#     if session[:order] != nil && session[:order].status == 'C'
+#       @order = session[:order]
+#       render :xml => @order.to_xml(:include => [:line_items]) and return
+#     end
+
+    @order = Order.new(params[:order])
+
+    session[:order] = @order
+    session[:items] = nil
+
+    if not @order.save()
+      render :json => @order.errors.full_messages.to_json, :status => :unprocessable_entity and return
+    end
+
+    # Actually send out the payload
+    if @order.cc_order?
+      # TODO: make sure to switch this back on
+      success = @order.paypal_directcharge(request)
+      @order.status = success ? 'C' : 'F'
+      if success
+        @order.finish_and_save()
+        render :json => @order.to_json(:include => [:line_items])
+      else
+        render :json => @order.errors.full_messages.to_json, :status => :unprocessable_entity and return
+      end
+    end
+  end
+
   def purchase
     redirect_to :action => 'index' and return unless params[:order] && params[:items]
 
@@ -231,7 +264,6 @@ class Store::OrderController < ApplicationController
     if success
       session[:order] = @order
       redirect_to :action => 'thankyou'
-      OrderMailer.deliver_thankyou(@order) if is_live?()
     else
       render :action => 'failed', :layout => 'error'
     end

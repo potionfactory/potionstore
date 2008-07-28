@@ -56,9 +56,22 @@ class Order < ActiveRecord::Base
   attr_accessor :cc_code, :cc_month, :cc_year
   attr_accessor :paypal_token, :paypal_payer_id
   attr_accessor :skip_cc_validation
+  attr_accessor :email_receipt_when_finishing
   attr_writer :promo_coupons
 
   validates_presence_of :payment_type
+
+  def initialize(attributes = {}, form_items = [])
+    if attributes[:items]
+      form_items = attributes[:items]
+      attributes.delete(:items)
+    end
+    super(attributes)
+    if form_items.length > 0
+      self.add_form_items(form_items)
+    end
+    self.order_time = Time.now()
+  end
 
   def validate
     ## Validate credit card order
@@ -208,6 +221,13 @@ class Order < ActiveRecord::Base
 
   def complete?
     return self.status == 'C'
+  end
+
+  def status=(new_status)
+    if self.status == 'P' && new_status == 'C'
+      self.email_receipt_when_finishing = true
+    end
+    write_attribute(:status, new_status)
   end
 
   def status_description
@@ -387,8 +407,11 @@ class Order < ActiveRecord::Base
     end
 
     self.save()
-  end
 
+    if self.email_receipt_when_finishing
+      OrderMailer.deliver_thankyou(@order) if is_live?()
+    end
+  end
 
   # PayPal related methods
   def paypal_directcharge(request)
@@ -467,6 +490,8 @@ class Order < ActiveRecord::Base
       if res.respond_to? 'cVV2Code'
         self.failure_reason += "\nThe card security code did not match." if res.cVV2Code == 'N'
       end
+
+      self.errors.add_to_base(self.failure_reason)
 
       # The 127 limit comes from the schema.
       # TODO: figure out a way to get the limit from the db schema
