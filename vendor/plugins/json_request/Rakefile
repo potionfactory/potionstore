@@ -1,0 +1,20 @@
+require 'rake'
+require 'rake/rdoctask'
+require 'rake/testtask'
+
+desc 'Run all tests by default'
+task :default =>:test
+
+Rake::TestTask.new do |test|
+  test.libs << "test"
+  test.pattern = 'test/*_test.rb'
+  test.verbose = true
+  test.warning = false
+end
+
+desc 'Generate RDoc'
+Rake::RDocTask.new do |rdoc|
+  rdoc.rdoc_dir = '../doc/output/rdoc-rails'
+  rdoc.options << '--title' << 'json_request' << '--line-numbers' << '--inline-source' << '--main' << 'json_request'
+  rdoc.rdoc_files.include('README', 'MIT-LICENSE', 'lib/**/*.rb')
+end

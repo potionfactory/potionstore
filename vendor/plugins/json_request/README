@@ -1,0 +1,31 @@
+The plugin adds a MIME parser that parses requests with the content type
+application/json, and maps them to a request parameter using the controller
+name as guidance.
+
+  class ItemsController < ApplicationController 
+
+    def show
+      respond_to do |format|
+        format.json :json=>@item
+        format.xml  :xml=>@item
+      end
+    end
+
+    def update
+      @item.update_attributes! params[:item]
+      show
+    end
+
+  end
+
+It works the same way whether you feed it an XML document, JSON object, or
+URL-encoded parameters.
+
+Since the JSON object is not annotated, it figures out the parameter name based
+on the controller name, in this case ItemsController becomes item. If you
+prefer a different name, add this line to your controller:
+
+  json_request :itemz 
+
+The json_request method adds a filter and can take the only and except options,
+if you need to limit it to specific actions. 
