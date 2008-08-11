@@ -1,12 +1,5 @@
 <script type="text/javascript">
 
-function validate() {
-	choose_cc();
-	setup_help_values();
-	$('#submit').get(0).disabled = true;
-	return true;
-}
-
 function reset() {
 	$('#submit').get(0).disabled = false;
 	choose_cc();
@@ -86,6 +79,15 @@ $(document).ready(function(){
 	$('#order_address2').blur( function() { setup_help_value('#order_address2'); });
 	$('#order_comment').focus( function() { setup_help_value('#order_comment'); });
 	$('#order_comment').blur(  function() { setup_help_value('#order_comment'); });
+
+	$('#purchase').validate({
+		submitHandler: function (form) {
+			choose_cc();
+			setup_help_values();
+			$('#submit').get(0).disabled = true;
+			form.submit();
+		}
+	});
 });
 
 </script>
@@ -134,7 +136,7 @@ $(document).ready(function(){
     </tr>
 </table>
 
-<% form_tag({:action => "purchase"}, {:onsubmit => "javascript:return validate();"}) do -%>
+<% form_tag({:action => "purchase"}, {:id => "purchase"}) do -%>
 
 <% for item in @order.line_items -%>
 <%= hidden_field "items", String(item.product_id), :value=> item.quantity -%>
@@ -170,7 +172,7 @@ $(document).ready(function(){
 		<label><span>Country:</span><%= render :partial => "form_countries" %></label>
     </p>
 	<p>
-		<label><span>Email:</span><%= text_field "order", "email"  %></label>
+		<label><span>Email:</span><div><%= text_field "order", "email", :class => "required email" %></div></label>
 	</p>
 </div>
 
@@ -192,12 +194,12 @@ $(document).ready(function(){
 	<img src="/images/store/discover.gif" alt="Discover" onclick="select_cc('Discover')" />
     </p>
 
-    <p><label><span>Credit Card Number:</span><%= text_field 'order', 'cc_number', :size=>24 %></label></p>
+    <p><label><span>Credit Card Number:</span><%= text_field "order", "cc_number", :size=>24, :class => "required creditcard" %></label></p>
 
     <p id="ccexp">
         <label><span>Expiration Date:</span>
-		<%= text_field 'order', 'cc_month', :maxlength => 2 %></label>/<%= text_field 'order', 'cc_year', :maxlength=>2 %>
-		<label>CSC: <%= text_field 'order', 'cc_code', :size => 4 %></label>
+		<%= text_field "order", "cc_month", :maxlength => 2 %></label>/<%= text_field "order", "cc_year", :maxlength=>2 %>
+		<label>CSC: <%= text_field "order", "cc_code", :size =>4 %></label>
         <img src="/images/store/cvv.png" alt="CVV" style="vertical-align:middle;position:relative; top:-2px;"/>
     </p>
 </div>
@@ -207,7 +209,7 @@ $(document).ready(function(){
 <div class="narrow">
 	<h2>Almost There</h2>
 	<p><label><span>Name on License:</span> <%= text_field "order", "licensee_name" %></label></p>
-	<p><label><span>Comment:</span><%= text_field 'order', 'comment' %></label></p>
+	<p><label><span>Comment:</span><%= text_field "order", "comment" %></label></p>
 	<p><span>&nbsp;</span><label><input type="checkbox" name="subscribe" value="checked"/>
         Keep me updated with <%=$STORE_PREFS['company_name']%> news.</label></p>
 </div>
