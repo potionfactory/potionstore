@@ -216,6 +216,14 @@ div.fieldWithErrors
     display:inline;
 }
 
+/* jQuery Validate plugin error labels */
+label.error
+{
+	margin:5px 0 0 137px;
+	color:red;
+	font-size:8pt;
+}
+
 /* -------------------------------------------------------------------------------- */
 /* Thank you page */
 
