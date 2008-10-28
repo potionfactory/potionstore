@@ -18,7 +18,6 @@ class Store::NotificationController < ApplicationController
     my_auth_key = Base64.encode64($STORE_PREFS['gcheckout_merchant_id'] + ':' + $STORE_PREFS['gcheckout_merchant_key']).strip()
     http_auth = request.headers['HTTP_AUTHORIZATION']
     if http_auth.nil? || http_auth.split(' ')[0] != 'Basic' || http_auth.split(' ')[1] != my_auth_key then
-      debugger
       logger.warn('Got unauthorized Google Checkout notification')
       render :text => 'Unauthorized', :status => 401 and return
     end
