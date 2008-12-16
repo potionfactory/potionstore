@@ -141,7 +141,7 @@ class Order < ActiveRecord::Base
 
   def licensee_name=(new_name)
     regenerate_keys = (self.licensee_name != new_name)
-    write_attribute(:licensee_name, new_name)
+    write_attribute(:licensee_name, new_name.strip())
     if regenerate_keys
       for item in self.line_items
         item.license_key = item.generate_license_key
@@ -151,6 +151,14 @@ class Order < ActiveRecord::Base
 
   def country_name
     return COUNTRY_MAPPING[self.country]
+  end
+
+  def first_name=(value)
+    write_attribute(:first_name, value.strip())
+  end
+
+  def last_name=(value)
+    write_attribute(:last_name, value.strip())
   end
 
   def name
