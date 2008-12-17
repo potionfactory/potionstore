@@ -14,7 +14,7 @@ class Store::OrderController < ApplicationController
          :redirect_to => { :action => :list }
 
   def new
-    session[:order] = nil
+    session[:order_id] = nil
     @qty = {}
     @payment_type = session[:payment_type]
     @products = Product.find(:all, :conditions => {:active => 1})
@@ -28,7 +28,7 @@ class Store::OrderController < ApplicationController
   end
 
   def payment
-    session[:order] = nil
+    session[:order_id] = nil
     redirect_to :action => 'index' and return if !params[:items]
     @order = Order.new
     session[:payment_type] = params[:payment_type]
@@ -69,7 +69,11 @@ class Store::OrderController < ApplicationController
       if res.ack == 'Success' || res.ack == 'SuccessWithWarning'
         # Need to copy the string. For some reason, it tries to render the payment action otherwise
         @order.paypal_token = String.new(res.token)
-        session[:order] = @order
+        if not @order.save()
+          flash[:notice] = 'Problem saving order'
+          redirect_to :action => 'index' and return
+        end
+        session[:order_id] = @order.id
         redirect_to Paypal.express_checkout_redirect_url(res.token) and return
       else
         flash[:notice] = 'Could not connect to PayPal'
@@ -99,14 +103,16 @@ class Store::OrderController < ApplicationController
     end
 
     # If there's a completed order in the session, just return that instead of charging twice
-    if session[:order] != nil && session[:order].status == 'C'
-      @order = session[:order]
-      render :json => @order.to_json(:include => [:line_items]) and return
+    if session[:order_id] != nil
+      @order = Order.find(session[:order_id])
+      if @order != nil && @order.status == 'C'
+        render :json => @order.to_json(:include => [:line_items]) and return
+      end
     end
 
     @order = Order.new(params[:order])
 
-    session[:order] = @order
+    session[:order_id] = @order.id
     session[:items] = nil
 
     if not @order.save()
@@ -130,12 +136,14 @@ class Store::OrderController < ApplicationController
   def purchase
     redirect_to :action => 'index' and return unless params[:order] && params[:items]
 
-    if session[:order] != nil && session[:order].status == 'C'
-      @order = session[:order]
-      render :action => 'failed', :layout => 'error' and return
+    if session[:order_id] != nil
+      @order = Order.find(session[:order_id])
+      if @order != nil && @order.status == 'C'
+        render :action => 'failed', :layout => 'error' and return
+      end
     end
 
-    # We need the next two ugly lines because Safari's autofill sucks
+    # We need the next two ugly lines because Safari's form autofill sucks
     params[:order][:address1] = params[:address1]
     params[:order][:address2] = params[:address2]
 
@@ -151,7 +159,7 @@ class Store::OrderController < ApplicationController
     end
 
     @order.order_time = Time.now()
-    session[:order] = @order
+    session[:order_id] = @order.id
     session[:items] = nil
 
     if not @order.save()
@@ -179,9 +187,9 @@ class Store::OrderController < ApplicationController
   end
 
   def confirm_paypal
-    render :action => 'no_order', :layout => 'error' and return if session[:order] == nil
+    render :action => 'no_order', :layout => 'error' and return if session[:order_id] == nil
 
-    @order = session[:order]
+    @order = Order.find(session[:order_id])
     redirect_to :action => 'index' and return if @order == nil || @order.paypal_token != params[:token]
 
     # Suck the info from PayPal
@@ -204,13 +212,19 @@ class Store::OrderController < ApplicationController
       @order.country = 'XX'
     end
     @order.payment_type = 'PayPal'
-    session[:order] = @order
+
+    if not @order.save()
+      flash[:error] = 'Problem saving order'
+      render :action => 'confirm_paypal' and return
+    end
+
+    session[:order_id] = @order.id
   end
 
   def purchase_paypal
-    render :action => 'no_order', :layout => 'error' and return if session[:order] == nil
+    render :action => 'no_order', :layout => 'error' and return if session[:order_id] == nil
 
-    @order = session[:order]
+    @order = Order.find(session[:order_id])
     @order.attributes = params[:order]
 
     redirect_to :action => 'index' and return if @order.paypal_token == nil
@@ -234,13 +248,13 @@ class Store::OrderController < ApplicationController
   def thankyou
     # no need to check for nil order in the session here.
     # check_completed_order is a before_filter for this method
-    @order = session[:order]
+    @order = Order.find(session[:order_id])
   end
 
   def receipt
     # no need to check for nil order in the session here.
     # check_completed_order is a before_filter for this method
-    @order = session[:order]
+    @order = Order.find(session[:order_id])
     @print = true
     render :partial => 'receipt'
   end
@@ -248,7 +262,8 @@ class Store::OrderController < ApplicationController
   ## Private methods
   private
   def check_completed_order
-    unless session[:order] && session[:order].complete?
+    @order = Order.find(session[:order_id])
+    unless @order && @order.complete?
       redirect_to :action => "index"
     end
   end
@@ -263,7 +278,7 @@ class Store::OrderController < ApplicationController
     @order.finish_and_save()
 
     if success
-      session[:order] = @order
+      session[:order_id] = @order.id
       redirect_to :action => 'thankyou'
     else
       render :action => 'failed', :layout => 'error'
