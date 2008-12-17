@@ -97,38 +97,48 @@ class Store::OrderController < ApplicationController
     redirect_to :action => 'index'
   end
 
+  # Accept orders from Cocoa storefront. It only works with JSON right now
   def create
     if params[:order] == nil
-      render :json => '["What?"]', :status => :unprocessable_entity and return
+      respond_to do |format|
+        format.json { render :json => '["Did not receive order"]', :status => :unprocessable_entity and return }
+      end
     end
 
     # If there's a completed order in the session, just return that instead of charging twice
     if session[:order_id] != nil
       @order = Order.find(session[:order_id])
       if @order != nil && @order.status == 'C'
-        render :json => @order.to_json(:include => [:line_items]) and return
+        respond_to do |format|
+          format.json { render :json => @order.to_json(:include => [:line_items]) }
+        end
+        return
       end
     end
 
     @order = Order.new(params[:order])
 
     session[:order_id] = @order.id
-    session[:items] = nil
 
     if not @order.save()
-      render :json => @order.errors.full_messages.to_json, :status => :unprocessable_entity and return
+      respond_to do |format|
+        format.json { render :json => @order.errors.full_messages.to_json, :status => :unprocessable_entity }
+      end
+      return
     end
 
     # Actually send out the payload
     if @order.cc_order?
       success = @order.paypal_directcharge(request)
       @order.status = success ? 'C' : 'F'
+      @order.finish_and_save() if success
 
-      if success
-        @order.finish_and_save()
-        render :json => @order.to_json(:include => [:line_items])
-      else
-        render :json => @order.errors.full_messages.to_json, :status => :unprocessable_entity and return
+      respond_to do |format|
+        if success
+          format.json { render :json => @order.to_json(:include => [:line_items]) }
+        else
+          format.json { render :json => @order.errors.full_messages.to_json, :status => :unprocessable_entity }
+        end
       end
     end
   end
