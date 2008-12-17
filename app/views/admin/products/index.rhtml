@@ -14,9 +14,9 @@
 	<td><%=h product.code %></td>
 	<td><%=h product.name %></td>
 	<td><%=h number_to_currency(product.price) %></td>
-	<td><%= link_to 'Show', product_path(product) %></td>
-    <td><%= link_to 'Edit', edit_product_path(product) %></td>
-    <td><%= link_to 'Destroy', product_path(product), :confirm => 'Are you sure?', :method => :delete %></td>
+	<td><%= link_to 'Show', admin_product_path(product) %></td>
+    <td><%= link_to 'Edit', edit_admin_product_path(product) %></td>
+    <td><%= link_to 'Destroy', admin_product_path(product), :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>

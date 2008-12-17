@@ -1,9 +1,9 @@
 <h1>Editing product</h1>
 
-<% form_for(:product, :url => product_path(@product), :html => {:method => :put}) do |f| %>
+<% form_for(:product, :url => admin_product_path(@product), :html => {:method => :put}) do |f| %>
     <%= render :partial => 'form', :object => f %>
     <%= submit_tag "Update" %>
 <% end %>
 
-<%= link_to 'Show', product_path %> |
-<%= link_to 'Back', products_path %>
+<%= link_to 'Show', admin_product_path %> |
+<%= link_to 'Back', admin_products_path %>

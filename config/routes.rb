@@ -13,12 +13,14 @@ ActionController::Routing::Routes.draw do |map|
   # -- just remember to delete public/index.html.
   map.connect 'store', :controller => "store/order"
   map.connect '', :controller => "store/order"
-  map.resource 'order', :path_prefix => 'store', :controller => 'store/order'
-  map.resources 'products', :path_prefix => 'store', :controller => 'store/products'
+
+  # Map the order controller as a resource so that it can take JSON orders from Cocoa frontend
+  # NOTE: This must come after the admin mapping
+  map.resource :order, :path_prefix => 'store', :controller => 'store/order'
 
   # admin stuff
-  map.resources :products, :path_prefix => 'admin', :controller => 'admin/products'
-  map.resources :orders,   :path_prefix => 'admin', :controller => 'admin/orders'
+  map.resources :products, :name_prefix => 'admin_', :path_prefix => 'admin', :controller => 'admin/products'
+  map.resources :orders,   :name_prefix => 'admin_', :path_prefix => 'admin', :controller => 'admin/orders'
   map.connect 'admin/charts/:action', :controller => 'admin/charts'
 
   # Allow downloading Web Service WSDL as a file with an extension
