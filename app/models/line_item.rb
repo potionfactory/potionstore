@@ -7,6 +7,8 @@ class LineItem < ActiveRecord::Base
   validates_numericality_of :quantity, :only_integer => true
   validates_numericality_of :unit_price
 
+  attr_protected :license_key
+
   def quantity=(qty)
     # take care of leading zeroes so that the quantity does not get treated as an octal number
     qty = qty.to_s.strip.sub(/^0+/, '')

@@ -7,7 +7,7 @@ class OrderMailer < ActionMailer::Base
     bcc $STORE_PREFS['purchase_receipt_bcc_email'] if bcc == true
 
     subject "Purchase Receipt for Order ##{order.id}"
-    subject subject + ' *' if order.comment && order.comment.strip() != ''
+    subject subject + ' *' if order.comment.blank?
 
     content_type "multipart/alternative"
 

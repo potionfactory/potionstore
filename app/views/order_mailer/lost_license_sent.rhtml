@@ -3,7 +3,7 @@ Order Number: <%= @order.id %>
 Placed On: <%= @order.order_time.utc %>
 
 Registered-To: <%= @order.first_name %> <%= @order.last_name %>
-<% if @order.company != '' -%>
+<% if not @order.company.blank? -%>
 Company: <%= @order.company %>
 <% end -%>
 Email: <%= @order.email %>
