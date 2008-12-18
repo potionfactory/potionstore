@@ -21,7 +21,6 @@ $(document).ready(function(){
     If you need a site license or have special pricing needs, please <a href="mailto:<%=$STORE_PREFS['sales_email']%>?subject=Request%20For%20Quote">contact us</a>.
 </div>
 
-
 <table id="products">
 <% for product in @products -%>
 	<tr>
@@ -35,7 +34,7 @@ $(document).ready(function(){
 		</td>
 		<td>
 			<%= text_field "items", product.id, :size => "3", :value => @qty[product.code], :autocomplete => "off", :class => "qty" -%>
-			@ <strong id="item_<%=product.id %>_price">$<%=product.price %></strong>&nbsp; each
+			@ <strong id="item_<%=product.id %>_price"><%= number_to_currency product.price %></strong>&nbsp; each
 		</td>
 	</tr>
 <% end -%>
