@@ -26,7 +26,7 @@ $(document).ready(function(){
 	<tr>
 		<td>
 			<a href="<%=product.url %>">
-				<% if product.image_path != "" -%>
+				<% if not product.image_path.blank? -%>
 				<img src="<%= product.image_path %>" alt="">
 				<% end -%>
 				<%= product.name %>
