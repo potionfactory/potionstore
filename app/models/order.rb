@@ -8,6 +8,8 @@ class Order < ActiveRecord::Base
   attr_accessor :email_receipt_when_finishing
   attr_writer :promo_coupons
 
+  attr_protected :status, :skip_cc_validation
+
   validates_presence_of :payment_type
 
   def initialize(attributes = {}, form_items = [])
@@ -126,7 +128,7 @@ class Order < ActiveRecord::Base
 
   def address
     address = self.address1
-    address += ', ' + self.address2 if !self.address2.nil? && self.address2 != ''
+    address += ', ' + self.address2 if not self.address2.blank?
     return address
   end
 
@@ -234,14 +236,10 @@ class Order < ActiveRecord::Base
     begin
       for product_id in items.keys
         next if items[product_id].to_s.strip == ''
-        item = LineItem.new
-        item.order = self
-        item.product_id = product_id
-        item.quantity = items[product_id]
+        item = LineItem.new({:order => self,:product_id => product_id,:quantity => items[product_id].to_i})
         next if item.quantity == 0
-        if item.quantity < 0
-          return false
-        end
+        return false if item.quantity < 0
+
         item.unit_price = Product.find(product_id).price
         self.line_items << item
       end

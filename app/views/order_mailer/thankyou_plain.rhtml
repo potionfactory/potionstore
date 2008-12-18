@@ -38,7 +38,7 @@ Order Number: <%= @order.id %>
 Placed On: <%= @order.order_time.utc %>
 
 Registered-To: <%= @order.first_name %> <%= @order.last_name %>
-<% if @order.company != '' -%>
+<% if not @order.company.blank? -%>
 Company: <%= @order.company %>
 <% end -%>
 Email: <%= @order.email %>
@@ -47,7 +47,7 @@ Billing Address:
 <% if @order.payment_type == 'PayPal' -%>
 N/A
 <% else -%>
-<%= @order.address1 -%><%= ', ' + @order.address2 if @order.address2 && ! @order.address2.blank? %>
+<%= @order.address1 -%><%= ', ' + @order.address2 if not @order.address2.blank? %>
 <%= @order.city %>, <%= @order.state %> <%= @order.zipcode %>
 <%= country_name(@order.country) %>
 <% end -%>

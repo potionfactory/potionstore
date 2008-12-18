@@ -65,7 +65,7 @@ body { margin: 0 50pt; }
 				<strong>Licensed to:</strong> <%=h @order.licensee_name %>
 			</td>
             <td style="padding:5px 0;border-bottom: 1px solid #ddd">
-				<% if @order.company != '' -%>
+				<% if not @order.company.blank? -%>
                 <strong>Company:</strong> <%=h @order.company -%>
                 <% end -%></td>
 			</tr>

@@ -16,7 +16,7 @@
 <body>
 	<div id="page" class="narrow">
 		<div id="page_top">
-			<% if $STORE_PREFS['company_logo_path'] != "" -%>
+			<% if not $STORE_PREFS['company_logo_path'].blank? -%>
 			<div id="logo"><a href="<%=$STORE_PREFS['company_url']%>">
 				<img src="<%=$STORE_PREFS['company_logo_path']%>" alt="<%=$STORE_PREFS['company_name']%>"/></a>
 			</div>
@@ -38,7 +38,7 @@
 			</center>
 		</div>
 	</div>
-	<% if is_live?() && $STORE_PREFS['google_analytics_account'] != "" -%>
+	<% if is_live?() && ! $STORE_PREFS['google_analytics_account'].blank? -%>
 	<script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		_uacct = "<%=$STORE_PREFS['google_analytics_account']%>";
