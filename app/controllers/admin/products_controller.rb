@@ -43,8 +43,8 @@ class Admin::ProductsController < ApplicationController
     respond_to do |format|
       if @product.save
         flash[:notice] = 'Product was successfully created.'
-        format.html { redirect_to product_url(@product) }
-        format.xml  { head :created, :location => product_url(@product) }
+        format.html { redirect_to admin_product_url(@product) }
+        format.xml  { head :created, :location => admin_product_url(@product) }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @product.errors.to_xml }
@@ -60,7 +60,7 @@ class Admin::ProductsController < ApplicationController
     respond_to do |format|
       if @product.update_attributes(params[:product])
         flash[:notice] = 'Product was successfully updated.'
-        format.html { redirect_to product_url(@product) }
+        format.html { redirect_to admin_product_url(@product) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -76,7 +76,7 @@ class Admin::ProductsController < ApplicationController
     @product.destroy
 
     respond_to do |format|
-      format.html { redirect_to products_url }
+      format.html { redirect_to admin_products_url }
       format.xml  { head :ok }
     end
   end

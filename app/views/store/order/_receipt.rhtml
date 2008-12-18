@@ -84,7 +84,7 @@ body { margin: 0 50pt; }
                 <%=h @order.address1
 					 -%><%=h ', ' + @order.address2 if @order.address2 && ! @order.address2.blank? -%><br/>
                 <%=h @order.city %>, <%=h @order.state %> <%=h @order.zipcode %><br/>
-                <%=h @order.country_name %>
+                <%=h country_name(@order.country) %>
 				<% end -%>
             </td>
 			<td id="payment" style="width:35%;padding:5px 0;border-bottom: 3px double #ddd">

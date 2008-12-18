@@ -53,7 +53,7 @@ class AdminProductsControllerTest < Test::Unit::TestCase
     post :create, {:product => {:code => "product_new_1", :name => "New Product v1"}}, {:logged_in => true}
 
     assert_response :redirect
-    assert_redirected_to :controller => 'admin/products' , :action => 'show'
+    assert_redirected_to admin_product_url(Product.find(:all).last)
 
     assert_equal num_products + 1, Product.count
   end
