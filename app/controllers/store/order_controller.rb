@@ -98,10 +98,11 @@ class Store::OrderController < ApplicationController
       render :json => '["What?"]', :status => :unprocessable_entity and return
     end
 
-#     if session[:order] != nil && session[:order].status == 'C'
-#       @order = session[:order]
-#       render :xml => @order.to_xml(:include => [:line_items]) and return
-#     end
+    # If there's a completed order in the session, just return that instead of charging twice
+    if session[:order] != nil && session[:order].status == 'C'
+      @order = session[:order]
+      render :json => @order.to_json(:include => [:line_items]) and return
+    end
 
     @order = Order.new(params[:order])
 
@@ -114,9 +115,9 @@ class Store::OrderController < ApplicationController
 
     # Actually send out the payload
     if @order.cc_order?
-      # TODO: make sure to switch this back on
       success = @order.paypal_directcharge(request)
       @order.status = success ? 'C' : 'F'
+
       if success
         @order.finish_and_save()
         render :json => @order.to_json(:include => [:line_items])
