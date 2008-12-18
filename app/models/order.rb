@@ -62,6 +62,7 @@ class Order < ActiveRecord::Base
   validates_presence_of :payment_type
 
   def initialize(attributes = {}, form_items = [])
+    attributes = attributes.clone()
     if attributes[:items]
       form_items = attributes[:items]
       attributes.delete(:items)
@@ -180,7 +181,7 @@ class Order < ActiveRecord::Base
 
   def address
     address = self.address1
-    address += ', ' + self.address2 if self.address2 != ''
+    address += ', ' + self.address2 if !self.address2.nil? && self.address2 != ''
     return address
   end
 
