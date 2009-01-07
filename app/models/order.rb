@@ -353,7 +353,7 @@ class Order < ActiveRecord::Base
     self.save()
 
     if self.email_receipt_when_finishing
-      OrderMailer.deliver_thankyou(@order) if is_live?()
+      OrderMailer.deliver_thankyou(self) if is_live?()
     end
   end
 
