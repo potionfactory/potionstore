@@ -60,8 +60,8 @@ class Admin::OrdersController < ApplicationController
     respond_to do |format|
       if save()
         flash[:notice] = 'Order was successfully created.'
-        format.html { redirect_to order_url(@order) }
-        format.xml  { head :created, :location => order_url(@order) }
+        format.html { redirect_to admin_order_url(@order) }
+        format.xml  { head :created, :location => admin_order_url(@order) }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @order.errors.to_xml }
@@ -86,7 +86,7 @@ class Admin::OrdersController < ApplicationController
     respond_to do |format|
       if @order.update_attributes(params[:order])
         flash[:notice] = 'Order was successfully updated.'
-        format.html { redirect_to order_url(@order) }
+        format.html { redirect_to admin_order_url(@order) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
