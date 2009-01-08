@@ -31,6 +31,7 @@ class Store::OrderController < ApplicationController
     session[:order_id] = nil
     redirect_to :action => 'index' and return if !params[:items]
     @order = Order.new
+    @order.payment_type = params[:payment_type]
     session[:payment_type] = params[:payment_type]
 
     session[:items] = params[:items]
@@ -68,7 +69,7 @@ class Store::OrderController < ApplicationController
                                      :cpp_header_image => $STORE_PREFS['paypal_express_checkout_header_image'])
       if res.ack == 'Success' || res.ack == 'SuccessWithWarning'
         # Need to copy the string. For some reason, it tries to render the payment action otherwise
-        @order.paypal_token = String.new(res.token)
+        session[:paypal_token] = String.new(res.token)
         if not @order.save()
           flash[:notice] = 'Problem saving order'
           redirect_to :action => 'index' and return
@@ -200,10 +201,10 @@ class Store::OrderController < ApplicationController
     render :action => 'no_order', :layout => 'error' and return if session[:order_id] == nil
 
     @order = Order.find(session[:order_id])
-    redirect_to :action => 'index' and return if @order == nil || @order.paypal_token != params[:token]
+    redirect_to :action => 'index' and return if @order == nil || session[:paypal_token] != params[:token]
 
     # Suck the info from PayPal
-    res = Paypal.express_checkout_details(:token => @order.paypal_token)
+    res = Paypal.express_checkout_details(:token => session[:paypal_token])
 
     if res.ack != 'Success' && res.ack != 'SuccessWithWarning'
       flash[:notice] = 'Could not retrieve order information from PayPal'
@@ -211,7 +212,7 @@ class Store::OrderController < ApplicationController
     end
 
     payerInfo = res.getExpressCheckoutDetailsResponseDetails.payerInfo
-    @order.paypal_payer_id = params['PayerID']
+    session[:paypal_payer_id] = params['PayerID']
     @order.email = String.new(payerInfo.payer)
     @order.first_name = String.new(payerInfo.payerName.firstName)
     @order.last_name = String.new(payerInfo.payerName.lastName)
@@ -237,7 +238,7 @@ class Store::OrderController < ApplicationController
     @order = Order.find(session[:order_id])
     @order.attributes = params[:order]
 
-    redirect_to :action => 'index' and return if @order.paypal_token == nil
+    redirect_to :action => 'index' and return if session[:paypal_token] == nil
     render :action => 'failed', :layout => 'error' and return if @order.status != 'P'
 
     @order.order_time = Time.now()
@@ -247,7 +248,7 @@ class Store::OrderController < ApplicationController
       render :action => 'confirm_paypal' and return
     end
 
-    success = @order.paypal_express_checkout_payment()
+    success = @order.paypal_express_checkout_payment(session[:paypal_token], session[:paypal_payer_id])
 
     finish_order(success)
   end

@@ -3,7 +3,6 @@ class Order < ActiveRecord::Base
   belongs_to :coupon
 
   attr_accessor :cc_code, :cc_month, :cc_year
-  attr_accessor :paypal_token, :paypal_payer_id
   attr_accessor :skip_cc_validation
   attr_accessor :email_receipt_when_finishing
   attr_writer :promo_coupons
@@ -41,14 +40,18 @@ class Order < ActiveRecord::Base
 
     ## Validate PayPal order
     if self.paypal_order?
-      errors.add_on_blank(['email'])
+      if self.status == 'C'
+        errors.add_on_blank(['email'])
+      end
     end
 
     ## If licensee name is all alpha-numeric, require it to be at least 8 characters.
-    if self.licensee_name == nil || self.licensee_name.strip == ''
-      errors.add_on_blank(['licensee_name'])
-    elsif (self.licensee_name =~ /^[\w ]*$/) != nil && self.licensee_name.length < 8
-      errors.add('licensee_name', msg= 'must be at least 8 characters long')
+    if self.status == 'C' then
+      if self.licensee_name == nil || self.licensee_name.strip == ''
+        errors.add_on_blank(['licensee_name'])
+      elsif (self.licensee_name =~ /^[\w ]*$/) != nil && self.licensee_name.length < 8
+        errors.add('licensee_name', msg= 'must be at least 8 characters long')
+      end
     end
   end
 
@@ -105,7 +108,7 @@ class Order < ActiveRecord::Base
   end
 
   def licensee_name=(new_name)
-    regenerate_keys = (self.licensee_name != new_name)
+    regenerate_keys = (self.licensee_name != new_name) && self.status != 'P'
     write_attribute(:licensee_name, new_name.strip())
     if regenerate_keys
       for item in self.line_items
@@ -397,9 +400,9 @@ class Order < ActiveRecord::Base
     return success
   end
 
-  def paypal_express_checkout_payment()
-    res = Paypal.express_checkout_payment(:token => self.paypal_token,
-                                          :payerID => self.paypal_payer_id,
+  def paypal_express_checkout_payment(token, payer_id)
+    res = Paypal.express_checkout_payment(:token => token,
+                                          :payerID => payer_id,
                                           :amount => self.total)
     success = (res.ack == 'Success' || res.ack == 'SuccessWithWarning')
     if success
