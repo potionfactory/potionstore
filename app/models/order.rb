@@ -159,7 +159,7 @@ class Order < ActiveRecord::Base
   end
 
   def cc_order?
-    return ['visa', 'mastercard', 'amex', 'discover'].member?(self.payment_type.downcase)
+    return self.payment_type != nil && ['visa', 'mastercard', 'amex', 'discover'].member?(self.payment_type.downcase)
   end
 
   def paypal_order?
@@ -355,7 +355,8 @@ class Order < ActiveRecord::Base
 
     self.save()
 
-    if self.email_receipt_when_finishing
+    if self.email_receipt_when_finishing && !self.gcheckout?
+      # Google Checkout orders get the emails delivered when the final OK notification from Google arrives
       OrderMailer.deliver_thankyou(self) if is_live?()
     end
   end
