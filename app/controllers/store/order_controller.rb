@@ -170,6 +170,7 @@ class Store::OrderController < ApplicationController
     end
 
     @order.order_time = Time.now()
+    @order.status = 'S'
     session[:order_id] = @order.id
     session[:items] = nil
 
@@ -239,9 +240,10 @@ class Store::OrderController < ApplicationController
     @order.attributes = params[:order]
 
     redirect_to :action => 'index' and return if session[:paypal_token] == nil
-    render :action => 'failed', :layout => 'error' and return if @order.status != 'P'
+    render :action => 'failed', :layout => 'error' and return if !@order.pending?
 
     @order.order_time = Time.now()
+    @order.status = 'S'
 
     if not @order.save()
       flash[:error] = 'Please fill out all fields'
