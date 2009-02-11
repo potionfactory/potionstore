@@ -28,7 +28,7 @@ class Order < ActiveRecord::Base
     ## Validate credit card order
     if self.cc_order? && !skip_cc_validation
       errors.add_on_blank(['first_name', 'last_name', 'address1', 'city', 'country', 'email'])
-      if self.status == 'P'
+      if self.pending? or self.submitting?
         errors.add_on_blank(['cc_number', 'cc_month', 'cc_year', 'cc_code'])
       end
 
@@ -40,13 +40,13 @@ class Order < ActiveRecord::Base
 
     ## Validate PayPal order
     if self.paypal_order?
-      if self.status == 'C'
+      if self.submitting? or self.complete?
         errors.add_on_blank(['email'])
       end
     end
 
     ## If licensee name is all alpha-numeric, require it to be at least 8 characters.
-    if self.status == 'C' then
+    if self.submitting? or self.complete?
       if self.licensee_name == nil || self.licensee_name.strip == ''
         errors.add_on_blank(['licensee_name'])
       elsif (self.licensee_name =~ /^[\w ]*$/) != nil && self.licensee_name.length < 8
@@ -108,7 +108,7 @@ class Order < ActiveRecord::Base
   end
 
   def licensee_name=(new_name)
-    regenerate_keys = (self.licensee_name != new_name) && self.status != 'P'
+    regenerate_keys = (self.licensee_name != new_name) && (self.submitting? or self.complete?)
     write_attribute(:licensee_name, new_name.strip())
     if regenerate_keys
       for item in self.line_items
@@ -170,12 +170,20 @@ class Order < ActiveRecord::Base
     return self.payment_type != nil && self.payment_type.downcase == 'google checkout'
   end
 
+  def pending?
+    return self.status == 'P'
+  end
+
   def complete?
     return self.status == 'C'
   end
 
+  def submitting?
+    return self.status == 'S'
+  end
+
   def status=(new_status)
-    if self.status == 'P' && new_status == 'C'
+    if (self.pending? or self.submitting?) && new_status == 'C'
       self.email_receipt_when_finishing = true
     end
     write_attribute(:status, new_status)
@@ -187,6 +195,8 @@ class Order < ActiveRecord::Base
       return 'Complete'
     when 'P'
       return 'Pending'
+    when 'S'
+      return 'Submitting'
     when 'F'
       return 'Failed'
     when 'X'
