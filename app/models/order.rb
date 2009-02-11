@@ -32,8 +32,11 @@ class Order < ActiveRecord::Base
         errors.add_on_blank(['cc_number', 'cc_month', 'cc_year', 'cc_code'])
       end
 
-      if ['US', 'CA'].member?(self.country)
+      if ['US', 'CA', 'JP'].member?(self.country)
         errors.add_on_blank('zipcode')
+      end
+
+      if ['US', 'CA'].member?(self.country)
         errors.add('state', msg = 'must be a 2 character abbreviation for USA and Canada') if self.state.size != 2
       end
     end
