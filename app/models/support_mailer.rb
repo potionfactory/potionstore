@@ -1,11 +1,8 @@
 class SupportMailer < ActionMailer::Base
 
   def support_request(fields)
-    if not fields["subject"].blank?
-      subject fields["subject"]
-    else
-      subject "#{fields["product"]} Support"
-    end
+    subject "#{fields["product"]} Support"
+    subject "#{self.subject}: #{fields["subject"]}" if not fields["subject"].blank?
 
     # add a star to the subject to mark that the email is from a registered customer
     subject "#{self.subject} *" if fields["registered"] == "1"
