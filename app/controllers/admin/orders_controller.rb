@@ -8,7 +8,7 @@ class Admin::OrdersController < ApplicationController
   # GET /orders.xml
   def index
     q = params[:query]
-    conditions = "status != 'P'"
+    conditions = "(status='C' OR status='X' OR status='F')"
     if q
       q = q.strip().downcase()
       if q.to_i != 0
