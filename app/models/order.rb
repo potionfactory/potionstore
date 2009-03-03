@@ -252,7 +252,8 @@ class Order < ActiveRecord::Base
     begin
       for product_id in items.keys
         next if items[product_id].to_s.strip == ''
-        item = LineItem.new({:order => self,:product_id => product_id,:quantity => items[product_id].to_i})
+        item = LineItem.new({:order => self,:product_id => product_id})
+        item.quantity = items[product_id].to_i
         next if item.quantity == 0
         return false if item.quantity < 0
 
