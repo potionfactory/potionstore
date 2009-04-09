@@ -12,7 +12,7 @@ class SupportMailer < ActionMailer::Base
 
     email_body = fields["message"] + "\r\n\r\n"
 
-    exclude_fields = ["product", "recipient", "replyTo", "message", "action", "controller"]
+    exclude_fields = ["product", "recipient", "replyTo", "subject", "message", "action", "controller"]
 
     fields.each do |key, value|
     	if fields[key].respond_to?("original_filename") == false && exclude_fields.include?(key) == false && fields[key] != nil
