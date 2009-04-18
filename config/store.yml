@@ -22,6 +22,7 @@ sales_email: "sales@mycompany.com"
 purchase_receipt_sender_email: "My Company <info@mycompany.com>"
 purchase_receipt_bcc_email: "orders@mycompany.com"
 
+send_lost_license_sent_notification_email: false
 lost_license_sent_notification_sender_email: "My Company <support@mycompany.com>"
 lost_license_sent_notification_recipient_email: "info@mycompany.com"
 
