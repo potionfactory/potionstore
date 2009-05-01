@@ -115,7 +115,7 @@ class Order < ActiveRecord::Base
     write_attribute(:licensee_name, new_name.strip())
     if regenerate_keys
       for item in self.line_items
-        item.license_key = item.generate_license_key
+        item.license_key = make_license(item.product.code, new_name, item.quantity)
       end
     end
   end
@@ -359,7 +359,7 @@ class Order < ActiveRecord::Base
       self.add_promo_coupons()
       for line_item in self.line_items
         if line_item.license_key.nil? then
-          line_item.license_key = line_item.generate_license_key()
+          line_item.license_key = make_license(line_item.product.code, self.licensee_name, line_item.quantity)
         end
       end
       if self.coupon
@@ -481,7 +481,7 @@ class Order < ActiveRecord::Base
         # The order doesn't become status C until we get final notification from Google,
         # but we're still optimistically showing the buyer their license key because otherwise
         # the delay can be as much as 20 minutes on the GCheckout side
-        line_item.license_key = line_item.generate_license_key()
+        line_item.license_key = make_license(line_item.product.code, self.licensee_name, line_item.quantity)
         line_item.save()
 
         digital_content = Google4R::Checkout::DigitalContent.new

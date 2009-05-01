@@ -20,7 +20,7 @@ class LineItem < ActiveRecord::Base
     write_attribute(:quantity, qty)
 
     if regenerate_keys
-      self.license_key = generate_license_key()
+      self.license_key = make_license(self.product.code, self.order.licensee_name, qty)
     end
   end
 
@@ -42,10 +42,6 @@ class LineItem < ActiveRecord::Base
 
   def regular_price
     return product.price
-  end
-
-  def generate_license_key
-    return make_license(self.product.code, self.order.licensee_name, self.quantity)
   end
 
   def license_url
