@@ -2,17 +2,16 @@
 #
 # Instructions:
 #
-# 1. Go to https://www.sandbox.paypal.com.
+# 1. Go to https://developer.paypal.com/.
 # 2. Click the "Sandbox" link or the "Sandbox" tab.
-# 3. Select the Test Account and click the "Launch Sandbox" button.
+# 3. Select the Business Test Account and click the "Enter Sandbox Test Site" button.
 # 4. Once you log in, click "Profile."
 # 5. Click on "API Access" under the 'Account Information' column.
 # 6. Click the "Request API Credentials" link.
-# 7. Select the radio button next to "API SSL client-side certificate".
-# 8. Check the box next to "I agree to the API Certificate Terms of Use, and terms incorporated therein."
-# 9. Click "Submit."
-# 10. Fill in api_username and api_password below with the information on this page
-# 11. Click on "Download Certificate." and save to locations in client_key and client_cert
+# 7. Select the radio button entitled "Request API certificate".
+# 8. Click the "Agree and Submit" button.
+# 9. Fill in api_username and api_password below with the information on this page
+# 10. Click on "Download Certificate." and save to locations in client_key and client_cert
 
 # Test settings
 development:
