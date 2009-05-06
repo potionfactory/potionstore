@@ -60,7 +60,7 @@ and running on your local machine.
 Debugging
 ---------
 
-1. gem install ruby-debugger
+1. gem install ruby-debug
 2. Put 'debugger' where you want to break in your source code
 3. Start the app with 'script/server --debugger' to enable breakpoints
 
