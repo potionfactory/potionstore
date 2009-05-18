@@ -182,16 +182,17 @@ $(document).ready(function(){
 	<h2>Credit Card</h2>
     <p id="cards"><span>Card Type:</span>
 	<input id="Visa" type="radio" name="order[payment_type]" value="Visa" checked="checked" />
-	<img src="/images/store/visa.gif" alt="Visa" onclick="select_cc('Visa')"/>
+	<%=image_tag("store/visa.gif",:alt => 'Visa', :onclick => "select_cc('Visa')")%> 
 
 	<input id="MasterCard" type="radio" name="order[payment_type]" value="MasterCard"/>
-	<img src="/images/store/mc.gif" alt="MasterCard" onclick="select_cc('MasterCard')" />
+	<%=image_tag("store/mc.gif",:alt => 'MasterCard', :onclick => "select_cc('MasterCard')")%>
 
 	<input id="Amex" type="radio" name="order[payment_type]" value="Amex" />
-	<img src="/images/store/amex.gif" alt="Amex" onclick="select_cc('Amex')" />
+	<%=image_tag("store/amex.gif",:alt => 'Amex', :onclick => "select_cc('Amex')")%>
+
 
 	<input id="Discover" type="radio" name="order[payment_type]" value="Discover" />
-	<img src="/images/store/discover.gif" alt="Discover" onclick="select_cc('Discover')" />
+	<%=image_tag("store/discover.gif",:alt => 'Discover', :onclick => "select_cc('Discover')")%>
     </p>
 
     <p><label><span>Credit Card Number:</span><%= text_field "order", "cc_number", :size=>24, :class => "required creditcard" %></label></p>
@@ -200,7 +201,7 @@ $(document).ready(function(){
         <label><span>Expiration Date:</span>
 		<%= text_field "order", "cc_month", :maxlength => 2 %></label>/<%= text_field "order", "cc_year", :maxlength=>2 %>
 		<label>CSC: <%= text_field "order", "cc_code", :size =>4 %></label>
-        <img src="/images/store/cvv.png" alt="CVV" style="vertical-align:middle;position:relative; top:-2px;"/>
+			<%=image_tag("store/cvv.png",:alt => 'CVV', :style => "vertical-align:middle;position:relative; top:-2px;")%>
     </p>
 </div>
 

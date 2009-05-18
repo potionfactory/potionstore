@@ -4,16 +4,13 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title><%=$STORE_PREFS['store_name']%></title>
     <link rel="icon" href="/favicon.png" type="image/png"/>
-	<style media="all" type="text/css">
-		@import "/stylesheets/store.css";
-		@import "/stylesheets/mytheme.css";
-	</style>
+		<%= stylesheet_link_tag("store", "mytheme",  :media => "all", :cache => "storeSheets")  %>
 <!--[if lt IE 7]>
 <script language="JavaScript">window.attachEvent("onload", correctPNG);</script>
 <![endif]-->
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
-	<script type="text/javascript" src="/javascripts/store.js"></script>
-	<script type="text/javascript" src="/javascripts/jquery.validate.js"></script>
+		<%= javascript_include_tag("store") %>
+		<%= javascript_include_tag("jquery.validate") %>
 </head>
 <body>
 <div id="page" class="narrow">
@@ -23,7 +20,8 @@
 		</div>
 		<% end -%>
 		<h1><%=$STORE_PREFS['store_name']%></h1>
-		<div class="tm"></div><img class="tr" src="/images/store/rounded_tr.png" alt="rounded border"/>
+		<div class="tm"></div>
+		<%=image_tag("store/rounded_tr.png",:alt => 'rounded border')%>
 	</div>
 	<div id="page_content" class="narrow">
 		<div class="ccolumn narrow solo">
