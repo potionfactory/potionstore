@@ -39,7 +39,7 @@ class AdminController < ApplicationController
     end
 
     revenue_summary()
-    @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_days')
+    @chart = OpenFlashChart.swf_object(500, 170, ActionController::Base.relative_url_root + '/admin/charts/revenue_history_days')
   end
 
   # The revenue_xxx functions get called through ajax when user chooses different types of reports
@@ -63,19 +63,19 @@ class AdminController < ApplicationController
 
   def revenue_history_days
     @type = "30 Day"
-    @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_days')
+    @chart = OpenFlashChart.swf_object(500, 170, ActionController::Base.relative_url_root + '/admin/charts/revenue_history_days')
     render :partial =>  "revenue_history"
   end
 
   def revenue_history_weeks
     @type = "26 Week"
-    @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_weeks')
+    @chart = OpenFlashChart.swf_object(500, 170, ActionController::Base.relative_url_root + '/admin/charts/revenue_history_weeks')
     render :partial =>  "revenue_history"
   end
 
   def revenue_history_months
     @type = "12 Month"
-    @chart = OpenFlashChart.swf_object(500, 170, '/admin/charts/revenue_history_months')
+    @chart = OpenFlashChart.swf_object(500, 170, ActionController::Base.relative_url_root + '/admin/charts/revenue_history_months')
     render :partial =>  "revenue_history"
   end
 
