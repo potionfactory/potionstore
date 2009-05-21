@@ -50,9 +50,14 @@ class Store::NotificationController < ApplicationController
 
     ba = n['buyer-billing-address']
 
-    words = ba['contact-name'].split(' ')
-    order.first_name = words.shift
-    order.last_name = words.join(' ')
+    if ba['structured-name']
+      order.first_name = _xmlval(ba['structured-name'], 'first-name')
+      order.last_name = _xmlval(ba['structured-name'], 'last-name')
+    else
+      words = ba['contact-name'].split(' ')
+      order.first_name = words.shift
+      order.last_name = words.join(' ')
+    end
 
     order.email = _xmlval(ba, 'email')
     if order.email == nil # This shouldn't happen, but just in case
