@@ -8,9 +8,10 @@
 #  Person.hair_colors = [:brown, :black, :blonde, :red]
 class Class
   def cattr_reader(*syms)
-    syms.flatten.each do |sym|
+    options = syms.extract_options!
+    syms.each do |sym|
       next if sym.is_a?(Hash)
-      class_eval(<<-EOS, __FILE__, __LINE__)
+      class_eval(<<-EOS, __FILE__, __LINE__ + 1)
         unless defined? @@#{sym}
           @@#{sym} = nil
         end
@@ -18,18 +19,22 @@ class Class
         def self.#{sym}
           @@#{sym}
         end
-
-        def #{sym}
-          @@#{sym}
-        end
       EOS
+
+      unless options[:instance_reader] == false
+        class_eval(<<-EOS, __FILE__, __LINE__ + 1)
+          def #{sym}
+            @@#{sym}
+          end
+        EOS
+      end
     end
   end
 
   def cattr_writer(*syms)
     options = syms.extract_options!
-    syms.flatten.each do |sym|
-      class_eval(<<-EOS, __FILE__, __LINE__)
+    syms.each do |sym|
+      class_eval(<<-EOS, __FILE__, __LINE__ + 1)
         unless defined? @@#{sym}
           @@#{sym} = nil
         end
@@ -37,13 +42,15 @@ class Class
         def self.#{sym}=(obj)
           @@#{sym} = obj
         end
-
-        #{"
-        def #{sym}=(obj)
-          @@#{sym} = obj
-        end
-        " unless options[:instance_writer] == false }
       EOS
+
+      unless options[:instance_writer] == false
+        class_eval(<<-EOS, __FILE__, __LINE__ + 1)
+          def #{sym}=(obj)
+            @@#{sym} = obj
+          end
+        EOS
+      end
     end
   end
 

@@ -55,12 +55,10 @@ module Enumerable
   #  [].sum(Payment.new(0)) { |i| i.amount } # => Payment.new(0)
   #
   def sum(identity = 0, &block)
-    return identity unless size > 0
-
     if block_given?
-      map(&block).sum
+      map(&block).sum(identity)
     else
-      inject { |sum, element| sum + element }
+      inject { |sum, element| sum + element } || identity
     end
   end
 
@@ -77,7 +75,7 @@ module Enumerable
   #   (1..5).each_with_object(1) { |value, memo| memo *= value } # => 1
   #
   def each_with_object(memo, &block)
-    returning memo do |m|
+    memo.tap do |m|
       each do |element|
         block.call(element, m)
       end
@@ -103,5 +101,20 @@ module Enumerable
   def many?(&block)
     size = block_given? ? select(&block).size : self.size
     size > 1
+  end
+
+  # Returns true if none of the elements match the given block.
+  #
+  #   success = responses.none? {|r| r.status / 100 == 5 }
+  #
+  # This is a builtin method in Ruby 1.8.7 and later.
+  def none?(&block)
+    !any?(&block)
+  end unless [].respond_to?(:none?)
+
+  
+  # The negative of the Enumerable#include?. Returns true if the collection does not include the object.
+  def exclude?(object)
+    !include?(object)
   end
 end

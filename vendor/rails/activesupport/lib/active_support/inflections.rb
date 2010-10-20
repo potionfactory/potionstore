@@ -42,6 +42,7 @@ module ActiveSupport
     inflect.singular(/(vert|ind)ices$/i, '\1ex')
     inflect.singular(/(matr)ices$/i, '\1ix')
     inflect.singular(/(quiz)zes$/i, '\1')
+    inflect.singular(/(database)s$/i, '\1')
 
     inflect.irregular('person', 'people')
     inflect.irregular('man', 'men')
@@ -50,6 +51,6 @@ module ActiveSupport
     inflect.irregular('move', 'moves')
     inflect.irregular('cow', 'kine')
 
-    inflect.uncountable(%w(equipment information rice money species series fish sheep))
+    inflect.uncountable(%w(equipment information rice money species series fish sheep jeans))
   end
 end

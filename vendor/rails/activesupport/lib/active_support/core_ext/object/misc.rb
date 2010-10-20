@@ -1,3 +1,5 @@
+require 'active_support/deprecation'
+
 class Object
   # Returns +value+ after yielding +value+ to the block. This simplifies the
   # process of constructing an object, performing work on the object, and then
@@ -36,9 +38,25 @@ class Object
   #  
   #  foo # => ['bar', 'baz']
   def returning(value)
+    ActiveSupport::Deprecation.warn('Kernel#returning has been deprecated in favor of Object#tap.', caller)
     yield(value)
     value
   end
+
+  # Yields <code>x</code> to the block, and then returns <code>x</code>.
+  # The primary purpose of this method is to "tap into" a method chain,
+  # in order to perform operations on intermediate results within the chain.
+  #
+  #   (1..10).tap { |x| puts "original: #{x.inspect}" }.to_a.
+  #     tap    { |x| puts "array: #{x.inspect}" }.
+  #     select { |x| x%2 == 0 }.
+  #     tap    { |x| puts "evens: #{x.inspect}" }.
+  #     map    { |x| x*x }.
+  #     tap    { |x| puts "squares: #{x.inspect}" }
+  def tap
+    yield self
+    self
+  end unless Object.respond_to?(:tap)
 
   # An elegant way to factor duplication out of options passed to a series of
   # method calls. Each method called in the block, with the block variable as
@@ -71,4 +89,5 @@ class Object
   def acts_like?(duck)
     respond_to? "acts_like_#{duck}?"
   end
+
 end

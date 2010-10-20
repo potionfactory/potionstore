@@ -60,7 +60,7 @@ module ActiveRecord
           @reflection.klass.find(*args)
         end
       end
-      
+
       # Fetches the first one using SQL if possible.
       def first(*args)
         if fetch_first_or_last_using_find?(args)
@@ -83,7 +83,11 @@ module ActiveRecord
 
       def to_ary
         load_target
-        @target.to_ary
+        if @target.is_a?(Array)
+          @target.to_ary
+        else
+          Array(@target)
+        end
       end
 
       def reset
@@ -139,6 +143,8 @@ module ActiveRecord
       end
 
       # Remove all records from this association
+      #
+      # See delete for more info.
       def delete_all
         load_target
         delete(@target)
@@ -182,7 +188,6 @@ module ActiveRecord
         end
       end
 
-
       # Removes +records+ from this association calling +before_remove+ and
       # +after_remove+ callbacks.
       #
@@ -191,20 +196,24 @@ module ActiveRecord
       # are actually removed from the database, that depends precisely on
       # +delete_records+. They are in any case removed from the collection.
       def delete(*records)
-        records = flatten_deeper(records)
-        records.each { |record| raise_on_type_mismatch(record) }
-        
-        transaction do
-          records.each { |record| callback(:before_remove, record) }
-          
-          old_records = records.reject {|r| r.new_record? }
+        remove_records(records) do |records, old_records|
           delete_records(old_records) if old_records.any?
-          
-          records.each do |record|
-            @target.delete(record)
-            callback(:after_remove, record)
-          end
+          records.each { |record| @target.delete(record) }
         end
+      end
+
+      # Destroy +records+ and remove them from this association calling
+      # +before_remove+ and +after_remove+ callbacks.
+      #
+      # Note that this method will _always_ remove records from the database
+      # ignoring the +:dependent+ option.
+      def destroy(*records)
+        records = find(records) if records.any? {|record| record.kind_of?(Fixnum) || record.kind_of?(String)}
+        remove_records(records) do |records, old_records|
+          old_records.each { |record| record.destroy }
+        end
+
+        load_target
       end
 
       # Removes all records from this association.  Returns +self+ so method calls may be chained.
@@ -219,15 +228,17 @@ module ActiveRecord
 
         self
       end
-      
-      def destroy_all
-        transaction do
-          each { |record| record.destroy }
-        end
 
-        reset_target!
+      # Destory all the records from this association.
+      #
+      # See destroy for more info.
+      def destroy_all
+        load_target
+        destroy(@target).tap do
+          reset_target!
+        end
       end
-      
+
       def create(attrs = {})
         if attrs.is_a?(Array)
           attrs.collect { |attr| create(attr) }
@@ -321,6 +332,7 @@ module ActiveRecord
 
       def include?(record)
         return false unless record.is_a?(@reflection.klass)
+        return include_in_memory?(record) if record.new_record?
         load_target if @reflection.options[:finder_sql] && !loaded?
         return @target.include?(record) if loaded?
         exists?(record)
@@ -339,7 +351,17 @@ module ActiveRecord
             begin
               if !loaded?
                 if @target.is_a?(Array) && @target.any?
-                  @target = find_target + @target.find_all {|t| t.new_record? }
+                  @target = find_target.map do |f|
+                    i = @target.index(f)
+                    if i
+                      @target.delete_at(i).tap do |t|
+                        keys = ["id"] + t.changes.keys + (f.attribute_names - t.attribute_names)
+                        t.attributes = f.attributes.except(*keys)
+                      end
+                    else
+                      f
+                    end
+                  end + @target
                 else
                   @target = find_target
                 end
@@ -354,6 +376,17 @@ module ActiveRecord
         end
         
         def method_missing(method, *args)
+          case method.to_s
+          when 'find_or_create'
+            return find(:first, :conditions => args.first) || create(args.first)
+          when /^find_or_create_by_(.*)$/
+            rest = $1
+            return  send("find_by_#{rest}", *args) ||
+                    method_missing("create_by_#{rest}", *args)
+          when /^create_by_(.*)$/
+            return create($1.split('_and_').zip(args).inject({}) { |h,kv| k,v=kv ; h[k] = v ; h })
+          end
+
           if @target.respond_to?(method) || (!@reflection.klass.respond_to?(method) && Class.respond_to?(method))
             if block_given?
               super { |*block_args| yield(*block_args) }
@@ -390,11 +423,31 @@ module ActiveRecord
               find(:all)
             end
 
-          @reflection.options[:uniq] ? uniq(records) : records
+          records = @reflection.options[:uniq] ? uniq(records) : records
+          records.each do |record|
+            set_inverse_instance(record, @owner)
+          end
+          records
+        end
+
+        def add_record_to_target_with_callbacks(record)
+          callback(:before_add, record)
+          yield(record) if block_given?
+          @target ||= [] unless loaded?
+          index = @target.index(record)
+          unless @reflection.options[:uniq] && index
+            if index
+              @target[index] = record
+            else
+             @target << record
+            end
+          end 
+          callback(:after_add, record)
+          set_inverse_instance(record, @owner)
+          record
         end
 
       private
-
         def create_record(attrs)
           attrs.update(@reflection.options[:conditions]) if @reflection.options[:conditions].is_a?(Hash)
           ensure_owner_is_not_new
@@ -418,13 +471,16 @@ module ActiveRecord
           end
         end
 
-        def add_record_to_target_with_callbacks(record)
-          callback(:before_add, record)
-          yield(record) if block_given?
-          @target ||= [] unless loaded?
-          @target << record unless @reflection.options[:uniq] && @target.include?(record)
-          callback(:after_add, record)
-          record
+        def remove_records(*records)
+          records = flatten_deeper(records)
+          records.each { |record| raise_on_type_mismatch(record) }
+
+          transaction do
+            records.each { |record| callback(:before_remove, record) }
+            old_records = records.reject { |r| r.new_record? }
+            yield(records, old_records)
+            records.each { |record| callback(:after_remove, record) }
+          end
         end
 
         def callback(method, record)
@@ -436,8 +492,8 @@ module ActiveRecord
         def callbacks_for(callback_name)
           full_callback_name = "#{callback_name}_for_#{@reflection.name}"
           @owner.class.read_inheritable_attribute(full_callback_name.to_sym) || []
-        end   
-        
+        end
+
         def ensure_owner_is_not_new
           if @owner.new_record?
             raise ActiveRecord::RecordNotSaved, "You cannot call create unless the parent is saved"
@@ -447,6 +503,18 @@ module ActiveRecord
         def fetch_first_or_last_using_find?(args)
           args.first.kind_of?(Hash) || !(loaded? || @owner.new_record? || @reflection.options[:finder_sql] ||
                                          @target.any? { |record| record.new_record? } || args.first.kind_of?(Integer))
+        end
+
+        def include_in_memory?(record)
+          if @reflection.is_a?(ActiveRecord::Reflection::ThroughReflection)
+            @owner.send(proxy_reflection.through_reflection.name.to_sym).each do |source|
+              source_reflection_target = source.send(proxy_reflection.source_reflection.name)
+              return true if source_reflection_target.respond_to?(:include?) ? source_reflection_target.include?(record) : source_reflection_target == record
+            end
+            false
+          else
+            @target.include?(record)
+          end
         end
     end
   end
