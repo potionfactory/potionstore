@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'singleton'
 require 'iconv'
+require 'kconv'
 
 module ActiveSupport
   # The Inflector transforms words from singular to plural, class names to table names, modularized class names to ones without,
@@ -157,7 +158,7 @@ module ActiveSupport
     def singularize(word)
       result = word.to_s.dup
 
-      if inflections.uncountables.include?(result.downcase)
+      if inflections.uncountables.any? { |inflection| result =~ /#{inflection}\Z/i }
         result
       else
         inflections.singulars.each { |(rule, replacement)| break if result.gsub!(rule, replacement) }
@@ -254,18 +255,22 @@ module ActiveSupport
     #   @person = Person.find(1)
     #   # => #<Person id: 1, name: "Donald E. Knuth">
     #
-    #   <%= link_to(@person.name, person_path %>
+    #   <%= link_to(@person.name, person_path(@person)) %>
     #   # => <a href="/person/1-donald-e-knuth">Donald E. Knuth</a>
     def parameterize(string, sep = '-')
-      re_sep = Regexp.escape(sep)
+      # remove malformed utf8 characters
+      string = string.toutf8 unless string.is_utf8?
       # replace accented chars with ther ascii equivalents
       parameterized_string = transliterate(string)
       # Turn unwanted chars into the seperator
-      parameterized_string.gsub!(/[^a-z0-9\-_\+]+/i, sep)
-      # No more than one of the separator in a row.
-      parameterized_string.squeeze!(sep)
-      # Remove leading/trailing separator.
-      parameterized_string.gsub!(/^#{re_sep}|#{re_sep}$/i, '')
+      parameterized_string.gsub!(/[^a-z0-9\-_]+/i, sep)
+      unless sep.blank?
+        re_sep = Regexp.escape(sep)
+        # No more than one of the separator in a row.
+        parameterized_string.gsub!(/#{re_sep}{2,}/, sep)
+        # Remove leading/trailing separator.
+        parameterized_string.gsub!(/^#{re_sep}|#{re_sep}$/i, '')
+      end
       parameterized_string.downcase
     end
 
@@ -275,9 +280,16 @@ module ActiveSupport
       Iconv.iconv('ascii//ignore//translit', 'utf-8', string).to_s
     end
 
+    if RUBY_VERSION >= '1.9'
+      undef_method :transliterate
+      def transliterate(string)
+        warn "Ruby 1.9 doesn't support Unicode normalization yet"
+        string.dup
+      end
+
     # The iconv transliteration code doesn't function correctly
     # on some platforms, but it's very fast where it does function.
-    if "foo" != Inflector.transliterate("föö")
+    elsif "foo" != (Inflector.transliterate("föö") rescue nil)
       undef_method :transliterate
       def transliterate(string)
         string.mb_chars.normalize(:kd). # Decompose accented characters

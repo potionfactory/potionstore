@@ -35,7 +35,27 @@ class OptimisticLockingTest < ActiveRecord::TestCase
     assert_equal 0, p2.lock_version
 
     p2.first_name = 'sue'
-    assert_raises(ActiveRecord::StaleObjectError) { p2.save! }
+    assert_raise(ActiveRecord::StaleObjectError) { p2.save! }
+  end
+
+  # See Lighthouse ticket #1966
+  def test_lock_destroy
+    p1 = Person.find(1)
+    p2 = Person.find(1)
+    assert_equal 0, p1.lock_version
+    assert_equal 0, p2.lock_version
+
+    p1.first_name = 'stu'
+    p1.save!
+    assert_equal 1, p1.lock_version
+    assert_equal 0, p2.lock_version
+
+    assert_raises(ActiveRecord::StaleObjectError) { p2.destroy }
+
+    assert p1.destroy
+    assert p1.frozen?
+    assert p1.destroyed?
+    assert_raises(ActiveRecord::RecordNotFound) { Person.find(1) }
   end
 
   def test_lock_repeating
@@ -50,9 +70,9 @@ class OptimisticLockingTest < ActiveRecord::TestCase
     assert_equal 0, p2.lock_version
 
     p2.first_name = 'sue'
-    assert_raises(ActiveRecord::StaleObjectError) { p2.save! }
+    assert_raise(ActiveRecord::StaleObjectError) { p2.save! }
     p2.first_name = 'sue2'
-    assert_raises(ActiveRecord::StaleObjectError) { p2.save! }
+    assert_raise(ActiveRecord::StaleObjectError) { p2.save! }
   end
 
   def test_lock_new
@@ -71,7 +91,7 @@ class OptimisticLockingTest < ActiveRecord::TestCase
     assert_equal 0, p2.lock_version
 
     p2.first_name = 'sue'
-    assert_raises(ActiveRecord::StaleObjectError) { p2.save! }
+    assert_raise(ActiveRecord::StaleObjectError) { p2.save! }
   end
 
   def test_lock_new_with_nil
@@ -95,7 +115,7 @@ class OptimisticLockingTest < ActiveRecord::TestCase
     assert_equal 0, t2.version
 
     t2.tps_report_number = 800
-    assert_raises(ActiveRecord::StaleObjectError) { t2.save! }
+    assert_raise(ActiveRecord::StaleObjectError) { t2.save! }
   end
 
   def test_lock_column_is_mass_assignable
@@ -150,6 +170,32 @@ class OptimisticLockingTest < ActiveRecord::TestCase
       end
     end
   end
+
+  # See Lighthouse ticket #1966
+  def test_destroy_dependents
+    # Establish dependent relationship between People and LegacyThing
+    add_counter_column_to(Person, 'legacy_things_count')
+    LegacyThing.connection.add_column LegacyThing.table_name, 'person_id', :integer
+    LegacyThing.reset_column_information
+    LegacyThing.class_eval do
+      belongs_to :person, :counter_cache => true
+    end
+    Person.class_eval do
+      has_many :legacy_things, :dependent => :destroy
+    end
+
+    # Make sure that counter incrementing doesn't cause problems
+    p1 = Person.new(:first_name => 'fjord')
+    p1.save!
+    t = LegacyThing.new(:person => p1)
+    t.save!
+    p1.reload
+    assert_equal 1, p1.legacy_things_count
+    assert p1.destroy
+    assert_equal true, p1.frozen?
+    assert_raises(ActiveRecord::RecordNotFound) { Person.find(p1.id) }
+    assert_raises(ActiveRecord::RecordNotFound) { LegacyThing.find(t.id) }
+  end
   
   def test_quote_table_name
     ref = references(:michael_magician)
@@ -168,11 +214,11 @@ class OptimisticLockingTest < ActiveRecord::TestCase
 
   private
 
-    def add_counter_column_to(model)
-      model.connection.add_column model.table_name, :test_count, :integer, :null => false, :default => 0
+    def add_counter_column_to(model, col='test_count')
+      model.connection.add_column model.table_name, col, :integer, :null => false, :default => 0
       model.reset_column_information
       # OpenBase does not set a value to existing rows when adding a not null default column
-      model.update_all(:test_count => 0) if current_adapter?(:OpenBaseAdapter)
+      model.update_all(col => 0) if current_adapter?(:OpenBaseAdapter)
     end
 
     def remove_counter_column_from(model)
