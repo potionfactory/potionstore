@@ -298,4 +298,5 @@ class OpenFlashChart
     output += '</object>'
 		return output
   end
+
 end

@@ -6,14 +6,14 @@ class Store::LostLicenseController < ApplicationController
 
   def retrieve
     if params[:email].blank?
-      flash[:notice] = "We can't do much without an email address"
+      flash[:license_notice] = "We can't do much without an email address"
       render :action => 'index' and return
     end
 
     email = params[:email].strip().downcase()
     orders = Order.find(:all, :conditions => ["status='C' AND LOWER(email)=?", email])
     if orders.empty?
-      flash[:notice] = "Could not find any orders for " + email
+      flash[:license_notice] = "Could not find any orders for " + email
       @email = email
       render :action => 'index' and return
     end
