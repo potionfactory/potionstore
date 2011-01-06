@@ -49,17 +49,20 @@ $(document).ready(function(){
 		<td>
 			<p class="creditcards">
 				<%= radio_button_tag 'payment_type', 'cc', !(['paypal', 'gcheckout'].member? @payment_type), :id => 'creditcard' %>
-				<img src="/images/store/visa.gif" alt="Visa" /><img src="/images/store/mc.gif" alt="MasterCard" /><img src="/images/store/amex.gif" alt="Amex" /><img src="/images/store/discover.gif" alt="Discover" />
+				<%= image_tag "store/visa.gif", :alt => "Visa" %>
+				<%= image_tag "store/mc.gif", :alt => "MasterCard" %>
+				<%= image_tag "store/amex.gif", :alt => "Amex" %>
+				<%= image_tag "store/discover.gif", :alt => "Discover" %>
 			</p>
 			<p class="paypal" style="font: 10px helvetica">
 				<%= radio_button_tag 'payment_type', 'paypal', @payment_type == 'paypal', :id => 'paypal' %>
-				<img src="/images/store/paypal.gif" alt="PayPal" />
+				<%= image_tag "store/paypal.gif", :alt => "Paypal" %>
 				Shop without sharing your financial information
 			</p>
 			<% if $STORE_PREFS['allow_google_checkout'] then -%>
 			<p class="gcheckout">
 				<%= radio_button_tag 'payment_type', 'gcheckout', @payment_type == 'gcheckout', :id => 'gcheckout' %>
-				<img src="/images/store/gcheckout.gif" alt="Google Checkout" />
+				<%= image_tag "store/gcheckout.gif", :alt => "Google Checkout" %>
 			</p>
 			<% end -%>
 		</td>
