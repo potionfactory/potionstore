@@ -87,7 +87,7 @@ body { margin: 0 50pt; }
                 <%=h country_name(@order.country) %>
 				<% end -%>
             </td>
-			<td id="payment" style="width:35%;padding:5px 0;border-bottom: 3px double #ddd">
+			<td id="payment" style="width:35%;padding:5px 0;vertical-align:top;border-bottom: 3px double #ddd">
 				<strong>Payment:</strong><br/>
                 <%=h @order.payment_type %>
 				<% if @order.cc_order? %>
