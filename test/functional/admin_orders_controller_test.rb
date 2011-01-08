@@ -4,7 +4,7 @@ require 'admin/orders_controller'
 # Re-raise errors caught by the controller.
 class Admin::OrdersController; def rescue_action(e) raise e end; end
 
-class AdminOrdersControllerTest < Test::Unit::TestCase
+class AdminOrdersControllerTest < ActiveSupport::TestCase
   fixtures :orders
 
   def setup
