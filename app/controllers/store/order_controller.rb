@@ -119,14 +119,14 @@ class Store::OrderController < ApplicationController
 
     @order = Order.new(params[:order])
 
-    session[:order_id] = @order.id
-
     if not @order.save()
       respond_to do |format|
         format.json { render :json => @order.errors.full_messages.to_json, :status => :unprocessable_entity }
       end
       return
     end
+
+    session[:order_id] = @order.id
 
     # Actually send out the payload
     if @order.cc_order?
@@ -171,8 +171,6 @@ class Store::OrderController < ApplicationController
 
     @order.order_time = Time.now()
     @order.status = 'S'
-    session[:order_id] = @order.id
-    session[:items] = nil
 
     if not @order.save()
       flash[:error] = 'Please fill out all fields'
@@ -182,6 +180,10 @@ class Store::OrderController < ApplicationController
         render :action => 'payment_gcheckout' and return
       end
     end
+
+    # Do this after saving order
+    session[:order_id] = @order.id
+    session[:items] = nil
 
     # Actually send out the payload
     if @order.cc_order?
