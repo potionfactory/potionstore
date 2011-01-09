@@ -147,11 +147,21 @@ class Store::OrderController < ApplicationController
   def purchase
     redirect_to :action => 'index' and return unless params[:order] && params[:items]
 
-    if session[:order_id] != nil
-      @order = Order.find(session[:order_id])
-      if @order != nil && @order.status == 'C'
-        render :action => 'failed', :layout => 'error' and return
+    @order = ThehitlistOrder.find_by_unique_id(params[:order][:unique_id])
+
+    if @order
+      if @order.status == 'C'
+        session[:order_id] = @order.id
+        redirect_to :action => 'thankyou'
+      elsif @order.status == 'S'
+        # If the order was already submitted, wait half a second and call purchase again.
+        # Hopefully it'll complete and we can be redirected to the thank you page
+        sleep 0.5
+        self.purchase
+      else
+        render :action => 'failed', :layout => 'error'
       end
+      return
     end
 
     # We need the next two ugly lines because Safari's form autofill sucks
