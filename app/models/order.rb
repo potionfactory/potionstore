@@ -1,3 +1,5 @@
+require 'uid'
+
 class Order < ActiveRecord::Base
   has_many :line_items
   belongs_to :coupon
@@ -17,11 +19,15 @@ class Order < ActiveRecord::Base
       form_items = attributes[:items]
       attributes.delete(:items)
     end
+
     super(attributes)
+
     if form_items.length > 0
       self.add_form_items(form_items)
     end
-    self.order_time = Time.now()
+
+    self.unique_id = uid() if not self.unique_id
+    self.order_time = Time.now() if not self.order_time
   end
 
   def validate
@@ -350,6 +356,9 @@ class Order < ActiveRecord::Base
     if self.coupon != nil && !self.coupon.new_record? && self.coupon.changed?
       self.coupon.save()
     end
+
+    # Add UID if it hasn't been already
+    self.unique_id = uid() unless self.unique_id
 
     super()
   end
