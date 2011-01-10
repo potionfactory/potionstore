@@ -30,12 +30,10 @@ function determine_cc_type(cc_number) {
 	}
 }
 
-function select_cc(card) { $("#"+card).get(0).checked = "checked"; }
-
 function choose_cc() {
 	cc_number = $('#order_cc_number').val().replace(/\s/g, ''); // Get the credit card number and strip white spaces
 	cc_type = determine_cc_type(cc_number);
-	if (cc_type) select_cc(cc_type);
+	if (cc_type) $("#"+card).get(0).checked = "checked";
 
 	var card_types = new Array("Visa", "MasterCard", "Amex", "Discover");
 	for (i in card_types) {
@@ -183,16 +181,16 @@ $(document).ready(function(){
 	<h2>Credit Card</h2>
     <p id="cards"><span>Card Type:</span>
 	<input id="Visa" type="radio" name="order[payment_type]" value="Visa" checked="checked" />
-	<%= image_tag "store/visa.gif", :alt => 'Visa', :onclick => "select_cc('Visa')" %>
+	<%= image_tag "store/visa.gif", :alt => 'Visa' %>
 
 	<input id="MasterCard" type="radio" name="order[payment_type]" value="MasterCard"/>
-	<%= image_tag "store/mc.gif", :alt => 'MasterCard', :onclick => "select_cc('MasterCard')" %>
+	<%= image_tag "store/mc.gif", :alt => 'MasterCard' %>
 
 	<input id="Amex" type="radio" name="order[payment_type]" value="Amex" />
-	<%= image_tag "store/amex.gif", :alt => 'Amex', :onclick => "select_cc('Amex')" %>
+	<%= image_tag "store/amex.gif", :alt => 'Amex' %>
 
 	<input id="Discover" type="radio" name="order[payment_type]" value="Discover" />
-	<%= image_tag"store/discover.gif", :alt => 'Discover', :onclick => "select_cc('Discover')" %>
+	<%= image_tag"store/discover.gif", :alt => 'Discover' %>
     </p>
 
     <p><label><span>Credit Card Number:</span><%= text_field "order", "cc_number", :size=>24, :class => "required creditcard" %></label></p>
