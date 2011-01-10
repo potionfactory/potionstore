@@ -29,8 +29,7 @@ div.progressBar div.background {
 
 #content { margin: 0 auto; }
 
-h1
-{
+h1 {
     margin: 30px 0 40px;
     font-family: helvetica, sans-serif;
     font-weight: bold;
@@ -39,29 +38,25 @@ h1
 }
 
 
-h1 span
-{
+h1 span {
     font-family: helvetica, sans-serif;
     font-weight: normal;
     font-size: 28px;
     color: #555;
 }
 
-h2
-{
+h2 {
     margin: 20px 0 30px;
     font-family: helvetica, arial, sans-serif;
     text-transform: uppercase;
 }
 
-h3
-{
+h3 {
     margin-top: 40px;
 }
 
 input.qty, #order_zipcode { vertical-align: middle; }
-input.qty
-{
+input.qty {
     font-size: 24px;
     font-weight: bold;
     text-align: right;
@@ -84,8 +79,7 @@ input.qty
 #products td span { color:#aaa; font-size:10px; }
 #products td strong { font-size:13px; }
 
-#products tr#coupon_row td
-{
+#products tr#coupon_row td {
     font-size:12px;
     font-weight:normal;
     padding-top:5px;
@@ -103,16 +97,14 @@ input.qty
 
 #products img { vertical-align:middle; margin-right:5px; }
 
-#discounts
-{
+#discounts {
     border: 1px dotted #ccc;
     padding: 7px;
     color: #444;
     background-color: #ffd;
 }
 
-#site_license
-{
+#site_license {
     margin: 5px auto;
     padding: 7px;
     color: #444;
@@ -127,13 +119,11 @@ div.d { height:1px; margin:20px 0 10px; border-top:1px dotted #999; }
 /* -------------------------------------------------------------------------------- */
 /* Stuff for the Payment screen                                                     */
 
-#page.narrow .ccolumn.narrow.solo div.narrow
-{
+#page.narrow .ccolumn.narrow.solo div.narrow {
   width: 440px; margin: 0 auto;
 }
 
-table#order
-{
+table#order {
     width: 440px;
     border-collapse: collapse;
     margin: 0 auto;
@@ -144,15 +134,13 @@ table#order .price { width:130px; text-align:right; padding-right:8px; }
 table#order .prod { font-weight:bold; font-size:12px; }
 table#order #total td { padding-top: 10px; font-size:14px; }
 
-span, label, .label
-{
+span, label, .label {
     font-family: helvetica, arial, sans-serif;
     font-size: 12px;
     color: #333;
 }
 
-p span
-{
+p span {
     position: relative;
     top: 3px;
     float: left;
@@ -161,8 +149,7 @@ p span
     text-align: right;
 }
 
-#fname, #lname
-{
+#fname, #lname {
     float: left;
     font-size: 10px;
     color: #aaa;
@@ -175,8 +162,7 @@ input#order_address1,
 input#order_address2,
 input#order_licensee_name,
 input#order_email,
-input#order_comment
-{
+input#order_comment {
     width:238px;
 }
 
@@ -192,23 +178,21 @@ input { margin-left: 0; }
 
 #order_cc_month { margin-right: 5px; }
 #order_cc_year { margin-left: 5px; margin-right: 10px; }
+#ccexp img { vertical-align: middle; position: relative; top: -3px; }
 
 input#submit { margin: 10px 0 0 192px; }
 
 #final_step { color: #999; font-family:helvetica, sans-serif; font-size: 11px; margin-left: 15px; }
 
-#errors
-{
+#errors {
 	padding-bottom: 20px;
 }
 
-#error
-{
+#error {
     color:#d00;
 }
 
-div.fieldWithErrors
-{
+div.fieldWithErrors {
     padding-right: 13px;
     background-image: url(/images/store/missing_field.png);
     background-position: right;
@@ -217,8 +201,7 @@ div.fieldWithErrors
 }
 
 /* jQuery Validate plugin error labels */
-label.error
-{
+label.error {
 	margin:5px 0 0 137px;
 	color:red;
 	font-size:8pt;
@@ -227,25 +210,21 @@ label.error
 /* -------------------------------------------------------------------------------- */
 /* Thank you page */
 
-#license_keys td.first
-{
+#license_keys td.first {
     text-align: right;
 }
 
-.box
-{
+.box {
 	padding: 0 15px 10px;
 	border: 1px dotted #ccc;
 	background-color: #ffd;
 }
 
-#license_keys td
-{
+#license_keys td {
     padding: 10px 10px 0 0;
 }
 
-#license_keys code
-{
+#license_keys code {
     color: black;
 }
 
