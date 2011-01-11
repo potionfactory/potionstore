@@ -60,13 +60,10 @@ class Store::OrderController < ApplicationController
       redirect_to :action => 'index' and return
     end
 
-    # Handle Paypal orders
     if params[:payment_type] == 'paypal'
-      res =  Paypal.express_checkout(:amount => String(@order.total),
-                                     :cancelURL => url_for(:action => 'index'),
-                                     :returnURL => url_for(:action => 'confirm_paypal'),
-                                     :noShipping => 1,
-                                     :cpp_header_image => $STORE_PREFS['paypal_express_checkout_header_image'])
+      # Handle Paypal orders
+      res = @order.paypal_set_express_checkout(url_for(:action => 'confirm_paypal'), url_for(:action => 'index'))
+
       if res.ack == 'Success' || res.ack == 'SuccessWithWarning'
         # Need to copy the string. For some reason, it tries to render the payment action otherwise
         session[:paypal_token] = String.new(res.token)
@@ -75,23 +72,21 @@ class Store::OrderController < ApplicationController
           redirect_to :action => 'index' and return
         end
         session[:order_id] = @order.id
-        redirect_to Paypal.express_checkout_redirect_url(res.token) and return
+        redirect_to PayPal.express_checkout_redirect_url(res.token)
       else
         flash[:notice] = 'Could not connect to PayPal'
-        redirect_to :action => 'index' and return
+        redirect_to :action => 'index'
       end
-
-    # Handle Google Checkout orders
     elsif params[:payment_type] == 'gcheckout'
-      render :action => 'payment_gcheckout' and return
+      # Handle Google Checkout orders
+      render :action => 'payment_gcheckout'
+    else
+      # credit card order
+      # put in a dummy credit card number for testing
+      @order.cc_number = '4916306176169494' if not is_live?()
+
+      render :action => 'payment_cc'
     end
-
-    # credit card order
-
-    # put in a dummy credit card number for testing
-    @order.cc_number = '4916306176169494' if not is_live?()
-
-    render :action => 'payment_cc'
   end
 
   def redirect
@@ -130,7 +125,7 @@ class Store::OrderController < ApplicationController
 
     # Actually send out the payload
     if @order.cc_order?
-      success = @order.paypal_directcharge(request)
+      success = @order.paypal_direct_payment(request)
       @order.status = success ? 'C' : 'F'
       @order.finish_and_save() if success
 
@@ -197,7 +192,7 @@ class Store::OrderController < ApplicationController
 
     # Actually send out the payload
     if @order.cc_order?
-      success = @order.paypal_directcharge(request)
+      success = @order.paypal_direct_payment(request)
       finish_order(success)
     else
       # Google Checkout order
@@ -217,24 +212,12 @@ class Store::OrderController < ApplicationController
     redirect_to :action => 'index' and return if @order == nil || session[:paypal_token] != params[:token]
 
     # Suck the info from PayPal
-    res = Paypal.express_checkout_details(:token => session[:paypal_token])
-
-    if res.ack != 'Success' && res.ack != 'SuccessWithWarning'
+    if not @order.update_from_paypal_express_checkout_details(session[:paypal_token])
       flash[:notice] = 'Could not retrieve order information from PayPal'
       redirect_to :action => 'index' and return
     end
 
-    payerInfo = res.getExpressCheckoutDetailsResponseDetails.payerInfo
     session[:paypal_payer_id] = params['PayerID']
-    @order.email = String.new(payerInfo.payer)
-    @order.first_name = String.new(payerInfo.payerName.firstName)
-    @order.last_name = String.new(payerInfo.payerName.lastName)
-    @order.licensee_name = @order.first_name + " " + @order.last_name
-    if payerInfo.respond_to? 'payerCountry'
-      @order.country = String.new(payerInfo.payerCountry)
-    else
-      @order.country = 'XX'
-    end
     @order.payment_type = 'PayPal'
 
     if not @order.save()

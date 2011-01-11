@@ -260,7 +260,7 @@ class PayPal
 	@@debug = val
   end
 
-  def self.express_checkout_redirect_url(token, useraction = None)
+  def self.express_checkout_redirect_url(token, useraction = nil)
     live = ENV['RAILS_ENV'] == 'production'
     if live
       url = "https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=#{token}"
