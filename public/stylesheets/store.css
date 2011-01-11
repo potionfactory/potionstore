@@ -156,6 +156,7 @@ p span {
 }
 
 #cards img { vertical-align: middle; margin-right: 7px; }
+#Visa, #MasterCard, #Amex, #Discover { display: none; }
 
 input#order_company,
 input#order_address1,
