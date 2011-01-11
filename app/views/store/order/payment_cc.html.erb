@@ -39,7 +39,6 @@ function choose_cc() {
 	for (i in card_types) {
 		input = $('#'+card_types[i]).get(0);
 		image = $('#'+card_types[i]).next().get(0);
- 		input.style.display = "none";
 
 		if (card_types[i] == cc_type) {
 			image.style.opacity = 1;
@@ -181,16 +180,16 @@ $(document).ready(function(){
 	<h2>Credit Card</h2>
     <p id="cards"><span>Card Type:</span>
 	<input id="Visa" type="radio" name="order[payment_type]" value="Visa" checked="checked" />
-	<%= image_tag "store/visa.gif", :alt => 'Visa' %>
+	<%= image_tag "store/visa.gif", :alt => 'Visa', :width => 37, :height => 23 %>
 
 	<input id="MasterCard" type="radio" name="order[payment_type]" value="MasterCard"/>
-	<%= image_tag "store/mc.gif", :alt => 'MasterCard' %>
+	<%= image_tag "store/mc.gif", :alt => 'MasterCard', :width => 37, :height => 23 %>
 
 	<input id="Amex" type="radio" name="order[payment_type]" value="Amex" />
-	<%= image_tag "store/amex.gif", :alt => 'Amex' %>
+	<%= image_tag "store/amex.gif", :alt => 'Amex', :width => 37, :height => 23 %>
 
 	<input id="Discover" type="radio" name="order[payment_type]" value="Discover" />
-	<%= image_tag"store/discover.gif", :alt => 'Discover' %>
+	<%= image_tag"store/discover.gif", :alt => 'Discover', :width => 37, :height => 23 %>
     </p>
 
     <p><label><span>Credit Card Number:</span><%= text_field "order", "cc_number", :size=>24, :class => "required creditcard" %></label></p>
@@ -199,7 +198,7 @@ $(document).ready(function(){
         <label><span>Expiration Date:</span>
 		<%= text_field "order", "cc_month", :maxlength => 2 %></label>/<%= text_field "order", "cc_year", :maxlength=>2 %>
 		<label>CSC: <%= text_field "order", "cc_code", :size =>4 %></label>
-		<%= image_tag "store/cvv.png", :alt => "Security Code" %>
+		<%= image_tag "store/cvv.png", :alt => "Security Code", :width => 37, :height => 21 %>
     </p>
 </div>
 
