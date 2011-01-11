@@ -33,7 +33,7 @@ function determine_cc_type(cc_number) {
 function choose_cc() {
 	cc_number = $('#order_cc_number').val().replace(/\s/g, ''); // Get the credit card number and strip white spaces
 	cc_type = determine_cc_type(cc_number);
-	if (cc_type) $("#"+card).get(0).checked = "checked";
+	if (cc_type) $("#"+cc_type).get(0).checked = "checked";
 
 	var card_types = new Array("Visa", "MasterCard", "Amex", "Discover");
 	for (i in card_types) {
