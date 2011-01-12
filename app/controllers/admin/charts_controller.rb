@@ -118,41 +118,32 @@ class Admin::ChartsController < ApplicationController
 
   private
   def revenue_history_days_sql(days)
-    if Order.connection.adapter_name == 'PostgreSQL'
+    if Order.connection.adapter_name.downcase == 'mysql'
       "select extract(year from orders.order_time) as year,
               extract(month from orders.order_time) as month,
               extract(day from orders.order_time) as day,
-              extract(day from age(date_trunc('day', orders.order_time))) as days_ago,
-              sum(line_items.unit_price * quantity)
-                - sum(coalesce(coupons.amount, 0))
-                - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
+              datediff(now(), orders.order_time) as days_ago,
+              sum(total) as revenue,
               max(orders.order_time) as last_time
 
          from orders
-              inner join line_items on orders.id = line_items.order_id
-              left outer join coupons on coupons.id = orders.coupon_id
 
-        where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time
+        where status = 'C' and total > 0 and current_date - #{days-1} <= order_time
 
         group by year, month, day, days_ago
 
         order by last_time desc"
     else
-      # Assume mysql if it's not postgresql
       "select extract(year from orders.order_time) as year,
               extract(month from orders.order_time) as month,
               extract(day from orders.order_time) as day,
-              datediff(now(), orders.order_time) as days_ago,
-              sum(line_items.unit_price * quantity)
-                - sum(coalesce(coupons.amount, 0))
-                - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
+              extract(day from age(date_trunc('day', orders.order_time))) as days_ago,
+              sum(total) as revenue,
               max(orders.order_time) as last_time
 
          from orders
-              inner join line_items on orders.id = line_items.order_id
-              left outer join coupons on coupons.id = orders.coupon_id
 
-        where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time
+        where status = 'C' and total > 0 and current_date - #{days-1} <= order_time
 
         group by year, month, day, days_ago
 
@@ -162,81 +153,62 @@ class Admin::ChartsController < ApplicationController
 
    def revenue_history_weeks_sql(weeks)
       # This query stays the same for both DBMS
-      if Order.connection.adapter_name == 'PostgreSQL'
+      if Order.connection.adapter_name.downcase == 'mysql'
         "select extract(week from orders.order_time) as week,
-              sum(line_items.unit_price * quantity)
-                - sum(coalesce(coupons.amount, 0))
-                - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
-              max(orders.order_time) as last_time
-
-         from orders
-              inner join line_items on orders.id = line_items.order_id
-              left outer join coupons on coupons.id = orders.coupon_id
-
-        where status = 'C' and lower(payment_type) != 'free' and current_date - #{(weeks-1)*7} <= order_time
-
-        group by week
-
-        order by last_time desc limit #{weeks}"
-      else
-        # Assume mysql if it's not postgresql
-        "select extract(week from orders.order_time) as week,
-                       sum(line_items.unit_price * quantity)
-                         - sum(coalesce(coupons.amount, 0))
-                         - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
-                        max(orders.order_time) as last_time
-
-                  from orders
-                       inner join line_items on orders.id = line_items.order_id
-                       left outer join coupons on coupons.id = orders.coupon_id
-
-                 where status = 'C' and lower(payment_type) != 'free' and datediff(current_date(),order_time) <=  #{weeks-1}*7
-
-                 group by week
-
-                 order by last_time desc limit #{weeks}"
-       end
-    end
-
-    def revenue_history_months_sql(months)
-      if Order.connection.adapter_name == 'PostgreSQL'
-        "select extract(year from orders.order_time) as year,
-                extract(month from orders.order_time) as month,
-                extract(month from age(date_trunc('month', orders.order_time))) as months_ago,
-                sum(line_items.unit_price * quantity)
-                  - sum(coalesce(coupons.amount, 0))
-                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
+                sum(total) as revenue,
                 max(orders.order_time) as last_time
 
            from orders
-                inner join line_items on orders.id = line_items.order_id
-                left outer join coupons on coupons.id = orders.coupon_id
 
-          where status = 'C' and lower(payment_type) != 'free'
+          where status = 'C' and total > 0 and datediff(current_date(), order_time) <=  #{weeks-1}*7
+
+          group by week
+
+          order by last_time desc limit #{weeks}"
+      else
+        "select extract(week from orders.order_time) as week,
+                sum(total) as revenue,
+                max(orders.order_time) as last_time
+
+           from orders
+
+          where status = 'C' and total > 0 and current_date - #{(weeks-1)*7} <= order_time
+
+          group by week
+
+          order by last_time desc limit #{weeks}"
+      end
+    end
+
+    def revenue_history_months_sql(months)
+      if Order.connection.adapter_name == 'mysql'
+        "select extract(year from orders.order_time) as year,
+                extract(month from orders.order_time) as month,
+                period_diff( extract( year_month from current_date ), extract( year_month from orders.order_time ) ) as months_ago,
+                sum(total) as revenue,
+                max(orders.order_time) as last_time
+
+           from orders
+
+          where status = 'C' and total > 0
 
           group by year, month, months_ago
 
           order by last_time desc limit #{months}"
       else
-        # Assume mysql if it's not postgresql
         "select extract(year from orders.order_time) as year,
-                        extract(month from orders.order_time) as month,
-                        PERIOD_DIFF( EXTRACT( YEAR_MONTH FROM current_date ), EXTRACT( YEAR_MONTH FROM orders.order_time ) ) as months_ago,
+                extract(month from orders.order_time) as month,
+                extract(month from age(date_trunc('month', orders.order_time))) as months_ago,
+                sum(total) as revenue,
+                max(orders.order_time) as last_time
 
-                        sum(line_items.unit_price * quantity)
-                          - sum(coalesce(coupons.amount, 0))
-                          - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
-                        max(orders.order_time) as last_time
+           from orders
 
-                 from orders
-                      inner join line_items on orders.id = line_items.order_id
-                      left outer join coupons on coupons.id = orders.coupon_id
+          where status = 'C' and total > 0
 
-                 where status = 'C' and lower(payment_type) != 'free'
+          group by year, month, months_ago
 
-                 group by year, month, months_ago
-
-                 order by last_time desc limit #{months}"
+          order by last_time desc limit #{months}"
       end
     end
 end

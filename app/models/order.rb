@@ -65,7 +65,7 @@ class Order < ActiveRecord::Base
     end
   end
 
-  def total
+  def calculated_total
     return round_money(total_before_applying_coupons() - coupon_amount())
   end
 
@@ -360,6 +360,9 @@ class Order < ActiveRecord::Base
 
     # Add UID if it hasn't been already
     self.unique_id = uid() unless self.unique_id
+
+    # Always update the total before saving. Always!!!
+    self.total = self.calculated_total
 
     super()
   end

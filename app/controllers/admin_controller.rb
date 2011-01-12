@@ -174,48 +174,36 @@ class AdminController < ApplicationController
 
     # helper function
     def last_n_days_sql(days)
-      if Order.connection.adapter_name == 'PostgreSQL'
+
+      if Order.connection.adapter_name.downcase == 'mysql'
         "select (select count(*)
-                  from orders
-                 where status = 'C' and
-                       lower(payment_type) != 'free' and
-                       current_date - #{days-1} <= order_time) as orders,
-               sum(line_items.unit_price * quantity)
-                 - sum(coalesce(coupons.amount, 0))
-                 - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
-               sum(quantity) as quantity,
-               products.code as product_name
+                   from orders
+                  where status = 'C' and total > 0 and datediff(current_date(), order_time) <= #{days-1}) as orders,
+                sum(total) as revenue,
+                sum(quantity) as quantity,
+                products.code as product_name
 
-        from orders
-             inner join line_items on orders.id = line_items.order_id
-             left outer join products on products.id = line_items.product_id
-             left outer join coupons on coupons.id = orders.coupon_id
+           from orders
+                inner join line_items on orders.id = line_items.order_id
+                left outer join products on products.id = line_items.product_id
 
-        where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time
-
-        group by product_name"
+          where status = 'C' and total > 0 and datediff(current_date(), order_time) <=  #{days-1}
+          group by product_name"
       else
         "select (select count(*)
-                    from orders
-                   where status = 'C' and
-                         lower(payment_type) != 'free' and
-                         datediff(current_date(),order_time) <=  #{days-1} ) as orders,
-                 sum(line_items.unit_price * quantity)
-                   - sum(IFNULL(coupons.amount, 0))
-                   - sum(line_items.unit_price * quantity * IFNULL(percentage, 0) / 100) as revenue,
-                 sum(quantity) as quantity,
-                 products.code as product_name
+                   from orders
+                  where status = 'C' and total > 0 and current_date - #{days-1} <= order_time) as orders,
+                sum(total) as revenue,
+                sum(quantity) as quantity,
+                products.code as product_name
 
-          from orders
-               inner join line_items on orders.id = line_items.order_id
-               left outer join products on products.id = line_items.product_id
-               left outer join coupons on coupons.id = orders.coupon_id
+           from orders
+                inner join line_items on orders.id = line_items.order_id
+                left outer join products on products.id = line_items.product_id
 
-          where status = 'C' and lower(payment_type) != 'free' and datediff(current_date(),order_time) <=  #{days-1}
-
+          where status = 'C' and total > 0 and current_date - #{days-1} <= order_time
           group by product_name"
         end
-
     end
 
     query_results = []
@@ -236,6 +224,7 @@ class AdminController < ApplicationController
       total = 0
       for row in result
         name = row["product_name"]
+        name.upcase! if name
         @product_revenue[name] = [] if @product_revenue[name] == nil
         @product_quantity[name] = [] if @product_quantity[name] == nil
         @product_revenue[name] << row["revenue"]
@@ -261,30 +250,17 @@ class AdminController < ApplicationController
     end
 
     def last_n_days_revenue(days)
-
-       if Order.connection.adapter_name == 'PostgreSQL'
-         last_n_days_sql = "
-           select sum(line_items.unit_price * quantity)
-                     - sum(coalesce(coupons.amount, 0))
-                     - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue
-
-             from orders
-                  inner join line_items on orders.id = line_items.order_id
-                  left outer join coupons on coupons.id = orders.coupon_id
-
-             where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time"
-       else
-         last_n_days_sql = "
-         select sum(line_items.unit_price * quantity)
-                       - sum(IFNULL(coupons.amount, 0))
-                       - sum(line_items.unit_price * quantity * IFNULL(percentage, 0) / 100) as revenue
-
-           from orders
-                inner join line_items on orders.id = line_items.order_id
-                left outer join coupons on coupons.id = orders.coupon_id
-
-           where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time"
-        end
+      if Order.connection.adapter_name.downcase == 'mysql'
+        last_n_days_sql = "
+          select sum(total) as revenue
+            from orders
+           where status = 'C' and total > 0 and datediff(current_date(), order_time) <=  #{days-1}"
+      else
+        last_n_days_sql = "
+          select sum(total) as revenue
+            from orders
+           where status = 'C' and total > 0 and current_date - #{days-1} <= order_time"
+      end
 
       result = Order.connection.select_all(last_n_days_sql)
       return (result != nil && result.length > 0 && result[0]["revenue"] != nil) ? result[0]["revenue"] : 0
