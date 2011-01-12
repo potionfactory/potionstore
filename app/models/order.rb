@@ -227,6 +227,7 @@ class Order < ActiveRecord::Base
         (coupon.product_code == 'all' || has_item_with_code(coupon.product_code)) &&
         !coupon.expired?
       self.coupon = coupon
+      self.total = self.calculated_total
     end
   end
 
@@ -270,6 +271,7 @@ class Order < ActiveRecord::Base
       for item in self.line_items
         item.unit_price = item.volume_price
       end
+      self.total = self.calculated_total
       return true
     rescue
       logger.error("Could not add form product items: #{$!}")
