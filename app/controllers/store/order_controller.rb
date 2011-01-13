@@ -196,7 +196,7 @@ class Store::OrderController < ApplicationController
       finish_order(success)
     else
       # Google Checkout order
-      redirect_url = @order.send_to_google_checkout(url_for(:action => 'index'))
+      redirect_url = @order.gcheckout_send_order(url_for(:action => 'index'))
       if redirect_url == nil
         @order.failure_reason = 'Could not connect to Google Checkout'
         render :action => 'failed', :layout => 'error' and return

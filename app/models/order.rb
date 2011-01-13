@@ -211,6 +211,8 @@ class Order < ActiveRecord::Base
       return 'Failed'
     when 'X'
       return 'Cancelled'
+    when 'R'
+      return 'Refunded'
     end
     return self.status
   end
@@ -390,6 +392,16 @@ class Order < ActiveRecord::Base
     end
   end
 
+  def refund
+    return if self.status != 'C' and self.status != 'X'
+
+    if cc_order? or paypal_order?
+      self.paypal_refund_order()
+    else
+      self.gcheckout_refund_order()
+    end
+  end
+
   # PayPal related methods
   def paypal_direct_payment(request)
     # The following is needed because MediaTemple puts in two ip addresses in REMOTE_ADDR for some reason
@@ -490,6 +502,25 @@ class Order < ActiveRecord::Base
     end
   end
 
+  def paypal_refund_order
+    itemsdesc = self.line_items.collect {|x| x.product.name}.to_sentence
+    company = $STORE_PREFS['company_name']
+
+    params = {
+      'method' => 'RefundTransaction',
+      'transactionID' => self.transaction_number,
+      'invoiceID' => self.id,
+      'note' => "Refund for #{itemsdesc} from #{company}"
+    }
+
+    res = PayPal.make_nvp_call(params, micropayment = self.total < 12)
+
+    if res.ack == 'Success' || res.ack == 'SuccessWithWarning'
+      self.status = 'R'
+      self.save()
+    end
+  end
+
   def update_from_paypal_express_checkout_details(token)
     res = PayPal.make_nvp_call('method' => 'GetExpressCheckoutDetails', 'token' => token)
     if res.ack == 'Success' || res.ack == 'SuccessWithWarning'
@@ -541,7 +572,7 @@ class Order < ActiveRecord::Base
   end
 
   # Google Checkout related methods
-  def send_to_google_checkout(edit_cart_url = nil)
+  def gcheckout_send_order(edit_cart_url = nil)
     command = $GCHECKOUT_FRONTEND.create_checkout_command
     command.continue_shopping_url = $STORE_PREFS['company_url']
     command.edit_cart_url = edit_cart_url
@@ -593,24 +624,38 @@ class Order < ActiveRecord::Base
     end
   end
 
-  def send_to_google_add_merchant_order_number_command
+  def gcheckout_add_merchant_order_number
     command = $GCHECKOUT_FRONTEND.create_add_merchant_order_number_command
     command.google_order_number = self.transaction_number
     command.merchant_order_number = self.id
     command.send_to_google_checkout() rescue nil
   end
 
-  def send_to_google_deliver_order_command
+  def gcheckout_deliver_order
     command = $GCHECKOUT_FRONTEND.create_deliver_order_command
     command.google_order_number = self.transaction_number
     command.send_email = false
     command.send_to_google_checkout() rescue nil
   end
 
-  def send_to_google_archive_order_command
+  def gcheckout_archive_order
     command = $GCHECKOUT_FRONTEND.create_archive_order_command
     command.google_order_number = self.transaction_number
     command.send_to_google_checkout() rescue nil
   end
-end
 
+  def gcheckout_refund_order
+    command = $GCHECKOUT_FRONTEND.create_refund_order_command
+    command.google_order_number = self.transaction_number
+    command.reason = 'Refund requested by customer'
+    command.send_to_google_checkout() rescue nil
+
+    command = $GCHECKOUT_FRONTEND.create_cancel_order_command
+    command.google_order_number = self.transaction_number
+    command.reason = 'Refund requested by customer'
+    command.send_to_google_checkout() rescue nil
+
+    self.status = 'R'
+    self.save()
+  end
+end

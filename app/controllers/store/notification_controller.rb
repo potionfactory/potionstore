@@ -1,4 +1,5 @@
 require 'base64'
+require 'xmlsimple'
 
 def _xmlval(hash, key)
   if hash[key] == {}
@@ -81,7 +82,7 @@ class Store::NotificationController < ApplicationController
 
     order.subscribe_to_list() if n['buyer-marketing-preferences']['email_allowed'] == 'true'
 
-    order.send_to_google_add_merchant_order_number_command()
+    order.gcheckout_add_merchant_order_number()
   end
 
   private
@@ -94,7 +95,7 @@ class Store::NotificationController < ApplicationController
     order.finish_and_save()
     OrderMailer.deliver_thankyou(order) if is_live?()
 
-    order.send_to_google_archive_order_command()
+    order.gcheckout_archive_order()
   end
 
 end

@@ -88,14 +88,18 @@ tr { vertical-align: top; }
 
 /* Used for the order and product list */
 table.list { border-collapse: collapse; }
-table.list th { border:1px dotted #bbb; background-color: #eee; padding:5px; }
+table.list th { border:1px dotted #bbb; background-color: #f5f5f5; padding:5px; }
 table.list td { border:1px dotted #999; padding:5px; }
 table.list tr.F, tr.F A { color:#999; }
-table.list tr.X { background-color:#999; }
-table.list tr.X td { border:1px dotted #bbb; }
+
+table.list tr.X { background-color:#e5e5e5; }
+table.list tr.X td { border:1px dotted #aaa; }
+
+table.list tr.R { background-color:#ccc; }
+table.list tr.R td { border:1px dotted #aaa; }
+
 table.list .address { width:150px; }
 table.list tr.newday { border-top:3px double #ccc; }
 
 .fl { float: left; }
 .fr { float: right; }
-  

@@ -11,6 +11,7 @@
     <% if @order.complete? -%>
     <li><%= link_to "Cancel Order", :action => "cancel", :id => @order.id %></li>
     <% elsif @order.status == "X" -%>
+	<li><%= link_to "Refund Order", :action => "refund", :id => @order.id %></li>
     <li><%= link_to "Uncancel Order", :action => "uncancel", :id => @order.id %></li>
     <% end -%>
     <% if @order.complete? -%>
