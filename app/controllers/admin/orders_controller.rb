@@ -8,7 +8,7 @@ class Admin::OrdersController < ApplicationController
   # GET /orders.xml
   def index
     q = params[:query]
-    conditions = "(status='C' OR status='X' OR status='F')"
+    conditions = "status <> 'P'"
     if q
       q = q.strip().downcase()
       if q.to_i != 0
@@ -107,6 +107,7 @@ class Admin::OrdersController < ApplicationController
     end
   end
 
+  # GET /orders/1/cancel
   def cancel
     @order = Order.find(params[:id])
     @order.status = 'X'
@@ -114,6 +115,7 @@ class Admin::OrdersController < ApplicationController
     redirect_to :action => 'show', :id => @order.id
   end
 
+  # GET /orders/1/uncancel
   def uncancel
     @order = Order.find(params[:id])
     @order.status = 'C'
@@ -121,6 +123,14 @@ class Admin::OrdersController < ApplicationController
     redirect_to :action => 'show', :id => @order.id
   end
 
+  # GET /orders/1/refund
+  def refund
+    @order = Order.find(params[:id])
+    @order.refund
+    redirect_to :action => 'show', :id => @order.id
+  end
+
+  # GET /orders/1/send_emails
   def send_emails
     @order = Order.find(params[:id])
     OrderMailer.deliver_thankyou(@order)

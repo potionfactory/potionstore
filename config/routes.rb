@@ -20,7 +20,13 @@ ActionController::Routing::Routes.draw do |map|
 
   # admin stuff
   map.resources :products, :name_prefix => 'admin_', :path_prefix => 'admin', :controller => 'admin/products'
-  map.resources :orders,   :name_prefix => 'admin_', :path_prefix => 'admin', :controller => 'admin/orders'
+  map.resources :orders,   :name_prefix => 'admin_', :path_prefix => 'admin', :controller => 'admin/orders', :member => {
+    :cancel => :get,
+    :uncancel => :get,
+    :refund => :get,
+    :send_emails => :get,
+  }
+
   map.connect 'admin/charts/:action', :controller => 'admin/charts'
 
   # Allow downloading Web Service WSDL as a file with an extension
