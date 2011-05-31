@@ -1,4 +1,10 @@
 require 'cases/helper'
+require 'models/post'
+require 'models/author'
+require 'models/comment'
+require 'models/category'
+require 'models/categorization'
+require 'active_support/core_ext/array/random_access'
 
 module Remembered
   def self.included(base)
@@ -12,7 +18,7 @@ module Remembered
 
   module ClassMethods
     def remembered; @@remembered ||= []; end
-    def rand; @@remembered.rand; end
+    def sample; @@remembered.sample; end
   end
 end
 
@@ -61,13 +67,13 @@ class EagerLoadPolyAssocsTest < ActiveRecord::TestCase
   def setup
     generate_test_object_graphs
   end
-  
+
   def teardown
-    [Circle, Square, Triangle, PaintColor, PaintTexture, 
+    [Circle, Square, Triangle, PaintColor, PaintTexture,
      ShapeExpression, NonPolyOne, NonPolyTwo].each do |c|
       c.delete_all
     end
-    
+
   end
 
 
@@ -76,14 +82,14 @@ class EagerLoadPolyAssocsTest < ActiveRecord::TestCase
       [Circle, Square, Triangle, NonPolyOne, NonPolyTwo].map(&:create!)
     end
     1.upto(NUM_SIMPLE_OBJS) do
-      PaintColor.create!(:non_poly_one_id => NonPolyOne.rand.id)
-      PaintTexture.create!(:non_poly_two_id => NonPolyTwo.rand.id)
+      PaintColor.create!(:non_poly_one_id => NonPolyOne.sample.id)
+      PaintTexture.create!(:non_poly_two_id => NonPolyTwo.sample.id)
     end
     1.upto(NUM_SHAPE_EXPRESSIONS) do
-      shape_type = [Circle, Square, Triangle].rand
-      paint_type = [PaintColor, PaintTexture].rand
-      ShapeExpression.create!(:shape_type => shape_type.to_s, :shape_id => shape_type.rand.id,
-                              :paint_type => paint_type.to_s, :paint_id => paint_type.rand.id)
+      shape_type = [Circle, Square, Triangle].sample
+      paint_type = [PaintColor, PaintTexture].sample
+      ShapeExpression.create!(:shape_type => shape_type.to_s, :shape_id => shape_type.sample.id,
+                              :paint_type => paint_type.to_s, :paint_id => paint_type.sample.id)
     end
   end
 
@@ -96,6 +102,30 @@ class EagerLoadPolyAssocsTest < ActiveRecord::TestCase
         assert_not_nil se.paint.non_poly, "this is the association that was loading incorrectly before the change"
         assert_not_nil se.shape, "just making sure other associations still work"
       end
+    end
+  end
+end
+
+class EagerLoadNestedIncludeWithMissingDataTest < ActiveRecord::TestCase
+  def setup
+    @davey_mcdave = Author.create(:name => 'Davey McDave')
+    @first_post = @davey_mcdave.posts.create(:title => 'Davey Speaks', :body => 'Expressive wordage')
+    @first_comment = @first_post.comments.create(:body => 'Inflamatory doublespeak')
+    @first_categorization = @davey_mcdave.categorizations.create(:category => Category.first, :post => @first_post)
+  end
+
+  def teardown
+    @davey_mcdave.destroy
+    @first_post.destroy
+    @first_comment.destroy
+    @first_categorization.destroy
+  end
+
+  def test_missing_data_in_a_nested_include_should_not_cause_errors_when_constructing_objects
+    assert_nothing_raised do
+      # @davey_mcdave doesn't have any author_favorites
+      includes = {:posts => :comments, :categorizations => :category, :author_favorites => :favorite_author }
+      Author.all :include => includes, :conditions => {:authors => {:name => @davey_mcdave.name}}, :order => 'categories.name'
     end
   end
 end

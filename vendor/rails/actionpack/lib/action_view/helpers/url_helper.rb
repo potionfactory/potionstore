@@ -1,4 +1,4 @@
-require 'action_view/helpers/javascript_helper'
+#require 'action_view/helpers/javascript_helper'
 
 module ActionView
   module Helpers #:nodoc:
@@ -91,7 +91,7 @@ module ActionView
           polymorphic_path(options)
         end
 
-        escape ? escape_once(url) : url
+        escape ? escape_once(url).html_safe : url
       end
 
       # Creates a link tag of the given +name+ using a URL created by the set
@@ -237,7 +237,7 @@ module ActionView
           end
 
           href_attr = "href=\"#{url}\"" unless href
-          "<a #{href_attr}#{tag_options}>#{name || url}</a>"
+          "<a #{href_attr}#{tag_options}>#{name || url}</a>".html_safe
         end
       end
 
@@ -308,8 +308,8 @@ module ActionView
 
         html_options.merge!("type" => "submit", "value" => name)
 
-        "<form method=\"#{form_method}\" action=\"#{escape_once url}\" class=\"button-to\"><div>" +
-          method_tag + tag("input", html_options) + request_token_tag + "</div></form>"
+        ("<form method=\"#{form_method}\" action=\"#{escape_once url}\" class=\"button-to\"><div>" +
+          method_tag + tag("input", html_options) + request_token_tag + "</div></form>").html_safe
       end
 
 
@@ -466,14 +466,12 @@ module ActionView
         extras << "subject=#{CGI.escape(subject).gsub("+", "%20")}&" unless subject.nil?
         extras = "?" << extras.gsub!(/&?$/,"") unless extras.empty?
 
-        email_address = email_address.to_s
-
-        email_address_obfuscated = email_address.dup
+        email_address_obfuscated = html_escape(email_address)
         email_address_obfuscated.gsub!(/@/, html_options.delete("replace_at")) if html_options.has_key?("replace_at")
         email_address_obfuscated.gsub!(/\./, html_options.delete("replace_dot")) if html_options.has_key?("replace_dot")
 
         if encode == "javascript"
-          "document.write('#{content_tag("a", name || email_address_obfuscated, html_options.merge({ "href" => "mailto:"+email_address+extras }))}');".each_byte do |c|
+          "document.write('#{content_tag("a", name || email_address_obfuscated.html_safe, html_options.merge({ "href" => "mailto:"+email_address+extras }))}');".each_byte do |c|
             string << sprintf("%%%x", c)
           end
           "<script type=\"#{Mime::JS}\">eval(decodeURIComponent('#{string}'))</script>"
@@ -490,9 +488,9 @@ module ActionView
             char = c.chr
             string << (char =~ /\w/ ? sprintf("%%%x", c) : char)
           end
-          content_tag "a", name || email_address_encoded, html_options.merge({ "href" => "#{string}#{extras}" })
+          content_tag "a", name || email_address_encoded.html_safe, html_options.merge({ "href" => "#{string}#{extras}" })
         else
-          content_tag "a", name || email_address_obfuscated, html_options.merge({ "href" => "mailto:#{email_address}#{extras}" })
+          content_tag "a", name || email_address_obfuscated.html_safe, html_options.merge({ "href" => "mailto:#{email_address}#{extras}" })
         end
       end
 
@@ -507,7 +505,30 @@ module ActionView
       #   current_page?(:controller => 'shop', :action => 'checkout')
       #   # => true
       #
-      #   current_page?(:controller => 'shop', :action => 'checkout', :order => 'asc)
+      #   current_page?(:controller => 'shop', :action => 'checkout', :order => 'asc')
+      #   # => false
+      #
+      #   current_page?(:action => 'checkout')
+      #   # => true
+      #
+      #   current_page?(:controller => 'library', :action => 'checkout')
+      #   # => false
+      #
+      # Let's say we're in the <tt>/shop/checkout?order=desc&page=1</tt> action.
+      #
+      #   current_page?(:action => 'process')
+      #   # => false
+      #
+      #   current_page?(:controller => 'shop', :action => 'checkout')
+      #   # => true
+      #
+      #   current_page?(:controller => 'shop', :action => 'checkout', :order => 'desc', :page=>'1')
+      #   # => true
+      #
+      #   current_page?(:controller => 'shop', :action => 'checkout', :order => 'desc', :page=>'2')
+      #   # => false
+      #
+      #   current_page?(:controller => 'shop', :action => 'checkout', :order => 'desc')
       #   # => false
       #
       #   current_page?(:action => 'checkout')
@@ -516,7 +537,7 @@ module ActionView
       #   current_page?(:controller => 'library', :action => 'checkout')
       #   # => false
       def current_page?(options)
-        url_string = CGI.escapeHTML(url_for(options))
+        url_string = CGI.unescapeHTML(url_for(options))
         request = @controller.request
         # We ignore any extra parameters in the request_uri if the 
         # submitted url doesn't have any either.  This lets the function
@@ -545,7 +566,7 @@ module ActionView
             when confirm && popup
               "if (#{confirm_javascript_function(confirm)}) { #{popup_javascript_function(popup)} };return false;"
             when confirm && method
-              "if (#{confirm_javascript_function(confirm)}) { #{method_javascript_function(method)} };return false;"
+              "if (#{confirm_javascript_function(confirm)}) { #{method_javascript_function(method, url, href)} };return false;"
             when confirm
               "return #{confirm_javascript_function(confirm)};"
             when method

@@ -18,7 +18,7 @@ ARGV.clone.options do |opts|
   opts.on("-h", "--help",
           "Show this help message.") { $stderr.puts opts; exit }
 
-  if RUBY_PLATFORM !~ /mswin/
+  if RUBY_PLATFORM !~ /(:?mswin|mingw)/
     opts.separator ""
     opts.separator "You can also use runner as a shebang line for your scripts like this:"
     opts.separator "-------------------------------------------------------------"
@@ -38,11 +38,17 @@ RAILS_ENV.replace(options[:environment]) if defined?(RAILS_ENV)
 
 require RAILS_ROOT + '/config/environment'
 
-if code_or_file.nil?
-  $stderr.puts "Run '#{$0} -h' for help."
-  exit 1
-elsif File.exist?(code_or_file)
-  eval(File.read(code_or_file), nil, code_or_file)
-else
-  eval(code_or_file)
+begin
+  if code_or_file.nil?
+    $stderr.puts "Run '#{$0} -h' for help."
+    exit 1
+  elsif File.exist?(code_or_file)
+    eval(File.read(code_or_file), nil, code_or_file)
+  else
+    eval(code_or_file)
+  end
+ensure
+  if defined? Rails
+    Rails.logger.flush if Rails.logger.respond_to?(:flush)
+  end
 end

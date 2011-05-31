@@ -4,6 +4,14 @@ class Parrot < ActiveRecord::Base
   has_and_belongs_to_many :treasures
   has_many :loots, :as => :looter
   alias_attribute :title, :name
+
+  validates_presence_of :name
+
+  attr_accessor :cancel_save_from_callback
+  before_save :cancel_save_callback_method, :if => :cancel_save_from_callback
+  def cancel_save_callback_method
+    false
+  end
 end
 
 class LiveParrot < Parrot

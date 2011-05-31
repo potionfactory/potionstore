@@ -29,7 +29,8 @@ module ActiveResource
   #
   # In order for a mock to deliver its content, the incoming request must match by the <tt>http_method</tt>,
   # +path+ and <tt>request_headers</tt>.  If no match is found an InvalidRequestError exception
-  # will be raised letting you know you need to create a new mock for that request.
+  # will be raised showing you what request it could not find a response for and also what requests and response
+  # pairs have been recorded so you can create a new mock for that request.
   #
   # ==== Example
   #   def setup
@@ -54,9 +55,12 @@ module ActiveResource
       end
 
       for method in [ :post, :put, :get, :delete, :head ]
-        module_eval <<-EOE, __FILE__, __LINE__
+        # def post(path, request_headers = {}, body = nil, status = 200, response_headers = {})
+        #   @responses[Request.new(:post, path, nil, request_headers)] = Response.new(body || "", status, response_headers)
+        # end
+        module_eval <<-EOE, __FILE__, __LINE__ + 1
           def #{method}(path, request_headers = {}, body = nil, status = 200, response_headers = {})
-            @responses[Request.new(:#{method}, path, nil, request_headers)] = Response.new(body || "", status, response_headers)
+            @responses << [Request.new(:#{method}, path, nil, request_headers), Response.new(body || "", status, response_headers)]
           end
         EOE
       end
@@ -88,21 +92,86 @@ module ActiveResource
         @@requests ||= []
       end
 
-      # Returns a hash of <tt>request => response</tt> pairs for all all responses this mock has delivered, where +request+
-      # is an instance of ActiveResource::Request and the response is, naturally, an instance of
-      # ActiveResource::Response.
+      # Returns the list of requests and their mocked responses. Look up a
+      # response for a request using responses.assoc(request).
       def responses
-        @@responses ||= {}
+        @@responses ||= []
       end
 
-      # Accepts a block which declares a set of requests and responses for the HttpMock to respond to. See the main
-      # ActiveResource::HttpMock description for a more detailed explanation.
-      def respond_to(pairs = {}) #:yields: mock
-        reset!
-        pairs.each do |(path, response)|
-          responses[path] = response
-        end
-
+      # Accepts a block which declares a set of requests and responses for the HttpMock to respond to in
+      # the following format:
+      # 
+      #   mock.http_method(path, request_headers = {}, body = nil, status = 200, response_headers = {})
+      # 
+      # === Example
+      # 
+      #   @matz  = { :id => 1, :name => "Matz" }.to_xml(:root => "person")
+      #   ActiveResource::HttpMock.respond_to do |mock|
+      #     mock.post   "/people.xml",   {}, @matz, 201, "Location" => "/people/1.xml"
+      #     mock.get    "/people/1.xml", {}, @matz
+      #     mock.put    "/people/1.xml", {}, nil, 204
+      #     mock.delete "/people/1.xml", {}, nil, 200
+      #   end
+      # 
+      # Alternatively, accepts a hash of <tt>{Request => Response}</tt> pairs allowing you to generate
+      # these the following format:
+      # 
+      #   ActiveResource::Request.new(method, path, body, request_headers)
+      #   ActiveResource::Response.new(body, status, response_headers)
+      # 
+      # === Example
+      # 
+      # Request.new(:#{method}, path, nil, request_headers)
+      # 
+      #   @matz  = { :id => 1, :name => "Matz" }.to_xml(:root => "person")
+      #
+      #   create_matz      = ActiveResource::Request.new(:post, '/people.xml', @matz, {})
+      #   created_response = ActiveResource::Response.new("", 201, {"Location" => "/people/1.xml"})
+      #   get_matz         = ActiveResource::Request.new(:get, '/people/1.xml', nil)
+      #   ok_response      = ActiveResource::Response.new("", 200, {})
+      # 
+      #   pairs = {create_matz => created_response, get_matz => ok_response}
+      # 
+      #   ActiveResource::HttpMock.respond_to(pairs)
+      #
+      # Note, by default, every time you call +respond_to+, any previous request and response pairs stored
+      # in HttpMock will be deleted giving you a clean slate to work on.
+      # 
+      # If you want to override this behaviour, pass in +false+ as the last argument to +respond_to+
+      # 
+      # === Example
+      # 
+      #   ActiveResource::HttpMock.respond_to do |mock|
+      #     mock.send(:get, "/people/1", {}, "XML1")
+      #   end
+      #   ActiveResource::HttpMock.responses.length #=> 1
+      #   
+      #   ActiveResource::HttpMock.respond_to(false) do |mock|
+      #     mock.send(:get, "/people/2", {}, "XML2")
+      #   end
+      #   ActiveResource::HttpMock.responses.length #=> 2
+      # 
+      # This also works with passing in generated pairs of requests and responses, again, just pass in false
+      # as the last argument:
+      # 
+      # === Example
+      # 
+      #   ActiveResource::HttpMock.respond_to do |mock|
+      #     mock.send(:get, "/people/1", {}, "XML1")
+      #   end
+      #   ActiveResource::HttpMock.responses.length #=> 1
+      # 
+      #   get_matz         = ActiveResource::Request.new(:get, '/people/1.xml', nil)
+      #   ok_response      = ActiveResource::Response.new("", 200, {})
+      # 
+      #   pairs = {get_matz => ok_response}
+      #
+      #   ActiveResource::HttpMock.respond_to(pairs, false)
+      #   ActiveResource::HttpMock.responses.length #=> 2
+      def respond_to(*args) #:yields: mock
+        pairs = args.first || {}
+        reset! if args.last.class != FalseClass
+        responses.concat pairs.to_a
         if block_given?
           yield Responder.new(responses)
         else
@@ -117,28 +186,39 @@ module ActiveResource
       end
     end
 
-    for method in [ :post, :put ]
-      module_eval <<-EOE, __FILE__, __LINE__
-        def #{method}(path, body, headers)
-          request = ActiveResource::Request.new(:#{method}, path, body, headers)
-          self.class.requests << request
-          self.class.responses[request] || raise(InvalidRequestError.new("No response recorded for \#{request}"))
-        end
-      EOE
-    end
-
-    for method in [ :get, :delete, :head ]
-      module_eval <<-EOE, __FILE__, __LINE__
-        def #{method}(path, headers)
-          request = ActiveResource::Request.new(:#{method}, path, nil, headers)
-          self.class.requests << request
-          self.class.responses[request] || raise(InvalidRequestError.new("No response recorded for \#{request}"))
-        end
-      EOE
+    # body?       methods
+    { true  => %w(post put),
+      false => %w(get delete head) }.each do |has_body, methods|
+      methods.each do |method|
+        # def post(path, body, headers)
+        #   request = ActiveResource::Request.new(:post, path, body, headers)
+        #   self.class.requests << request
+        #   if response = self.class.responses.assoc(request)
+        #     response[1]
+        #   else
+        #     raise InvalidRequestError.new("Could not find a response recorded for #{request.to_s} - Responses recorded are: - #{inspect_responses}")
+        #   end
+        # end
+        module_eval <<-EOE, __FILE__, __LINE__ + 1
+          def #{method}(path, #{'body, ' if has_body}headers)
+            request = ActiveResource::Request.new(:#{method}, path, #{has_body ? 'body, ' : 'nil, '}headers)
+            self.class.requests << request
+            if response = self.class.responses.assoc(request)
+              response[1]
+            else
+              raise InvalidRequestError.new("Could not find a response recorded for \#{request.to_s} - Responses recorded are: \#{inspect_responses}")
+            end
+          end
+        EOE
+      end
     end
 
     def initialize(site) #:nodoc:
       @site = site
+    end
+
+    def inspect_responses #:nodoc:
+      self.class.responses.map { |r| r[0].to_s }.inspect
     end
   end
 
@@ -146,24 +226,29 @@ module ActiveResource
     attr_accessor :path, :method, :body, :headers
 
     def initialize(method, path, body = nil, headers = {})
-      @method, @path, @body, @headers = method, path, body, headers.merge(ActiveResource::Connection::HTTP_FORMAT_HEADER_NAMES[method] => 'application/xml')
+      @method, @path, @body, @headers = method, path, body, headers
     end
 
-    def ==(other_request)
-      other_request.hash == hash
-    end
-
-    def eql?(other_request)
-      self == other_request
+    def ==(req)
+      path == req.path && method == req.method && headers_match?(req)
     end
 
     def to_s
       "<#{method.to_s.upcase}: #{path} [#{headers}] (#{body})>"
     end
 
-    def hash
-      "#{path}#{method}#{headers}".hash
+    private
+
+    def headers_match?(req)
+      # Ignore format header on equality if it's not defined
+      format_header = ActiveResource::Connection::HTTP_FORMAT_HEADER_NAMES[method]
+      if headers[format_header].present? || req.headers[format_header].blank?
+        headers == req.headers
+      else
+        headers.dup.merge(format_header => req.headers[format_header]) == req.headers
+      end
     end
+
   end
 
   class Response

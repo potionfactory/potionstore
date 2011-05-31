@@ -1,3 +1,5 @@
+require "active_support/core_ext/array"
+
 # Extends the module object with module and instance accessors for class attributes, 
 # just like the native attr* accessors for instance attributes.
 #
@@ -12,42 +14,49 @@
 #  AppConfiguration.google_api_key = "overriding the api key!"
 class Module
   def mattr_reader(*syms)
+    options = syms.extract_options!
     syms.each do |sym|
       next if sym.is_a?(Hash)
-      class_eval(<<-EOS, __FILE__, __LINE__)
+      class_eval(<<-EOS, __FILE__, __LINE__ + 1)
         unless defined? @@#{sym}
           @@#{sym} = nil
         end
-        
+
         def self.#{sym}
           @@#{sym}
         end
-
-        def #{sym}
-          @@#{sym}
-        end
       EOS
+
+      unless options[:instance_reader] == false
+        class_eval(<<-EOS, __FILE__, __LINE__ + 1)
+          def #{sym}
+            @@#{sym}
+          end
+        EOS
+      end
     end
   end
   
   def mattr_writer(*syms)
     options = syms.extract_options!
     syms.each do |sym|
-      class_eval(<<-EOS, __FILE__, __LINE__)
+      class_eval(<<-EOS, __FILE__, __LINE__ + 1)
         unless defined? @@#{sym}
           @@#{sym} = nil
         end
-        
+
         def self.#{sym}=(obj)
           @@#{sym} = obj
         end
-        
-        #{"
-        def #{sym}=(obj)
-          @@#{sym} = obj
-        end
-        " unless options[:instance_writer] == false }
       EOS
+
+      unless options[:instance_writer] == false
+        class_eval(<<-EOS, __FILE__, __LINE__ + 1)
+          def #{sym}=(obj)
+            @@#{sym} = obj
+          end
+        EOS
+      end
     end
   end
   

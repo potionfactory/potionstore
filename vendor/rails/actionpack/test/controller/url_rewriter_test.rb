@@ -2,7 +2,7 @@ require 'abstract_unit'
 
 ActionController::UrlRewriter
 
-class UrlRewriterTests < Test::Unit::TestCase
+class UrlRewriterTests < ActionController::TestCase
   def setup
     @request = ActionController::TestRequest.new
     @params = {}
@@ -46,14 +46,30 @@ class UrlRewriterTests < Test::Unit::TestCase
     )
   end
 
+  def test_anchor_should_call_to_param
+    assert_equal(
+      'http://test.host/c/a/i#anchor',
+      @rewriter.rewrite(:controller => 'c', :action => 'a', :id => 'i', :anchor => Struct.new(:to_param).new('anchor'))
+    )
+  end
+
+  def test_anchor_should_be_cgi_escaped
+    assert_equal(
+      'http://test.host/c/a/i#anc%2Fhor',
+      @rewriter.rewrite(:controller => 'c', :action => 'a', :id => 'i', :anchor => Struct.new(:to_param).new('anc/hor'))
+    )
+  end
+
   def test_overwrite_params
     @params[:controller] = 'hi'
     @params[:action] = 'bye'
     @params[:id] = '2'
 
-    assert_equal '/hi/hi/2', @rewriter.rewrite(:only_path => true, :overwrite_params => {:action => 'hi'})
-    u = @rewriter.rewrite(:only_path => false, :overwrite_params => {:action => 'hi'})
-    assert_match %r(/hi/hi/2$), u
+    assert_deprecated /overwrite_params/ do
+      assert_equal '/hi/hi/2', @rewriter.rewrite(:only_path => true, :overwrite_params => {:action => 'hi'})
+      u = @rewriter.rewrite(:only_path => false, :overwrite_params => {:action => 'hi'})
+      assert_match %r(/hi/hi/2$), u
+    end
   end
 
   def test_overwrite_removes_original
@@ -61,9 +77,11 @@ class UrlRewriterTests < Test::Unit::TestCase
     @params[:action] = 'list'
     @params[:list_page] = 1
 
-    assert_equal '/search/list?list_page=2', @rewriter.rewrite(:only_path => true, :overwrite_params => {"list_page" => 2})
-    u = @rewriter.rewrite(:only_path => false, :overwrite_params => {:list_page => 2})
-    assert_equal 'http://test.host/search/list?list_page=2', u
+    assert_deprecated /overwrite_params/ do
+      assert_equal '/search/list?list_page=2', @rewriter.rewrite(:only_path => true, :overwrite_params => {"list_page" => 2})
+      u = @rewriter.rewrite(:only_path => false, :overwrite_params => {:list_page => 2})
+      assert_equal 'http://test.host/search/list?list_page=2', u
+    end
   end
 
   def test_to_str
@@ -85,8 +103,7 @@ class UrlRewriterTests < Test::Unit::TestCase
   end
 end
 
-class UrlWriterTests < Test::Unit::TestCase
-
+class UrlWriterTests < ActionController::TestCase
   class W
     include ActionController::UrlWriter
   end
@@ -100,7 +117,7 @@ class UrlWriterTests < Test::Unit::TestCase
   end
 
   def test_exception_is_thrown_without_host
-    assert_raises RuntimeError do
+    assert_raise RuntimeError do
       W.new.url_for :controller => 'c', :action => 'a', :id => 'i'
     end
   end
@@ -108,6 +125,24 @@ class UrlWriterTests < Test::Unit::TestCase
   def test_anchor
     assert_equal('/c/a#anchor',
       W.new.url_for(:only_path => true, :controller => 'c', :action => 'a', :anchor => 'anchor')
+    )
+  end
+
+  def test_anchor_should_call_to_param
+    assert_equal('/c/a#anchor',
+      W.new.url_for(:only_path => true, :controller => 'c', :action => 'a', :anchor => Struct.new(:to_param).new('anchor'))
+    )
+  end
+
+  def test_anchor_should_escape_unsafe_pchar
+    assert_equal('/c/a#%23anchor',
+      W.new.url_for(:only_path => true, :controller => 'c', :action => 'a', :anchor => Struct.new(:to_param).new('#anchor'))
+    )
+  end
+
+  def test_anchor_should_not_escape_safe_pchar
+    assert_equal('/c/a#name=user&email=user@domain.com',
+      W.new.url_for(:only_path => true, :controller => 'c', :action => 'a', :anchor => Struct.new(:to_param).new('name=user&email=user@domain.com'))
     )
   end
 
@@ -300,6 +335,57 @@ class UrlWriterTests < Test::Unit::TestCase
 
   def test_path_generation_for_symbol_parameter_keys
     assert_generates("/image", :controller=> :image)
+  end
+
+  def test_named_routes_with_nil_keys
+    ActionController::Routing::Routes.clear!
+    ActionController::Routing::Routes.draw do |map|
+      map.main '', :controller => 'posts', :format => nil
+      map.resources :posts
+      map.connect ':controller/:action/:id'
+    end
+    # We need to create a new class in order to install the new named route.
+    kls = Class.new { include ActionController::UrlWriter }
+    kls.default_url_options[:host] = 'www.basecamphq.com'
+
+    controller = kls.new
+    params = {:action => :index, :controller => :posts, :format => :xml}
+    assert_equal("http://www.basecamphq.com/posts.xml", controller.send(:url_for, params))
+    params[:format] = nil
+    assert_equal("http://www.basecamphq.com/", controller.send(:url_for, params))
+  ensure
+    ActionController::Routing::Routes.load!
+  end
+
+  def test_formatted_url_methods_are_deprecated
+    ActionController::Routing::Routes.draw do |map|
+      map.resources :posts
+    end
+    # We need to create a new class in order to install the new named route.
+    kls = Class.new { include ActionController::UrlWriter }
+    controller = kls.new
+    params = {:id => 1, :format => :xml}
+    assert_deprecated do
+      assert_equal("/posts/1.xml", controller.send(:formatted_post_path, params))    
+    end
+    assert_deprecated do
+      assert_equal("/posts/1.xml", controller.send(:formatted_post_path, 1, :xml))    
+    end
+  ensure
+    ActionController::Routing::Routes.load!
+  end
+
+  def test_multiple_includes_maintain_distinct_options
+    first_class = Class.new { include ActionController::UrlWriter }
+    second_class = Class.new { include ActionController::UrlWriter }
+
+    first_host, second_host = 'firsthost.com', 'secondhost.com'
+
+    first_class.default_url_options[:host] = first_host
+    second_class.default_url_options[:host] = second_host
+
+    assert_equal first_class.default_url_options[:host], first_host
+    assert_equal second_class.default_url_options[:host], second_host
   end
 
   private
