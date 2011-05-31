@@ -7,9 +7,11 @@ module ActiveRecord
       end
     end
 
+    ##
+    # :singleton-method:
     # The connection handler
-    cattr_accessor :connection_handler, :instance_writer => false
-    @@connection_handler = ConnectionAdapters::ConnectionHandler.new
+    class_attribute :connection_handler
+    self.connection_handler = ConnectionAdapters::ConnectionHandler.new
 
     # Returns the connection currently associated with the class. This can
     # also be used to "borrow" the connection to do database work that isn't
@@ -52,7 +54,7 @@ module ActiveRecord
           raise AdapterNotSpecified unless defined? RAILS_ENV
           establish_connection(RAILS_ENV)
         when ConnectionSpecification
-          @@connection_handler.establish_connection(name, spec)
+          self.connection_handler.establish_connection(name, spec)
         when Symbol, String
           if configuration = configurations[spec.to_s]
             establish_connection(configuration)
@@ -121,6 +123,7 @@ module ActiveRecord
         connection_handler.retrieve_connection(self)
       end
 
+      # Returns true if +ActiveRecord+ is connected.
       def connected?
         connection_handler.connected?(self)
       end

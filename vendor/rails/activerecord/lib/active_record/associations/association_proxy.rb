@@ -53,6 +53,7 @@ module ActiveRecord
 
       def initialize(owner, reflection)
         @owner, @reflection = owner, reflection
+        reflection.check_validity!
         Array(reflection.options[:extend]).each { |ext| proxy_extend(ext) }
         reset
       end
@@ -169,8 +170,8 @@ module ActiveRecord
         end
 
         # Forwards the call to the reflection class.
-        def sanitize_sql(sql)
-          @reflection.klass.send(:sanitize_sql, sql)
+        def sanitize_sql(sql, table_name = @reflection.klass.quoted_table_name)
+          @reflection.klass.send(:sanitize_sql, sql, table_name)
         end
 
         # Assigns the ID of the owner to the corresponding foreign key in +record+.
@@ -180,7 +181,10 @@ module ActiveRecord
             record["#{@reflection.options[:as]}_id"]   = @owner.id unless @owner.new_record?
             record["#{@reflection.options[:as]}_type"] = @owner.class.base_class.name.to_s
           else
-            record[@reflection.primary_key_name] = @owner.id unless @owner.new_record?
+            unless @owner.new_record?
+              primary_key = @reflection.options[:primary_key] || :id
+              record[@reflection.primary_key_name] = @owner.send(primary_key)
+            end
           end
         end
 
@@ -188,6 +192,7 @@ module ActiveRecord
         def merge_options_from_reflection!(options)
           options.reverse_merge!(
             :group   => @reflection.options[:group],
+            :having  => @reflection.options[:having],
             :limit   => @reflection.options[:limit],
             :offset  => @reflection.options[:offset],
             :joins   => @reflection.options[:joins],
@@ -204,14 +209,12 @@ module ActiveRecord
 
       private
         # Forwards any missing method call to the \target.
-        def method_missing(method, *args)
+        def method_missing(method, *args, &block)
           if load_target
-            raise NoMethodError unless @target.respond_to?(method)
-
-            if block_given?
-              @target.send(method, *args)  { |*block_args| yield(*block_args) }
+            if @target.respond_to?(method)
+              @target.send(method, *args, &block)
             else
-              @target.send(method, *args)
+              super
             end
           end
         end
@@ -266,6 +269,19 @@ module ActiveRecord
         # Returns the ID of the owner, quoted if needed.
         def owner_quoted_id
           @owner.quoted_id
+        end
+
+        def set_inverse_instance(record, instance)
+          return if record.nil? || !we_can_set_the_inverse_on_this?(record)
+          inverse_relationship = @reflection.inverse_of
+          unless inverse_relationship.nil?
+            record.send(:"set_#{inverse_relationship.name}_target", instance)
+          end
+        end
+
+        # Override in subclasses
+        def we_can_set_the_inverse_on_this?(record)
+          false
         end
     end
   end

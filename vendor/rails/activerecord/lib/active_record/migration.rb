@@ -130,7 +130,9 @@ module ActiveRecord
   # To run migrations against the currently configured database, use
   # <tt>rake db:migrate</tt>. This will update the database by running all of the
   # pending migrations, creating the <tt>schema_migrations</tt> table
-  # (see "About the schema_migrations table" section below) if missing.
+  # (see "About the schema_migrations table" section below) if missing. It will also 
+  # invoke the db:schema:dump task, which will update your db/schema.rb file
+  # to match the structure of your database.
   #
   # To roll the database back to a previous migration version, use
   # <tt>rake db:migrate VERSION=X</tt> where <tt>X</tt> is the version to which
@@ -336,6 +338,10 @@ module ActiveRecord
         self.verbose = save
       end
 
+      def connection
+        ActiveRecord::Base.connection
+      end
+
       def method_missing(method, *arguments, &block)
         arg_list = arguments.map(&:inspect) * ', '
 
@@ -343,7 +349,7 @@ module ActiveRecord
           unless arguments.empty? || method == :execute
             arguments[0] = Migrator.proper_table_name(arguments.first)
           end
-          ActiveRecord::Base.connection.send(method, *arguments, &block)
+          connection.send(method, *arguments, &block)
         end
       end
     end
@@ -375,6 +381,7 @@ module ActiveRecord
       def migrate(migrations_path, target_version = nil)
         case
           when target_version.nil?              then up(migrations_path, target_version)
+          when current_version == 0 && target_version == 0 then # noop
           when current_version > target_version then down(migrations_path, target_version)
           else                                       up(migrations_path, target_version)
         end
@@ -400,6 +407,10 @@ module ActiveRecord
       
       def run(direction, migrations_path, target_version)
         self.new(direction, migrations_path, target_version).run
+      end
+
+      def migrations_path
+        'db/migrate'
       end
 
       def schema_migrations_table_name
@@ -505,7 +516,7 @@ module ActiveRecord
             raise DuplicateMigrationNameError.new(name.camelize) 
           end
           
-          klasses << returning(MigrationProxy.new) do |migration|
+          klasses << (MigrationProxy.new).tap do |migration|
             migration.name     = name.camelize
             migration.version  = version
             migration.filename = file

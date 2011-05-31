@@ -1,3 +1,4 @@
+# encoding: us-ascii
 module ActionMailer
   module Quoting #:nodoc:
     # Convert the given text into quoted printable format, with an instruction
@@ -12,7 +13,7 @@ module ActionMailer
     # account multi-byte characters (if executing with $KCODE="u", for instance)
     def quoted_printable_encode(character)
       result = ""
-      character.each_byte { |b| result << "=%02x" % b }
+      character.each_byte { |b| result << "=%02X" % b }
       result
     end
 

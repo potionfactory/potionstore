@@ -169,9 +169,8 @@ class AdminController < ApplicationController
 
     # helper function
     def last_n_days_sql(days)
-      # NOTE: Older mysql should use IFNULL instead of COALESCE
-      return "
-        select (select count(*)
+      if Order.connection.adapter_name == 'PostgreSQL'
+        "select (select count(*)
                   from orders
                  where status = 'C' and
                        lower(payment_type) != 'free' and
@@ -180,7 +179,7 @@ class AdminController < ApplicationController
                  - sum(coalesce(coupons.amount, 0))
                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue,
                sum(quantity) as quantity,
-               products.name as product_name
+               products.code as product_name
 
         from orders
              inner join line_items on orders.id = line_items.order_id
@@ -190,6 +189,28 @@ class AdminController < ApplicationController
         where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time
 
         group by product_name"
+      else
+        "select (select count(*)
+                    from orders
+                   where status = 'C' and
+                         lower(payment_type) != 'free' and
+                         datediff(current_date(),order_time) <=  #{days-1} ) as orders,
+                 sum(line_items.unit_price * quantity)
+                   - sum(IFNULL(coupons.amount, 0))
+                   - sum(line_items.unit_price * quantity * IFNULL(percentage, 0) / 100) as revenue,
+                 sum(quantity) as quantity,
+                 products.code as product_name
+
+          from orders
+               inner join line_items on orders.id = line_items.order_id
+               left outer join products on products.id = line_items.product_id
+               left outer join coupons on coupons.id = orders.coupon_id
+
+          where status = 'C' and lower(payment_type) != 'free' and datediff(current_date(),order_time) <=  #{days-1}
+
+          group by product_name"
+        end
+
     end
 
     query_results = []
@@ -235,16 +256,31 @@ class AdminController < ApplicationController
     end
 
     def last_n_days_revenue(days)
-      last_n_days_sql = "
-        select sum(line_items.unit_price * quantity)
-                  - sum(coalesce(coupons.amount, 0))
-                  - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue
 
-          from orders
-               inner join line_items on orders.id = line_items.order_id
-               left outer join coupons on coupons.id = orders.coupon_id
+       if Order.connection.adapter_name == 'PostgreSQL'
+         last_n_days_sql = "
+           select sum(line_items.unit_price * quantity)
+                     - sum(coalesce(coupons.amount, 0))
+                     - sum(line_items.unit_price * quantity * coalesce(percentage, 0) / 100) as revenue
 
-         where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time"
+             from orders
+                  inner join line_items on orders.id = line_items.order_id
+                  left outer join coupons on coupons.id = orders.coupon_id
+
+             where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time"
+       else
+         last_n_days_sql = "
+         select sum(line_items.unit_price * quantity)
+                       - sum(IFNULL(coupons.amount, 0))
+                       - sum(line_items.unit_price * quantity * IFNULL(percentage, 0) / 100) as revenue
+
+           from orders
+                inner join line_items on orders.id = line_items.order_id
+                left outer join coupons on coupons.id = orders.coupon_id
+
+           where status = 'C' and lower(payment_type) != 'free' and current_date - #{days-1} <= order_time"
+        end
+
       result = Order.connection.select_all(last_n_days_sql)
       return (result != nil && result.length > 0 && result[0]["revenue"] != nil) ? result[0]["revenue"] : 0
     end

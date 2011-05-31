@@ -63,6 +63,17 @@ class AdapterTest < ActiveRecord::TestCase
     def test_show_nonexistent_variable_returns_nil
       assert_nil @connection.show_variable('foo_bar_baz')
     end
+
+    def test_not_specifying_database_name_for_cross_database_selects
+      begin
+        assert_nothing_raised do
+          ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations['arunit'].except(:database))
+          ActiveRecord::Base.connection.execute "SELECT activerecord_unittest.pirates.*, activerecord_unittest2.courses.* FROM activerecord_unittest.pirates, activerecord_unittest2.courses"
+        end
+      ensure
+        ActiveRecord::Base.establish_connection 'arunit'
+      end
+    end
   end
 
   if current_adapter?(:PostgreSQLAdapter)

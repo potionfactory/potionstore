@@ -1,10 +1,13 @@
+require 'active_support/json'
+
 module ActiveRecord #:nodoc:
   module Serialization
     class Serializer #:nodoc:
       attr_reader :options
 
-      def initialize(record, options = {})
-        @record, @options = record, options.dup
+      def initialize(record, options = nil)
+        @record = record
+        @options = options ? options.dup : {}
       end
 
       # To replicate the behavior in ActiveRecord#attributes,
@@ -71,7 +74,7 @@ module ActiveRecord #:nodoc:
       end
 
       def serializable_record
-        returning(serializable_record = {}) do
+        {}.tap do |serializable_record|
           serializable_names.each { |name| serializable_record[name] = @record.send(name) }
           add_includes do |association, records, opts|
             if records.is_a?(Enumerable)

@@ -1,5 +1,3 @@
-require 'tempfile'
-
 module ActiveSupport #:nodoc:
   module CoreExtensions #:nodoc:
     module File #:nodoc:
@@ -18,6 +16,9 @@ module ActiveSupport #:nodoc:
         #     file.write("hello")
         #   end
         def atomic_write(file_name, temp_dir = Dir.tmpdir)
+          require 'tempfile' unless defined?(Tempfile)
+          require 'fileutils' unless defined?(FileUtils)
+
           temp_file = Tempfile.new(basename(file_name), temp_dir)
           yield temp_file
           temp_file.close
@@ -27,14 +28,14 @@ module ActiveSupport #:nodoc:
             old_stat = stat(file_name)
           rescue Errno::ENOENT
             # No old permissions, write a temp file to determine the defaults
-            check_name = ".permissions_check.#{Thread.current.object_id}.#{Process.pid}.#{rand(1000000)}"
+            check_name = join(dirname(file_name), ".permissions_check.#{Thread.current.object_id}.#{Process.pid}.#{rand(1000000)}")
             open(check_name, "w") { }
             old_stat = stat(check_name)
             unlink(check_name)
           end
 
           # Overwrite original file with temp file
-          rename(temp_file.path, file_name)
+          FileUtils.mv(temp_file.path, file_name)
 
           # Set correct permissions on new file
           chown(old_stat.uid, old_stat.gid, file_name)
