@@ -208,7 +208,7 @@ module ActiveRecord
           end
 
           begin
-            class_eval(method_definition, __FILE__, __LINE__)
+            class_eval(method_definition, __FILE__)
           rescue SyntaxError => err
             generated_methods.delete(attr_name)
             if logger
@@ -324,6 +324,7 @@ module ActiveRecord
           if Numeric === value || value !~ /[^0-9]/
             !value.to_i.zero?
           else
+            return false if ActiveRecord::ConnectionAdapters::Column::FALSE_VALUES.include?(value)
             !value.blank?
           end
         elsif column.number?

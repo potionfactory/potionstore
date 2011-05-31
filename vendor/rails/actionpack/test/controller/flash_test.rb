@@ -1,6 +1,6 @@
 require 'abstract_unit'
 
-class FlashTest < Test::Unit::TestCase
+class FlashTest < ActionController::TestCase
   class TestController < ActionController::Base
     def set_flash
       flash["that"] = "hello"
@@ -71,13 +71,21 @@ class FlashTest < Test::Unit::TestCase
       redirect_to :action => "std_action"
       @flash_copy = {}.update(flash)
     end
+    
+    def redirect_with_alert
+      redirect_to '/nowhere', :alert => "Beware the nowheres!"
+    end
+    
+    def redirect_with_notice
+      redirect_to '/somewhere', :notice => "Good luck in the somewheres!"
+    end
+
+    def redirect_with_other_flashes
+      redirect_to '/wonderland', :flash => { :joyride => "Horses!" }
+    end
   end
 
-  def setup
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
-    @controller = TestController.new
-  end
+  tests TestController
 
   def test_flash
     get :set_flash
@@ -125,7 +133,7 @@ class FlashTest < Test::Unit::TestCase
     assert_nil                  @response.template.assigns["flash_copy"]["that"], "On second flash"
     assert_equal "hello again", @response.template.assigns["flash_copy"]["this"], "On second flash"
   end
-  
+
   def test_flash_after_reset_session
     get :use_flash_after_reset_session
     assert_equal "hello",    @response.template.assigns["flashy_that"]
@@ -142,5 +150,25 @@ class FlashTest < Test::Unit::TestCase
     assert_equal "bar", @response.template.assigns["flash_copy"]["foo"]
     get :std_action
     assert_nil @response.template.assigns["flash_copy"]["foo"]
+  end
+
+  def test_does_not_set_the_session_if_the_flash_is_empty
+    get :std_action
+    assert_nil session["flash"]
+  end
+  
+  def test_redirect_to_with_alert
+    get :redirect_with_alert
+    assert_equal "Beware the nowheres!", @controller.send(:flash)[:alert]
+  end
+  
+  def test_redirect_to_with_notice
+    get :redirect_with_notice
+    assert_equal "Good luck in the somewheres!", @controller.send(:flash)[:notice]
+  end
+  
+  def test_redirect_to_with_other_flashes
+    get :redirect_with_other_flashes
+    assert_equal "Horses!", @controller.send(:flash)[:joyride]
   end
 end

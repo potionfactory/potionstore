@@ -1,6 +1,8 @@
 class Author < ActiveRecord::Base
   has_many :posts
+  has_many :very_special_comments, :through => :posts
   has_many :posts_with_comments, :include => :comments, :class_name => "Post"
+  has_many :popular_grouped_posts, :include => :comments, :class_name => "Post", :group => "type", :having => "SUM(comments_count) > 1", :select => "type"
   has_many :posts_with_comments_sorted_by_comment_id, :include => :comments, :class_name => "Post", :order => 'comments.id'
   has_many :posts_sorted_by_id_limited, :class_name => "Post", :order => 'posts.id', :limit => 1
   has_many :posts_with_categories, :include => :categories, :class_name => "Post"
@@ -24,6 +26,8 @@ class Author < ActiveRecord::Base
   has_many :comments_with_order_and_conditions, :through => :posts, :source => :comments, :order => 'comments.body', :conditions => "comments.body like 'Thank%'"
   has_many :comments_with_include, :through => :posts, :source => :comments, :include => :post
 
+  has_many :thinking_posts, :class_name => 'Post', :conditions => { :title => 'So I was thinking' }, :dependent => :delete_all
+  has_many :welcome_posts,  :class_name => 'Post', :conditions => { :title => 'Welcome to the weblog' }
 
   has_many :comments_desc, :through => :posts, :source => :comments, :order => 'comments.id DESC'
   has_many :limited_comments, :through => :posts, :source => :comments, :limit => 1
@@ -84,6 +88,11 @@ class Author < ActiveRecord::Base
   has_many :tags,     :through => :posts # through has_many :through
   has_many :post_categories, :through => :posts, :source => :categories
 
+  has_many :event_authors
+  has_many :events, :through => :event_authors
+  
+  has_one :essay, :primary_key => :name, :as => :writer
+
   belongs_to :author_address, :dependent => :destroy
   belongs_to :author_address_extra, :dependent => :delete, :class_name => "AuthorAddress"
 
@@ -96,6 +105,8 @@ class Author < ActiveRecord::Base
   def label
     "#{id}-#{name}"
   end
+
+  validates_presence_of :name
 
   private
     def log_before_adding(object)

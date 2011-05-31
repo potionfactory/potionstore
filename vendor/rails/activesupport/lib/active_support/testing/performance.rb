@@ -12,7 +12,7 @@ module ActiveSupport
         if benchmark = ARGV.include?('--benchmark')  # HAX for rake test
           { :benchmark => true,
             :runs => 4,
-            :metrics => [:process_time, :memory, :objects, :gc_runs, :gc_time],
+            :metrics => [:wall_time, :memory, :objects, :gc_runs, :gc_time],
             :output => 'tmp/performance' }
         else
           { :benchmark => false,
@@ -24,7 +24,7 @@ module ActiveSupport
         end.freeze
 
       def self.included(base)
-        base.superclass_delegating_accessor :profile_options
+        base.class_attribute :profile_options
         base.profile_options = DEFAULTS
       end
 
