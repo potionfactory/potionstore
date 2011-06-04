@@ -179,7 +179,7 @@ class AdminController < ApplicationController
         "select (select count(*)
                    from orders
                   where status = 'C' and total > 0 and datediff(current_date(), order_time) <= #{days-1}) as orders,
-                sum(total) as revenue,
+                sum(unit_price * quantity) as revenue,
                 sum(quantity) as quantity,
                 products.code as product_name
 
@@ -193,7 +193,7 @@ class AdminController < ApplicationController
         "select (select count(*)
                    from orders
                   where status = 'C' and total > 0 and current_date - #{days-1} <= order_time) as orders,
-                sum(total) as revenue,
+                sum(unit_price * quantity) as revenue,
                 sum(quantity) as quantity,
                 products.code as product_name
 
