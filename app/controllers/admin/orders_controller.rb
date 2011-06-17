@@ -23,12 +23,15 @@ class Admin::OrdersController < ApplicationController
         lname = 'BLANK_LAST_NAME' if not lname # Just a dummy value to stop matching on last name
         conditions = [conditions + "AND ((LOWER(first_name) LIKE ? AND LOWER(last_name) LIKE ?) OR
                                          LOWER(licensee_name) = ? OR
-                                         LOWER(email) = ?)", "#{fname}%", "#{lname}%", name, email]
+                                         LOWER(email) = ?)",
+                      "#{fname}%", "#{lname}%", name, email]
       else
         conditions = [conditions + " AND (LOWER(email) LIKE ? OR
                                           LOWER(first_name) LIKE ? OR
                                           LOWER(last_name) LIKE ? OR
-                                          LOWER(licensee_name) LIKE ?)", "#{q}%", "#{q}%", "#{q}%", "%#{q}%"]
+                                          LOWER(licensee_name) LIKE ? OR
+                                          ? IN (SELECT lower(license_key) FROM line_items WHERE order_id=orders.id))",
+                      "#{q}%", "#{q}%", "#{q}%", "%#{q}%", q]
       end
     end
     @orders = Order.paginate :page => (params[:page] || 1), :per_page => 100, :conditions => conditions, :order => 'order_time DESC'
