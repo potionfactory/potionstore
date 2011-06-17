@@ -12,6 +12,10 @@ $(document).ready(function(){
 <% end -%>
 //	$('#items_3').keyup(update_prices);
 //	$('#items_3').change(update_prices);
+
+<% for product in @products -%>
+	$('#items_<%= product.id %>').spinit({min:0,height:30});
+<% end -%>
 });
 </script>
 
@@ -33,8 +37,8 @@ $(document).ready(function(){
 			</a>
 		</td>
 		<td>
-			<%= text_field "items", product.id, :size => "3", :value => @qty[product.code], :autocomplete => "off", :class => "qty" -%>
-			@ <strong id="item_<%=product.id %>_price"><%= number_to_currency product.price %></strong>&nbsp; each
+			<%= text_field "items", product.id, :size => "3", :value => @qty[product.code], :autocomplete => "off", :class => "qty smartspinner" -%>
+			&nbsp; @ <strong id="item_<%=product.id %>_price"><%= number_to_currency product.price %></strong>&nbsp; each
 		</td>
 	</tr>
 <% end -%>

@@ -57,10 +57,11 @@ h3 {
 
 input.qty, #order_zipcode { vertical-align: middle; }
 input.qty {
-    font-size: 24px;
+    font-size: 14px;
     font-weight: bold;
-    text-align: right;
     color: #444;
+	background-color: #fff;
+	height: 30px;
 }
 
 #products
@@ -231,3 +232,31 @@ label.error {
 
 #print { width:100%; text-align: right; margin: 20px 0; }
 #print img { vertical-align: top; }
+
+
+/* -------------------------------------------------------------------------------- */
+/* Smart Spinner */
+.smartspinner {
+	padding: 0;
+	padding: 2px 10px 2px 2px;
+	border:solid 1px #afafaf;
+	background: url(/images/store/normal.jpg) no-repeat right;
+	background-color:#f6f6f6;
+	text-align:center;
+	line-height:2;
+	border-radius:3px;
+	-moz-border-radius:3px;
+	color:#848484;
+	font-size:1.0em;
+	font-weight:bold;
+}
+.smartspinner.up {
+	background: url(/images/store/up.jpg) no-repeat right;
+	background-color:#f6f6f6;
+	cursor:pointer;
+}
+.smartspinner.down {
+	background: url(/images/store/down.jpg) no-repeat right;
+	background-color:#f6f6f6;
+	cursor:pointer;
+}
