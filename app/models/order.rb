@@ -431,7 +431,7 @@ class Order < ActiveRecord::Base
       'countrycode' => self.country,
       'zip' => self.zipcode,
       'amt' => self.total,
-      'invnum' => self.id
+      'invnum' => self.id,
     }
 
     self.line_items.each_with_index do |item, i|
@@ -440,6 +440,15 @@ class Order < ActiveRecord::Base
       params["l_amt#{i}"] = item.unit_price
       params["l_qty#{i}"] = item.quantity
     end
+
+    # Used for testing errors. If the error code you want to test is 10544, put in 105.44 for the amount
+    # https://www.paypalobjects.com/en_US/ebook/PP_Sandbox_UserGuide/testing_error_conditions.html
+    # https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_nvp_errorcodes
+#     if false
+#       error_code = '105.44'
+#       params['amt'] = error_code
+#       params['l_amt0'] = error_code
+#     end
 
     res = PayPal.make_nvp_call(params)
 
@@ -657,5 +666,58 @@ class Order < ActiveRecord::Base
 
     self.status = 'R'
     self.save()
+  end
+
+  def customer_friendly_failure_reason
+    # These are ordered by the frequency of failure
+    if self.failure_code == 10527
+      # Invalid card number
+      "Please enter a valid credit card number."
+    elsif self.failure_code == 15005
+      # Declined by card bank
+      "Your credit card issuing bank declined the transaction.\nPlease contact your credit card company or try a different card."
+    elsif self.failure_code == 10508
+      # Invalid expiration date
+      "Please enter the correct expiration date of the card."
+    elsif self.failure_code == 10504
+      # Invalid CVV
+      "Please enter the correct card security code."
+    elsif self.failure_code == 10417
+      # Transaction cannot complete
+      "Your PayPal account may not be set up with a credit card or a bank account. You may need to agree to PayPal's credit card or billing agreement. Please make sure that your PayPal account is set up correctly or use a different payment method."
+    elsif self.failure_code == 10544
+      # Gateway decline
+      "This transaction was declined by our payment processor. Please try another payment method."
+    elsif self.failure_code == 15004
+      # Gateway decline because of CVV mismatch
+      "Please enter the correct card security code."
+    elsif self.failure_code == 10756
+      # Gateway decline
+      "Please make sure that you have chosen the correct country for your billing address."
+    elsif self.failure_code == 10534
+      # Gateway decline (The credit card entered is currently restricted by PayPal. Contact PayPal for more information.)
+      "Please enter a valid credit card number or try a different card or payment method."
+    elsif self.failure_code == 10752
+      # Gateway decline (The transaction was declined by the issuing bank, not PayPal. The merchant should attempt another card.)
+      "Your credit card issuing bank declined the transaction.\nPlease contact your credit card company or try a different card."
+    elsif self.failure_code == 10730
+      # Shipping Address Postal Code Empty (Shipping address error in postal code)
+      "Please enter a valid postal code or zip code in your billing address."
+    elsif self.failure_code == 10505
+      # Gateway decline (The transaction was refused because the AVS response returned the value of N, and the merchant account is not able to accept such transactions.)
+      "Please enter the correct billing address."
+    elsif self.failure_code == 10502
+      # Invalid data (The credit card used is expired.)
+      "Please make sure that you entered the credit card number correctly and that it's not expired."
+    elsif self.failure_code == 15006
+      # Processor Decline (The transaction was declined by the issuing bank, not PayPal. The merchant should attempt another card.)
+      "Your credit card issuing bank declined the transaction.\nPlease contact your credit card company or try a different card."
+    elsif self.failure_reason
+      # No friendly message for this error
+      self.failure_reason
+    else
+      # Unknown error
+      "This order failed for an unknown reason."
+    end
   end
 end

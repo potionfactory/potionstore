@@ -1,30 +1,76 @@
-<h1>Order Failed</h1>
-
 <!-- <p>Failure code: <%= @order.failure_code %></p> -->
 
-<p style="font-size:14px; margin-bottom:25px; line-height:22px;">
+<style type="text/css">
+#errorbox {
+	display: inline-block;
+	width: 380px;
+	margin: 25px auto 10px;
+	padding: 20px;
+	font-size: 14px;
+	line-height: 22px;
+	text-align: center;
+	background-color: #fff;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	-webkit-box-shadow: 0 3px 2px #888;
+	-moz-box-shadow: 0 3px 2px #888;
+	box-shadow: 0 3px 2px #888;
+}
+
+#errorbox h2 {
+	margin-top: 15px;
+}
+
+a#goback.button {
+	display: inline-block;
+	text-align: center;
+	color: #444;
+	background-color: #ddd;
+	margin-top: 10px;
+	border-radius: 2px;
+	border: 1px solid #ccc;
+	-webkit-box-shadow: 0 1px 1px #888;
+	-moz-box-shadow: 0 1px 1px #888;
+	box-shadow: 0 1px 1px #888;
+	text-shadow: 0 1px 1px #fff;
+}
+
+#choosecountry {
+	color:#444;
+	margin-bottom:50px;
+}
+</style>
+
+<div id="errorbox">
+	<h2>Order Failed</h2>
+
+	<p id="message">
 	<% if @order.status == 'C' -%>
 		You placed this order already.
 	<% elsif @order.status == 'X' -%>
 		This order has been cancelled.
-	<% elsif @order.failure_reason == nil -%>
-		This order failed for an unknown reason
+	<% elsif flash[:notice] -%>
+	    <%= flash[:notice] %>
 	<% else -%>
-		<%= @order.failure_reason.gsub("\n", "<br/>") -%>
+		<%= @order.customer_friendly_failure_reason.gsub("\n", "<br/>") -%>
 	<% end -%>
-</p>
-<div class="cl"></div>
+	</p>
 
-<% if @order.country == "US" && @order.status != "C" -%>
-<p style="color:#666; margin-bottom:50px">
-    <strong>Non-USA Customers:</strong> Please make sure to select your country
-</p>
-<% end -%>
-
-<p style="margin-bottom:50px">
+	<p>
 	<% if @order.status == 'C' -%>
 	An order receipt with the license key was sent to <%= @order.email -%>
 	<% else -%>
-	<strong><a href="javascript:history.back()">Go back</a></strong> to try again
+	<a id="goback" class="button" href="javascript:history.back()">Go Back to Try Again</a>
 	<% end -%>
 </p>
+
+</div>
+
+<% if @order.country == "US" && @order.status != "C" -%>
+<p id="choosecountry">
+    <strong>Non-USA Customers:</strong> Please make sure to select your country
+</p>
+<% end -%>
