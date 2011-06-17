@@ -20,7 +20,7 @@ class LineItem < ActiveRecord::Base
     write_attribute(:quantity, qty)
 
     if regenerate_keys
-      self.license_key = make_license(self.product.code, self.order.licensee_name, qty)
+      self.license_key = generate_license_key()
     end
   end
 
@@ -48,4 +48,14 @@ class LineItem < ActiveRecord::Base
     return self.product.license_url_scheme + '://' + self.license_key rescue nil
   end
 
+  def generate_license_key(attempt = 0)
+    newkey = make_license(self.product.code, self.order.licensee_name, self.quantity)
+
+    # Check if the newkey is already in the database. Don't try this more than 256 times.
+    if LineItem.find_by_license_key(newkey) && attempt < 256
+      logger.info('License key already in the database. Generating it again (attempt #{attempt}).')
+      return generate_license_key(attempt + 1)
+    end
+    return newkey
+  end
 end
