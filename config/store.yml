@@ -2,6 +2,10 @@
 admin_username: "admin"
 admin_password: "password"
 
+# Limited admin login
+limited_admin_username: "support"
+limited_admin_password: "illbeyourhero"
+
 # Presentation stuf
 company_name: "My Company"
 company_url: "http://www.mycompany.com/"

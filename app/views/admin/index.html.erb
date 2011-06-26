@@ -12,7 +12,7 @@ table tr td { padding-right:10px; }
 #rsummary .total td { border-top: 3px double #ccc; }
 #projections { text-align:right; font-size:11px; color:#888; }
 </style>
-
+<% if session[:rights] == 'all' -%>
 <div class="box">
 	<h2 class="fl">Summary</h2>
 	<div class="boxmenu">
@@ -38,3 +38,4 @@ table tr td { padding-right:10px; }
 		<%= render :partial =>  "revenue_history" %>
     </div>
 </div>
+<% end -%>

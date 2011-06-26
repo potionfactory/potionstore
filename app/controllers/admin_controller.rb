@@ -15,11 +15,17 @@ class AdminController < ApplicationController
     if params[:username] == $STORE_PREFS['admin_username'] &&
        params[:password] == $STORE_PREFS['admin_password']
       session[:logged_in] = true
+      session[:rights] = 'all'
       if session[:intended_url] != nil
         redirect_to session[:intended_url]
       else
         redirect_to :action => 'index'
       end
+    elsif params[:username] == $STORE_PREFS['limited_admin_username'] &&
+        params[:password] == $STORE_PREFS['limited_admin_password']
+      session[:logged_in] = true
+      session[:rights] = 'limited'
+      redirect_to :action => 'index'
     else
       flash[:notice] = "Go home kid. This ain't for you."
       render :action => "login"
@@ -28,7 +34,8 @@ class AdminController < ApplicationController
 
   def logout
     session[:logged_in] = nil
-    redirect_to home_url
+    session[:rights] = nil
+    redirect_to :action => 'index'
   end
 
   # Dashboard page
