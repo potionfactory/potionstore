@@ -11,8 +11,8 @@ class Admin::OrdersController < ApplicationController
     conditions = "status <> 'P'"
     if q
       q = q.strip().downcase()
-      if q.to_i != 0
-        conditions = [conditions + "AND id=?", q.to_i]
+      if q =~ /^\d+$/
+        conditions = [conditions + " AND id=?", q.to_i]
 
       elsif q =~ /^\s*(.*?)\s*<\s*(.*?)\s*>.*$/
         # Parse email address pasted in the format of "John Doh <john.doh@me.com>"
@@ -21,9 +21,9 @@ class Admin::OrdersController < ApplicationController
         email = $2
         fname, lname = name.split(/\s+/, 2)
         lname = 'BLANK_LAST_NAME' if not lname # Just a dummy value to stop matching on last name
-        conditions = [conditions + "AND ((LOWER(first_name) LIKE ? AND LOWER(last_name) LIKE ?) OR
-                                         LOWER(licensee_name) = ? OR
-                                         LOWER(email) = ?)",
+        conditions = [conditions + " AND ((LOWER(first_name) LIKE ? AND LOWER(last_name) LIKE ?) OR
+                                           LOWER(licensee_name) = ? OR
+                                           LOWER(email) = ?)",
                       "#{fname}%", "#{lname}%", name, email]
       else
         conditions = [conditions + " AND (LOWER(email) LIKE ? OR
