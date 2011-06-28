@@ -1,30 +1,25 @@
-body
-{
+body {
   color: #222;
 }
 
-h1
-{
+h1 {
   margin-top: 40px;
 }
 
-h2
-{
+h2 {
   margin: 5px 0 10px;
   font-size: 16px;
   border-bottom: 1px dotted #ccc;
 }
 
-#topmenu
-{
+#topmenu {
   margin: 0; padding: 0;
   padding-left: 0;
-  }
+}
 
-#topmenu li
-{
+#topmenu li {
   height: 40px;
-  font-family: arial, "Trebuchet MS", "Lucida Grande", sans-serif;
+  font-family: Helvetica, sans-serif;
   font-size: 13px;
   padding-left: 14px;
   padding-right: 14px;
@@ -36,22 +31,24 @@ h2
   display: inline;
 }
 
-#topmenu li:first-child
-{
-  border-left: 1px dotted #ddd;
-  }
+#topmenu li:first-child {
+  border-left: none;
+  padding-left: 10px;
+}
+
+#topmenu li:last-child {
+  border-right: none;
+}
 
 
-#submenu
-{
+#submenu {
   margin: 0; padding: 0;
   padding-left: 0;
-  }
+}
 
-#submenu li
-{
+#submenu li {
   height: 18px;
-  font-family: arial, "Trebuchet MS", "Lucida Grande", sans-serif;
+  font-family: Helvetica, sans-serif;
   font-size: 13px;
   padding-left: 14px;
   padding-right: 14px;
@@ -63,10 +60,9 @@ h2
   display: inline;
 }
 
-#submenu li:first-child
-{
+#submenu li:first-child {
   border-left: 1px dotted #ddd;
-  }
+}
 
 hr { height: 20px; border: 0; }
 
@@ -75,15 +71,12 @@ table.form tr td:first-child { text-align: right; }
 
 tr { vertical-align: top; }
 
-#search form
-{
+#search form {
   margin: 1px 0 0 0;
 }
 
-.pagination
-{
+.pagination {
   margin: 20px 0;
-
 }
 
 /* Used for the order and product list */
