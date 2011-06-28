@@ -48,4 +48,15 @@
 </div>
 
 <br />
+<% elsif session[:rights] != 'all' -%>
+<p>
+	<br/>
+	Find orders by searching for
+	<ul>
+		<li>Name</li>
+		<li>Email address</li>
+		<li>Name or email address: "John Doe &lt;johndoe@host.com&gt;"</li>
+		<li>License key</li>
+	</ul>
+</p>
 <% end -%>
