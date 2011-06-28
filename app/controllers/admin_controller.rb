@@ -45,10 +45,11 @@ class AdminController < ApplicationController
       redirect_to :action => 'products' and return
     end
 
-    revenue_summary()
-
-    flashRoute = url_for :controller => 'admin/charts', :action => 'revenue_history_days'
-    @chart = OpenFlashChart.swf_object(500, 170, flashRoute)
+    if session[:rights] == 'all'
+      revenue_summary()
+      flashRoute = url_for :controller => 'admin/charts', :action => 'revenue_history_days'
+      @chart = OpenFlashChart.swf_object(500, 170, flashRoute)
+    end
   end
 
   # The revenue_xxx functions get called through ajax when user chooses different types of reports
