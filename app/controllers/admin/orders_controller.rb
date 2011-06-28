@@ -8,15 +8,15 @@ class Admin::OrdersController < ApplicationController
   # GET /orders.xml
   def index
     q = params[:query]
+    conditions = "status <> 'P'"
 
     if q
       q = q.strip().downcase()
-      conditions = "status <> 'P'"
 
       if q =~ /^\d+$/
         conditions = [conditions + " AND id=?", q.to_i]
 
-      elsif q.length < 3
+      elsif q.length < 3 && session[:rights] != 'all'
         flash[:notice] = 'Need at least 3 characters to find an order'
         conditions = nil
 
@@ -41,11 +41,13 @@ class Admin::OrdersController < ApplicationController
                         "#{q}%", "#{q}%", "#{q}%", "%#{q}%", q]
         end
       end
+    elsif session[:rights] != 'all'
+      conditions = nil
+    end
 
-      if conditions
-        @orders = Order.paginate :page => (params[:page] || 1), :per_page => 100, :conditions => conditions, :order => 'order_time DESC'
-        flash[:notice] = nil
-      end
+    if conditions
+      @orders = Order.paginate :page => (params[:page] || 1), :per_page => 100, :conditions => conditions, :order => 'order_time DESC'
+      flash[:notice] = nil
     end
 
     respond_to do |format|
