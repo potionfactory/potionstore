@@ -46,6 +46,10 @@ class Order < ActiveRecord::Base
       if ['US', 'CA'].member?(self.country)
         errors.add('state', msg = 'must be a 2 character abbreviation for USA and Canada') if self.state.size != 2
       end
+
+      if String(self.country).size != 2
+        errors.add('country', msg = 'is required')
+      end
     end
 
     ## Validate PayPal order
