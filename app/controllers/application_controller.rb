@@ -25,7 +25,7 @@ end
 
 # Convenience global function to check if we're running in production mode
 def is_live?
-  return ENV['RAILS_ENV'] == 'production'
+  return Rails.env == 'production'
 end
 
 
@@ -68,7 +68,7 @@ if $STORE_PREFS['allow_google_checkout']
   end
 
   def _initialize_google_checkout
-    environment = ENV['RAILS_ENV'] || 'production'
+    environment = Rails.env || 'production'
 
     app_root = File.dirname(__FILE__) + '/../..'
     config_dir = app_root + '/config'

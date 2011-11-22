@@ -1,5 +1,5 @@
 <% @qty = {} %>
-<% form_tag :action => "add_coupons" do -%>
+<%= form_tag :action => "add_coupons" do -%>
 <p>Code: <%= text_field 'form', 'code' %></p>
 <p>Amount: <%= text_field 'form', 'amount' %></p>
 <p>Description: <%= text_field 'form', 'description' %></p>
