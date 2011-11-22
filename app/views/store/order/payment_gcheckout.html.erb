@@ -83,7 +83,7 @@ $(document).ready(function(){
   end
 -%>
 
-<% form_tag({:action => "purchase"}, {:onsubmit => form_onsubmit}) do -%>
+<%= form_tag({:action => "purchase"}, {:onsubmit => form_onsubmit}) do -%>
 
 <% for item in @order.line_items -%>
 <%= hidden_field 'items', String(item.product_id), :value=> item.quantity %>

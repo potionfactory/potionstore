@@ -133,7 +133,7 @@ $(document).ready(function(){
     </tr>
 </table>
 
-<% form_tag({:action => "purchase"}, {:id => "purchase"}) do -%>
+<%= form_tag({:action => "purchase"}, {:id => "purchase"}) do -%>
 
 <% for item in @order.line_items -%>
 <%= hidden_field "items", String(item.product_id), :value=> item.quantity -%>

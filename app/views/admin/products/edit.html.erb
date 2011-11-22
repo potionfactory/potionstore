@@ -1,6 +1,6 @@
 <h1>Editing product</h1>
 
-<% form_for(:product, :url => admin_product_path(@product), :html => {:method => :put}) do |f| %>
+<%= form_for(:product, :url => admin_product_path(@product), :html => {:method => :put}) do |f| %>
     <%= render :partial => 'form', :object => f %>
     <%= submit_tag "Update" %>
 <% end %>
