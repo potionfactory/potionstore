@@ -32,6 +32,8 @@ GEM
     builder (2.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
+    foreigner (1.1.1)
+      activerecord (>= 3.0.0)
     google4r-checkout (1.1.0)
       money (>= 2.3.0)
     i18n (0.5.0)
@@ -81,6 +83,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  foreigner
   google4r-checkout (~> 1.1.0)
   money (~> 4.0.1)
   mysql2 (~> 0.2.7)
