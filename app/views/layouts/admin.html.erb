@@ -17,16 +17,16 @@
         <li><%= link_to("Add Coupons", {:controller => "/admin", :action => "generate_coupons"}, {:accesskey => "4"}) %></li>
         <li><%= link_to("Products", {:controller => "admin/products", :action => "index"}, {:accesskey => "5"}) %></li>
         <li id="search">
-            <%= form_tag({:controller => "admin/orders", :action => "index"}, {:method => "GET"}) do -%>
+            <%= form_tag({:controller => "admin/orders", :action => "index"}, {:method => "GET"}) do %>
             <%= text_field_tag("query", nil, {:accesskey => "S"}) %>
             <%= submit_tag "Search" %>
-            <% end -%>
+            <% end %>
         </li>
     </ul>
-    <% end -%>
+    <% end %>
     <p style="color: green"><%= flash[:notice] %></p>
     <p style="color: red"><%= flash[:error] %></p>
 
-    <%= @content_for_layout %>
+    <%= yield %>
 </body>
 </html>
