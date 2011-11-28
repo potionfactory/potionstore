@@ -1,8 +1,12 @@
 Potionstore::Application.routes.draw do
   match 'store' => 'store/order#index'
   match '' => 'store/order#index'
-  resource :order
   
+  scope "store" do
+    match "order/payment" => "store/order#payment"
+    resources :order, :singular => true, :module => "store"
+  end
+
   namespace :admin do
     resources :products
     resources :orders do
