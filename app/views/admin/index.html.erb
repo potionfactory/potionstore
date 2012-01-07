@@ -16,9 +16,9 @@ table tr td { padding-right:10px; }
 <div class="box">
 	<h2 class="fl">Summary</h2>
 	<div class="boxmenu">
-		<%= link_to_remote "Units", :url => { :action => "revenue_summary_quantity" }, :update => "rsummary" %> /
-		<%= link_to_remote "Amount", :url => { :action => "revenue_summary_amount" }, :update => "rsummary" %> /
-		<%= link_to_remote "Percentage", :url => { :action => "revenue_summary_percentage" }, :update => "rsummary" %>
+		<%= link_to "Units", :url => { :action => "revenue_summary_quantity" }, :remote => true, :update => "rsummary" %> /
+		<%= link_to "Amount", :url => { :action => "revenue_summary_amount" }, :remote => true, :update => "rsummary" %> /
+		<%= link_to "Percentage", :url => { :action => "revenue_summary_percentage" }, :remote => true, :update => "rsummary" %>
 	</div>
 	<div class="clear"></div>
 	<div id="rsummary">
@@ -29,9 +29,9 @@ table tr td { padding-right:10px; }
 <div class="box">
     <h2 class="fl">History</h2>
 	<div class="boxmenu">
-		<%= link_to_remote "30 Days", :url => { :action => "revenue_history_days" }, :update => "rhistory" %> /
-		<%= link_to_remote "26 Weeks", :url => { :action => "revenue_history_weeks" }, :update => "rhistory" %> /
-		<%= link_to_remote "12 Months ", :url => { :action => "revenue_history_months" }, :update => "rhistory" %>
+		<%= link_to "30 Days", :url => { :action => "revenue_history_days" }, :remote => true, :update => "rhistory" %> /
+		<%= link_to "26 Weeks", :url => { :action => "revenue_history_weeks" }, :remote => true, :update => "rhistory" %> /
+		<%= link_to "12 Months ", :url => { :action => "revenue_history_months" }, :remote => true, :update => "rhistory" %>
 	</div>
 	<div class="clear"></div>
 	<div id="rhistory">
