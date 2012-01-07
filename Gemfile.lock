@@ -76,6 +76,7 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.31)
+    uuidtools (2.1.2)
     will_paginate (3.0.2)
     xml-simple (1.1.1)
 
@@ -88,5 +89,6 @@ DEPENDENCIES
   money (~> 4.0.1)
   mysql2 (~> 0.2.7)
   rails (= 3.0.9)
+  uuidtools
   will_paginate
   xml-simple (~> 1.1.1)
