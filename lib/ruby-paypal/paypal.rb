@@ -287,7 +287,7 @@ class PayPal
     prefs = File.expand_path(config_dir + '/paypal.yml')
     if File.exists?(prefs)
       y = YAML.load(File.open(prefs))
-      y.each {|pref, value| eval("@#{pref} =\"#{value}\"")}
+      y.each {|pref, value| eval("@#{pref} ='#{value}'")}
       y[environment].each {|pref, value| eval("@#{pref} =\"#{value}\"")}
     end
 
