@@ -138,6 +138,7 @@ $(document).ready(function(){
 <% for item in @order.line_items %>
 <%= hidden_field "items", String(item.product_id), :value => item.quantity %>
 <% end %>
+<%= hidden_field "order", "uuid" %>
 <%= hidden_field_tag("coupon", @order.coupon_text) if @order.coupon %>
 
 <div class="d"></div>

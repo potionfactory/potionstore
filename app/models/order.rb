@@ -1,10 +1,11 @@
-require 'uid'
+require 'uuidtools'
 require 'ruby-paypal'
 
 class Order < ActiveRecord::Base
   has_many :line_items
   belongs_to :coupon
-
+  before_create :generate_token
+  
   attr_accessor :cc_code, :cc_month, :cc_year
   attr_accessor :skip_cc_validation
   attr_accessor :email_receipt_when_finishing
@@ -26,8 +27,7 @@ class Order < ActiveRecord::Base
     if form_items.length > 0
       self.add_form_items(form_items)
     end
-
-    self.unique_id = uid() if not self.unique_id
+    
     self.order_time = Time.now() if not self.order_time
   end
 
@@ -363,7 +363,7 @@ class Order < ActiveRecord::Base
     end
 
     # Add UID if it hasn't been already
-    self.unique_id = uid() unless self.unique_id
+    self.uuid = generate_token() unless self.uuid
 
     # Always update the total before saving. Always!!!
     self.total = self.calculated_total
@@ -658,4 +658,12 @@ class Order < ActiveRecord::Base
     self.status = 'R'
     self.save()
   end
+  
+  private
+    def generate_token
+      token = UUIDTools::UUID.timestamp_create.to_s
+      self.uuid = token
+      logger.debug("TOKEN : #{token}")
+      return token
+    end
 end
