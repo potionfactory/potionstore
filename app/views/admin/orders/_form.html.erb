@@ -1,7 +1,7 @@
-<% if @order && !@order.new_record? -%>
+<% if @order && !@order.new_record? %>
 <%= form.hidden_field :id %>
 <%= form.hidden_field :status %>
-<% end -%>
+<% end %>
 <table class="form">
 	<tr>
 		<td>Licensee Name:</td>
@@ -13,7 +13,7 @@
 	</tr>
 	<tr>
 		<td>Items:</td>
-		<td><%= render :partial => "product_quantities" -%></td>
+		<td><%= render :partial => "product_quantities" %></td>
 	</tr>
 	<tr>
 		<td>Company:</td>
@@ -61,6 +61,6 @@
 	</tr>
 		<tr>
 		<td>Ordered Time:</td>
-		<td><%= datetime_select("order", "order_time") -%></td>
+		<td><%= datetime_select("order", "order_time") %></td>
 	</tr>
 </table>

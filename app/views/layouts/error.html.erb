@@ -13,11 +13,11 @@
 <body>
 	<div id="page" class="narrow">
 		<div id="page_top">
-			<% if not $STORE_PREFS['company_logo_path'].blank? -%>
+			<% if not $STORE_PREFS['company_logo_path'].blank? %>
 			<div id="logo"><a href="<%=$STORE_PREFS['company_url']%>">
 				<img src="<%=$STORE_PREFS['company_logo_path']%>" alt="<%=$STORE_PREFS['company_name']%>"/></a>
 			</div>
-			<% end -%>
+			<% end %>
 
 			<br/>
 			<br/>
@@ -35,7 +35,7 @@
 			</center>
 		</div>
 	</div>
-	<% if is_live?() && ! $STORE_PREFS['google_analytics_account'].blank? -%>
+	<% if is_live?() && ! $STORE_PREFS['google_analytics_account'].blank? %>
   <script type="text/javascript">
 
     var _gaq = _gaq || [];
@@ -49,6 +49,6 @@
     })();
 
   </script>
-	<% end -%>
+	<% end %>
 </body>
 </html>

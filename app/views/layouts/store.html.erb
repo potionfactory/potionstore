@@ -15,10 +15,10 @@
 <body>
 <div id="page" class="narrow">
 	<div id="page_top">
-		<% if not $STORE_PREFS['company_logo_path'].blank? -%>
+		<% if not $STORE_PREFS['company_logo_path'].blank? %>
 		<div id="logo"><a href="<%=$STORE_PREFS['company_url']%>"><img src="<%=$STORE_PREFS['company_logo_path']%>" alt="<%=$STORE_PREFS['company_name']%>"/></a>
 		</div>
-		<% end -%>
+		<% end %>
 		<h1><%=$STORE_PREFS['store_name']%></h1>
 		<div class="tm"></div>
 		<%= image_tag "store/rounded_tr.png", :alt => "rounded border", :class => "tr" %>
@@ -33,7 +33,7 @@
 		<div id="copyright"><p><%=$STORE_PREFS['copyright_html']%> Powered by <a href="http://www.potionfactory.com/potionstore">Potion Store</a></p></div>
 	</div>
 </div>
-<% if is_live?() && ! $STORE_PREFS['google_analytics_account'].blank? -%>
+<% if is_live?() && ! $STORE_PREFS['google_analytics_account'].blank? %>
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -47,9 +47,9 @@
   })();
 
 </script>
-<% end -%>
-<% if is_live?() && $STORE_PREFS['include_mint'] == true -%>
+<% end %>
+<% if is_live?() && $STORE_PREFS['include_mint'] == true %>
 <script type="text/javascript" src="/mint/?js"></script>
-<% end -%>
+<% end %>
 </body>
 </html>

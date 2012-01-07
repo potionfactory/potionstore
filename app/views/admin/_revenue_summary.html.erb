@@ -8,29 +8,29 @@
 		</tr>
 		<tr>
 			<th class="first">Orders</th>
-			<% for val in @num_orders -%>
+			<% for val in @num_orders %>
 			<td><%= val %></td>
-			<% end -%>
+			<% end %>
 		</tr>
-		<% for product in @products -%>
+		<% for product in @products %>
 		<tr>
 			<th class="first"><%= product %></th>
-			<% for i in 0..3 -%>
-			<% if @type == nil || @type == "quantity" -%>
+			<% for i in 0..3 %>
+			<% if @type == nil || @type == "quantity" %>
 			<td><%= @product_quantity[product][i] %></td>
-			<% elsif @type == "amount" -%>
+			<% elsif @type == "amount" %>
 			<td><%= number_to_currency(@product_revenue[product][i]) %></td>
-			<% elsif @type == "percentage" -%>
+			<% elsif @type == "percentage" %>
 			<td><%= number_to_percentage @product_percentage[product][i], :precision => 0 %></td>
-			<% end -%>
-			<% end -%>
+			<% end %>
+			<% end %>
 		</tr>
-		<% end -%>
+		<% end %>
 		<tr class="total">
 			<th class="first">Total</th>
-			<% for val in @revenue -%>
+			<% for val in @revenue %>
 			<td><%= number_to_currency(val) %></td>
-			<% end -%>
+			<% end %>
 		</tr>
 		<tr>
 			<th></th>
