@@ -1922,8 +1922,8 @@ superclass' view_paths.  [Rick Olson]
 
 * Allow form_for and fields_for to work with indexed form inputs.  [Jeremy Kemper, Matt Lyon]
 
-  <% form_for 'post[]', @post do |f| -%>
-  <% end -%>
+  <% form_for 'post[]', @post do |f| %>
+  <% end %>
 
 * Remove leak in development mode by replacing define_method with module_eval. [Nicholas Seckar]
 
@@ -2521,8 +2521,8 @@ superclass' view_paths.  [Rick Olson]
 
 * Allow form_for and fields_for to work with indexed form inputs.  [Jeremy Kemper, Matt Lyon]
 
-  <% form_for 'post[]', @post do |f| -%>
-  <% end -%>
+  <% form_for 'post[]', @post do |f| %>
+  <% end %>
 
 * Remove leak in development mode by replacing define_method with module_eval. [Nicholas Seckar]
 
@@ -2747,11 +2747,11 @@ superclass' view_paths.  [Rick Olson]
 
 * Change #form_for and #fields_for so that the second argument is not required [Dave Thomas]
 
-    <% form_for :post, @post, :url => { :action => 'create' } do |f| -%>
+    <% form_for :post, @post, :url => { :action => 'create' } do |f| %>
     
   becomes...
   
-    <% form_for :post, :url => { :action => 'create' } do |f| -%>
+    <% form_for :post, :url => { :action => 'create' } do |f| %>
 
 * Update to script.aculo.us 1.6 [Thomas Fuchs]
 
@@ -4392,7 +4392,7 @@ Default YAML web services were retired, ActionController::Base.param_parsers car
 
 * Added display of error messages with scaffolded form pages
 
-* Added option to ERB templates to swallow newlines by using <% if something -%> instead of just <% if something %>. Example:
+* Added option to ERB templates to swallow newlines by using <% if something %> instead of just <% if something %>. Example:
 
     class SomeController < ApplicationController
     <% if options[:scaffold] %>
@@ -4411,9 +4411,9 @@ Default YAML web services were retired, ActionController::Base.param_parsers car
   ...where as:
 
     class SomeController < ApplicationController
-    <% if options[:scaffold] -%>
+    <% if options[:scaffold] %>
       scaffold :<%= singular_name %>
-    <% end -%>
+    <% end %>
       helper :post
   
   ...produces:

@@ -113,33 +113,32 @@ $(document).ready(function(){
 </div>
 
 <table id="order">
-    <% for item in @order.line_items -%>
-    <%   if item.quantity > 0 -%>
+    <% for item in @order.line_items %>
+    <%   if item.quantity > 0 %>
     <tr>
         <td class="price"><%= item.quantity %> @ <%= number_to_currency item.unit_price %> each</td>
         <td class="prod"><%= item.product.name %></td>
     </tr>
-    <%   end -%>
-    <% end -%>
-    <% if @order.coupon -%>
+    <%   end %>
+    <% end %>
+    <% if @order.coupon %>
     <tr>
       <td class="price">-<%= number_to_currency(@order.coupon_amount) %></td>
       <td><%= @order.coupon.description %></td>
     </tr>
-    <% end -%>
+    <% end %>
     <tr id="total">
         <td></td>
         <td>Total: <strong><%= number_to_currency @order.total %></strong></td>
     </tr>
 </table>
 
-<%= form_tag({:action => "purchase"}, {:id => "purchase"}) do -%>
+<%= form_tag({:action => "purchase"}, {:id => "purchase"}) do %>
 
-<% for item in @order.line_items -%>
-<%= hidden_field "items", String(item.product_id), :value=> item.quantity -%>
-<% end -%>
-<%= hidden_field "order", "unique_id" %>
-<%= hidden_field_tag("coupon", @order.coupon_text) if @order.coupon -%>
+<% for item in @order.line_items %>
+<%= hidden_field "items", String(item.product_id), :value => item.quantity %>
+<% end %>
+<%= hidden_field_tag("coupon", @order.coupon_text) if @order.coupon %>
 
 <div class="d"></div>
 
@@ -214,4 +213,4 @@ $(document).ready(function(){
 
 <p><input id="submit" name="commit" type="submit" value="&nbsp; Place Order &rarr;" /></p>
 
-<% end -%>
+<% end %>

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width"/>
 </head>
 <body>
-    <% if session[:logged_in] -%>
+    <% if session[:logged_in] %>
     <ul id="topmenu">
         <li><%= link_to("Reports", {:controller => "/admin", :action => "index"}, {:accesskey => "1"}) %></li>
         <li><%= link_to("Orders", {:controller => "admin/orders", :action => "index"}, {:accesskey => "2"}) %></li>

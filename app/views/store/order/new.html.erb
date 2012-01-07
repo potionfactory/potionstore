@@ -7,37 +7,37 @@ $(document).ready(function(){
 //	update_prices();
 	$('.creditcards img').click(function() { $('#creditcard').get(0).checked = 'checked'; });
 	$('.paypal img').click(function() { $('#paypal').get(0).checked = 'checked'; });
-<% if $STORE_PREFS['allow_google_checkout'] then -%>
+<% if $STORE_PREFS['allow_google_checkout'] then %>
 	$('.gcheckout img').click(function() { $('#gcheckout').get(0).checked = 'checked'; });
-<% end -%>
+<% end %>
 //	$('#items_3').keyup(update_prices);
 //	$('#items_3').change(update_prices);
 });
 </script>
 
-<%= form_tag :action => "payment" do -%>
+<%= form_tag :action => "payment" do %>
 
 <div id="site_license">
     If you need a site license or have special pricing needs, please <a href="mailto:<%=$STORE_PREFS['sales_email']%>?subject=Request%20For%20Quote">contact us</a>.
 </div>
 
 <table id="products">
-<% for product in @products -%>
+<% for product in @products %>
 	<tr>
 		<td>
 			<a href="<%=product.url %>">
-				<% if not product.image_path.blank? -%>
+				<% if not product.image_path.blank? %>
 				<img src="<%= product.image_path %>" alt="">
-				<% end -%>
+				<% end %>
 				<%= product.name %>
 			</a>
 		</td>
 		<td>
-			<%= text_field "items", product.id, :size => "3", :value => @qty[product.code], :autocomplete => "off", :class => "qty" -%>
+			<%= text_field "items", product.id, :size => "3", :value => @qty[product.code], :autocomplete => "off", :class => "qty" %>
 			@ <strong id="item_<%=product.id %>_price"><%= number_to_currency product.price %></strong>&nbsp; each
 		</td>
 	</tr>
-<% end -%>
+<% end %>
     <tr><td colspan="2"><div class="d"></div></td></tr>
     <tr id="coupon_row">
 		<td>Coupon Code:</td>
@@ -59,12 +59,12 @@ $(document).ready(function(){
 				<%= image_tag "store/paypal.gif", :alt => "Paypal" %>
 				Shop without sharing your financial information
 			</p>
-			<% if $STORE_PREFS['allow_google_checkout'] then -%>
+			<% if $STORE_PREFS['allow_google_checkout'] then %>
 			<p class="gcheckout">
 				<%= radio_button_tag 'payment_type', 'gcheckout', @payment_type == 'gcheckout', :id => 'gcheckout' %>
 				<%= image_tag "store/gcheckout.gif", :alt => "Google Checkout" %>
 			</p>
-			<% end -%>
+			<% end %>
 		</td>
     </tr>
     <tr>
@@ -76,4 +76,4 @@ $(document).ready(function(){
     </tr>
 </table>
 
-<% end -%>
+<% end %>

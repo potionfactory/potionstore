@@ -1,4 +1,4 @@
-<%= form_tag :action => "retrieve" do -%>
+<%= form_tag :action => "retrieve" do %>
 
 <h1>Retrieve License</h1>
 
@@ -7,9 +7,9 @@ Please tell us the email address used during the purchase. Your license along wi
 will be sent by email.
 </p>
 
-<% if flash[:license_notice] -%>
+<% if flash[:license_notice] %>
 <h3 style="color:red"><%= h flash[:license_notice] %></h3>
-<% end -%>
+<% end %>
 
 <div style="margin-top:40px"></div>
 
@@ -27,4 +27,4 @@ will be sent by email.
 
 <div style="margin-top:100px"></div>
 
-<% end -%>
+<% end %>
