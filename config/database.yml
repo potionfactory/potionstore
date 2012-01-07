@@ -3,7 +3,7 @@ production:
   encoding: utf8
   database: store
   username: root
-  password: 24xhub
+  password: 
   timeout: 5000
 
 development:
@@ -11,7 +11,7 @@ development:
   encoding: utf8
   database: store
   username: root
-  password: 24xhub
+  password: 
   timeout: 5000
 
 test:
@@ -19,5 +19,5 @@ test:
   encoding: utf8
   database: store-test
   username: root
-  password: 24xhub
+  password: 
   timeout: 5000

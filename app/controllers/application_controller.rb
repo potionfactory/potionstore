@@ -3,9 +3,6 @@
 
 class ApplicationController < ActionController::Base
 
-  # Don't log any credit card data
-  filter_parameter_logging :password, :cc_number, :cc_code, :cc_month, :cc_year
-
   def check_authentication
     unless session[:logged_in]
       session[:intended_url] = request.request_uri

@@ -30,8 +30,11 @@ GEM
     activesupport (3.0.9)
     arel (2.0.10)
     builder (2.1.2)
+    dynamic_form (1.1.4)
     erubis (2.6.6)
       abstract (>= 1.0.0)
+    exception_notification (2.5.2)
+      actionmailer (>= 3.0.4)
     foreigner (1.1.1)
       activerecord (>= 3.0.0)
     google4r-checkout (1.1.0)
@@ -84,6 +87,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dynamic_form
+  exception_notification (~> 2.5.2)
   foreigner
   google4r-checkout (~> 1.1.0)
   money (~> 4.0.1)
