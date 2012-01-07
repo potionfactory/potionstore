@@ -4,6 +4,10 @@ Potionstore::Application.routes.draw do
   
   scope "store" do
     match "order/payment" => "store/order#payment"
+    match "order/purchase" => "store/order#purchase"
+    match "order/thankyou" => "store/order#thankyou"
+    match "order/receipt" => "store/order#receipt"
+    
     resources :order, :singular => true, :module => "store"
   end
 
