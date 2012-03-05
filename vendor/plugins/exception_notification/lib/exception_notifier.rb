@@ -56,11 +56,11 @@ class ExceptionNotifier < ActionMailer::Base
 
     def sanitize_backtrace(trace)
       re = Regexp.new(/^#{Regexp.escape(rails_root)}/)
-      trace.map { |line| Pathname.new(line.gsub(re, "[RAILS_ROOT]")).cleanpath.to_s }
+      trace.map { |line| Pathname.new(line.gsub(re, "[Rails.root]")).cleanpath.to_s }
     end
 
     def rails_root
-      @rails_root ||= Pathname.new(RAILS_ROOT).cleanpath.to_s
+      @rails_root ||= Pathname.new(Rails.root).cleanpath.to_s
     end
 
 end

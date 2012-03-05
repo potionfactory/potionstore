@@ -1,4 +1,4 @@
-gems = Dir[File.join(RAILS_ROOT, "vendor/gems/*")]
+gems = Dir[File.join(Rails.root, "vendor/gems/*")]
 if gems.any?
   gems.sort.each do |dir|
     lib = File.join(dir, 'lib')
