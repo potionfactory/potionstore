@@ -1,8 +1,4 @@
 class AdminController < ApplicationController
-  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-  verify :method => :post, :only => [ :destroy, :create, :update ],
-  :redirect_to => { :action => :list }
-
   # Authentication stuff
   before_filter :redirect_to_ssl
   before_filter :check_authentication, :except => [:login]
