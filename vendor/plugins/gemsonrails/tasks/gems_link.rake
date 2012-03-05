@@ -32,7 +32,7 @@ if %w[#{only_list.join(' ')}].include?(ENV['RAILS_ENV'])
       raise "No gem #{gem_name} is installed.  Try 'gem install #{gem_name}' to install the gem."
     end
     
-    gems_dir = File.join(RAILS_ROOT, 'vendor', 'gems')
+    gems_dir = File.join(Rails.root, 'vendor', 'gems')
     mkdir_p gems_dir, :verbose => false if !File.exists?(gems_dir)
     
     target_dir = ENV['TO'] || gem.name

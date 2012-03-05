@@ -15,7 +15,7 @@ module Potionstore
     #config.frameworks -= [ :action_web_service ]
   
     # Add additional load paths for your own custom dirs
-    # config.autoload_paths += %W( #{RAILS_ROOT}/extras )
+    # config.autoload_paths += %W( #{Rails.root}/extras )
   
     # Force all environments to use the same logger level
     # (by default production uses :info, the others :debug)
