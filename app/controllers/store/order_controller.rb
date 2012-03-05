@@ -1,4 +1,3 @@
-
 class Store::OrderController < ApplicationController
   layout "store"
 
@@ -8,16 +7,12 @@ class Store::OrderController < ApplicationController
     new
     render :action => 'new'
   end
-
-  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-  verify :method => :post, :only => [ :destroy, :create, :update ],
-         :redirect_to => { :action => :list }
-
+  
   def new
     session[:order_id] = nil
     @qty = {}
     @payment_type = session[:payment_type]
-    @products = Product.find(:all, :conditions => {:active => 1})
+    @products = Product.where(:active => 1)
     if params[:product]
       @qty[params[:product]] = 1
     elsif session[:items]
