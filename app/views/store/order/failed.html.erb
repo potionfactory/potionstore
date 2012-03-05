@@ -10,7 +10,7 @@
 	<% elsif @order.failure_reason == nil %>
 		This order failed for an unknown reason
 	<% else %>
-		<%= @order.failure_reason.gsub("\n", "<br/>") %>
+		<%= @order.failure_reason.gsub("\n", "<br/>").html_safe %>
 	<% end %>
 </p>
 <div class="cl"></div>
