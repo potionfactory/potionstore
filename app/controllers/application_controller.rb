@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   def check_authentication
     unless session[:logged_in]
-      session[:intended_url] = request.request_uri
+      session[:intended_url] = request.url
       logger.debug('intended_url: ' + session[:intended_url])
       redirect_to :controller => "/admin", :action => "login"
     end
