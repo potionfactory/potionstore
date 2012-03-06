@@ -1,7 +1,7 @@
 class Store::OrderController < ApplicationController
   layout "store"
 
-  #before_filter :redirect_to_ssl
+  before_filter :redirect_to_ssl
 
   def index
     new
