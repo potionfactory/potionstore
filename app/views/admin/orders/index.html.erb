@@ -24,7 +24,7 @@
     <td>
         <%= link_to order.id, :action => "show", :id => order %><%= "*" if !order.comment.blank? %>
     </td>
-    <td><%= order.order_time.strftime("%m/%d/%y&nbsp;%H:%M") %></td>
+    <td><%= order.order_time.strftime("%m/%d/%y %H:%M") %></td>
     <td><%= order.licensee_name ? order.licensee_name : order.name %></td>
     <td><%= order.email %></td>
     <td><% if order.cc_order? %><%= order.address %>, <%= order.city %>, <%= order.state %> <%= order.zipcode %>,<% end %> <%= order.country %>
