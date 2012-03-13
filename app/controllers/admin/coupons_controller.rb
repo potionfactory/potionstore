@@ -81,7 +81,7 @@ class Admin::CouponsController < ApplicationController
 
   def update
     @coupon = Coupon.find(params[:id])
-    puts params.inspect
+    
     if @coupon.update_attributes(params[:coupon])
       redirect_to admin_coupons_path, notice: 'Coupon was successfully updated.'
     else
