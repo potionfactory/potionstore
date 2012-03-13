@@ -1,5 +1,5 @@
 Potionstore::Application.routes.draw do
-  match 'store' => 'store/order#index'
+  match 'store' => 'store/order#new'
   match '' => 'store/order#index'
   
   scope "store" do
@@ -13,6 +13,10 @@ Potionstore::Application.routes.draw do
 
   namespace :admin do
     resources :products
+    resources :coupons
+    match 'coupons/:id/:operation' => 'coupons#toggle_state', :constraints => { :operation => /disable|enable/ }, :as => 'disable_coupon'
+    match 'coupons/:id/toggle_state_for_all_coupons_with_code/:operation' => 'coupons#toggle_state_for_all_coupons_with_code', :constraints => { :operation => /disable|enable/ }, :as => 'toggle_state_for_all_coupons_with_code'
+    #match 'coupons/:id/delete_all' => 'coupons#delete_all_coupons_with_code', :as => 'delete_all_coupons_with_code'
     resources :orders do
       member do
         get :cancel

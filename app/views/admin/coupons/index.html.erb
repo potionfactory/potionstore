@@ -1,0 +1,22 @@
+<h1>Coupons</h1>
+
+<table class="list">
+  <tr>
+    <th>Code</th>
+    <th>Count</th>
+    <th></th>
+  </tr>
+
+<% @coupons.each do |code, count| %>
+  <tr>
+    <td><%= code %></td>
+    <td><%= count %></td>
+    <td><%= link_to 'Edit', admin_coupon_path(code) %></td>
+
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Coupon', new_admin_coupon_path %>

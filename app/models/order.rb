@@ -227,7 +227,7 @@ class Order < ActiveRecord::Base
     if coupon != nil &&
         self.coupon == nil &&
         (coupon.product_code == 'all' || has_item_with_code(coupon.product_code)) &&
-        !coupon.expired?
+        coupon.enabled? && !coupon.expired?
       self.coupon = coupon
       self.total = self.calculated_total
     end

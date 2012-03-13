@@ -103,3 +103,7 @@ table.list tr.newday { border-top:3px double #ccc; }
 
 .fl { float: left; }
 .fr { float: right; }
+
+.sosumi { font-size:10px; color:#555; }
+.red { color:red; }
+.bold { font-weight:bold; }

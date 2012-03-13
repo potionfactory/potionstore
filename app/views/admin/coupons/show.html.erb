@@ -1,0 +1,83 @@
+<br>
+<br>
+
+<table>
+  <tr>
+    <td>Code</td>
+    <td><%= @coupons.first.code %></td>
+  </tr>
+  <tr>
+    <td>Description</td>
+    <td><%= @coupons.first.description %></td>
+  </tr>
+  <tr>
+    <td>Product Code</td>
+    <td><%= @coupons.first.product_code %></td>
+  </tr>
+  <tr>
+    <td>Discount Amount</td>
+    <td><%= number_to_currency(@coupons.first.amount) %></td>
+  </tr>
+</table>
+
+<br>
+
+<table>
+  <tr>
+    <td>
+      <%= link_to 'Disable All', admin_toggle_state_for_all_coupons_with_code_path(@coupons.first.code, 'disable') %>
+    </td>
+    <td>
+      <%= link_to 'Enable All', admin_toggle_state_for_all_coupons_with_code_path(@coupons.first.code, 'enable') %>
+    </td>
+  </tr>
+</table>
+
+<br>
+
+<table class="list">
+  <tr>
+    <th>Coupon</th>
+    <th>Used Count</th>
+    <th>Use Limit</th>
+    <th>Status</th>
+    <th>Expiration</th>
+    <th></th>
+    <th></th>
+  </tr>
+<% @coupons.each do |coupon| %>
+  <tr>
+    <td><%= coupon.coupon %></td>
+    <td><%= coupon.used_count %></td>
+    <td><%= coupon.use_limit %></td>
+    <td>
+    <% if ! coupon.expired? %>
+      <%= coupon.enabled? ? 'Enabled' : 'Disabled' %>
+    <% else %>
+      <span class="red bold">Expired</span>
+    <% end %>
+    </td>
+    <td>
+    <% if coupon.expiration_date != nil %>
+      <%= distance_of_time_in_words_to_now(coupon.expiration_date) %>
+      <%= " ago" if coupon.expiration_date < Time.now %>
+    <% else %>
+      Never
+    <% end %>
+    </td>
+    <td>
+      <% if coupon.enabled? %>
+        <%= link_to 'Disable', admin_disable_coupon_path(coupon, 'disable') %>
+      <% else %>
+        <%= link_to 'Enable', admin_disable_coupon_path(coupon, 'enable') %>
+      <% end %>
+    </td>
+    <td><%= link_to 'Edit', edit_admin_coupon_path(coupon) %></td>
+  </tr>
+<% end %>
+</table>
+
+<br>
+<br>
+
+<%= link_to 'Back', admin_coupons_path %>

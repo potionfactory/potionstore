@@ -81,6 +81,7 @@ class AdminController < ApplicationController
   end
 
   # Coupon actions
+=begin
   def generate_coupons
     if params[:form]
       form = params[:form]
@@ -98,6 +99,7 @@ class AdminController < ApplicationController
       flash[:notice] = 'Coupons generated'
     end
   end
+=end
 
 #   def add_coupons # unused
 #     if params[:form]

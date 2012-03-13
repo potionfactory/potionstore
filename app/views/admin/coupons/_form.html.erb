@@ -1,0 +1,69 @@
+<%= form_for [:admin, @coupon] do |f| %>
+  <% if @coupon.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@coupon.errors.count, "error") %> prohibited this admin_coupon from being saved:</h2>
+
+      <ul>
+      <% @coupon.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <table class="form">
+    <% if params[:action] != 'edit' %>
+  	<tr>
+  		<td># to Generate</td>
+  		<td><%= f.text_field :quantity, :value => '1' %><br>
+  		  <span class="sosumi">if this is more than 1, the value for coupon code will be ignored</span></td>
+  	</tr>
+    <% end %>
+  	<tr>
+  		<td>Promotion Code:</td>
+  		<td><%= f.text_field :code %></td>
+  	</tr>
+
+    <tr>
+  		<td>Coupon code:</td>
+  		<td><%= f.text_field :coupon %></td>
+  	</tr>
+  	
+  	<tr>
+  		<td>Description for Customer:</td>
+  		<td><%= f.text_field :description %></td>
+  	</tr>
+
+  	<tr>
+  		<td>Product:</td>
+  		<td>
+  			<select name="form[product_code]">
+  				<option value="all">All</a>
+  					<%= f.select :product_code, options_for_select(Product.find(:all).collect{|x| x.code}.uniq) %>
+  			</select>
+  		</td>
+  	</tr>
+
+  	<tr>
+  		<td>Discount Amount:</td>
+  		<td><%= f.text_field :amount %></td>
+  	</tr>
+
+  	<tr>
+  		<td>Use Limit:</td>
+  		<td><%= f.text_field :use_limit, :value => '1' %></td>
+  	</tr>
+  	
+  	<tr>
+  	  <td>Expiration Date:</td>
+  	  <td><%= f.datetime_select :expiration_date, :start_year => Time.now.year, :prompt => true, :ampm => true %></td>
+  	</tr>
+  </table>
+  
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
+
+
