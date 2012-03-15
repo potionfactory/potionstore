@@ -280,7 +280,7 @@ class PayPal
   # access to PayPal production servers.
   #
   def initialize()
-    environment = Rails.env
+    environment = 'development' #Rails.env   ## TEMPORARILY OVERRIDE THIS TO USE DEVELOPMENT FOR TESTING ON HEROKU
     app_root = File.dirname(__FILE__) + '/../..'
     config_dir = app_root + '/config'
 
