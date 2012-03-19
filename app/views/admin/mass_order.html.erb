@@ -1,7 +1,7 @@
 <% @qty = {} %>
-<% form_tag :action => "mass_order" do -%>
+<%= form_tag :action => "mass_order" do %>
 
-<%= render :partial => "product_quantities" -%>
+<%= render :partial => "product_quantities" %>
 
 <p>Payment Type:<%= text_field 'form', 'payment_type', :value => 'Paypal' %></p>
 
@@ -11,4 +11,4 @@
 
 <p><%= submit_tag 'Process Orders' %></p>
 
-<% end -%>
+<% end %>

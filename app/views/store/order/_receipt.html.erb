@@ -1,4 +1,4 @@
-<% if @print -%>
+<% if @print %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -7,14 +7,14 @@
 </head>
 <body>
     <h1 style="font:bold 14px helvetica; margin-top:50px;"><%=$STORE_PREFS['company_name']%></h1>
-<% end -%>
+<% end %>
 <style type="text/css">
-<% if @print -%>
+<% if @print %>
 body { margin: 0 50pt; }
 #receipt table { width:100% }
-<% else -%>
+<% else %>
 #receipt table { width:550px; }
-<% end -%>
+<% end %>
 </style>
 <%
 =begin
@@ -38,7 +38,7 @@ body { margin: 0 50pt; }
 #receipt table tr.d { border-bottom: 3px double #ddd; }
 #receipt h3 { display:inline; margin:0; padding:0;}
 
-=end -%>
+=end %>
 
 <div id="receipt" style="font-family:helvetica,arial,sans-serif;font-size:12px;line-height:18px;margin-top:30px;">
     <table style="border-collapse:collapse">
@@ -65,9 +65,9 @@ body { margin: 0 50pt; }
 				<strong>Licensed to:</strong> <%=h @order.licensee_name %>
 			</td>
             <td style="padding:5px 0;border-bottom: 1px solid #ddd">
-				<% if not @order.company.blank? -%>
-                <strong>Company:</strong> <%=h @order.company -%>
-                <% end -%></td>
+				<% if not @order.company.blank? %>
+                <strong>Company:</strong> <%=h @order.company %>
+                <% end %></td>
 			</tr>
         <tr class="r">
             <td colspan="2" style="padding:5px 0;border-bottom: 1px solid #ddd">
@@ -78,14 +78,14 @@ body { margin: 0 50pt; }
             <td style="padding:5px 0;border-bottom: 3px double #ddd">
                 <strong>Billing Address:</strong><br/>
 				<%=h @order.first_name %> <%=h @order.last_name %><br/>
-				<% if @order.address1.blank? -%>
+				<% if @order.address1.blank? %>
 				N/A
-				<% else -%>
+				<% else %>
                 <%=h @order.address1
-					 -%><%=h ', ' + @order.address2 if @order.address2 && ! @order.address2.blank? -%><br/>
+					 %><%=h ', ' + @order.address2 if @order.address2 && ! @order.address2.blank? %><br/>
                 <%=h @order.city %>, <%=h @order.state %> <%=h @order.zipcode %><br/>
                 <%=h country_name(@order.country) %>
-				<% end -%>
+				<% end %>
             </td>
 			<td id="payment" style="width:35%;padding:5px 0;vertical-align:top;border-bottom: 3px double #ddd">
 				<strong>Payment:</strong><br/>
@@ -104,7 +104,7 @@ body { margin: 0 50pt; }
 				<th style="padding:5px 0;border-bottom: 1px solid #ddd">Qty</th>
 				<th style="padding:5px 0;border-bottom: 1px solid #ddd">Price</th>
 			</tr>
-			<% for item in @order.line_items -%>
+			<% for item in @order.line_items %>
 			<tr class="r">
 				<td class="prod" style="padding:5px 0;border-bottom: 1px solid #ddd">
 					<%=h item.product.name %>
@@ -122,13 +122,13 @@ body { margin: 0 50pt; }
 					<%= number_to_currency item.unit_price * item.quantity %>
 				</td>
 			</tr>
-			<% end -%>
-			<% if @order.coupon -%>
+			<% end %>
+			<% if @order.coupon %>
 			<tr>
 				<td colspan="4" style="padding:5px 0"><%= @order.coupon.description %></td>
 				<td class="price" style="padding:5px 0;text-align:right">-<%= number_to_currency(@order.coupon_amount) %></td>
 			</tr>
-			<% end -%>
+			<% end %>
 			<tr id="total" class="r">
 				<td colspan="3" style="padding:5px 0;border-bottom: 1px solid #ddd"></td>
 				<td class="qty" style="padding:5px 0;border-bottom: 1px solid #ddd;text-align:center">
@@ -138,13 +138,13 @@ body { margin: 0 50pt; }
 					<strong><%= number_to_currency @order.total %></strong>
 				</td>
 			</tr>
-			<% if @order.comment -%>
+			<% if @order.comment %>
 			<tr class="r">
 				<td colspan="5" style="padding:5px 0;border-bottom: 1px solid #ddd">
 					<strong>Comment:</strong> <%=h @order.comment %>
 				</td>
 			</tr>
-			<% end -%>
+			<% end %>
 		</table>
 	</div>
 <% if @print %>

@@ -15,7 +15,7 @@
   vc_coupons = coupons.compact()
   vc_coupons.reject!{|x| x.product_code != 'vc'}
 
--%>
+%>
 <h1>Thank You</h1>
 
 <p>
@@ -23,9 +23,9 @@
     downloaded the software already, please do so now:
 
     <ul>
-        <% for item in @order.line_items -%>
+        <% for item in @order.line_items %>
         <li><a href="<%=h item.product.download_url %>">Download <%=h item.product.name %></a></li>
-        <% end -%>
+        <% end %>
     </ul>
 </p>
 
@@ -37,41 +37,41 @@
 </p>
 
 <table id="license_keys">
-	<% for item in @order.line_items -%>
+	<% for item in @order.line_items %>
 	<tr>
 		<td class="first"><b><%=item.product.name%>:</b></td>
 		<td><code style="font-size:13px"><%= item.license_key %></code></td>
 		<td><a class="button" href="<%= item.license_url %>">ACTIVATE NOW</a></td>
 	</tr>
-<% end -%>
+<% end %>
 </table>
 </div>
 
 <div class="d"></div>
 
-<%= render :partial => 'receipt' -%>
+<%= render :partial => 'receipt' %>
 
 <div id="print">
-    <%= link_to image_tag('store/printer.png')+' Printer Friendly Receipt', { :action => 'receipt' }, :popup => ['new_window', 'height=500,width=600'] -%>
+    <%= link_to image_tag('store/printer.png')+' Printer Friendly Receipt', { :action => 'receipt' }, :popup => ['new_window', 'height=500,width=600'] %>
 </div>
 
-<% if coupons.length != 0 -%>
+<% if coupons.length != 0 %>
 <h3>DISCOUNT COUPONS</h3>
 <% end
-   if vc_coupons.length != 0 -%>
+   if vc_coupons.length != 0 %>
 <p>
     If you have friends who might enjoy Voice Candy, here are 3 coupon
     codes for $3 off their purchases. They expire in 15 days.
 </p>
 
 <pre><%= vc_coupons.collect {|x| x.coupon}.join(',  ') %></pre>
-<% end -%>
+<% end %>
 
 <p style="text-align:center;margin:50px 0 10px" class="small">
     The contents of this page are being sent to you by email.
 </p>
 
-<% if is_live?() && ! $STORE_PREFS['google_analytics_account'].blank? -%>
+<% if is_live?() && ! $STORE_PREFS['google_analytics_account'].blank? %>
 <!-- Google Analytics Transaction Tracking -->
 <form style="display:none;" name="utmform">
 <%
@@ -81,15 +81,15 @@ Format for the textarea field:
 UTM:T|[order-id]|[affiliation]|[total]|[tax]|[shipping]|[city]|[state]|[country]
 UTM:I|[order-id]|[sku/code]|[productname]|[category]|[price]|[quantity]
 =end
--%>
+%>
 <textarea id="utmtrans">
 UTM:T|<%=@order.id %>||<%=@order.total %>|<%=@order.tax_total %>|<%=@order.shipping_total %>|<%=@order.city %>|<%=@order.state %>|<%=@order.country %>
-<% for item in @order.line_items -%>
+<% for item in @order.line_items %>
 UTM:I|<%=@order.id %>|<%=item.product.code %>|<%=item.product.name %>||<%=item.unit_price %>|<%=item.quantity %>
-<% end -%>
+<% end %>
 </textarea>
 </form>
 <script type="text/javascript">
 __utmSetTrans();
 </script>
-<% end -%>
+<% end %>

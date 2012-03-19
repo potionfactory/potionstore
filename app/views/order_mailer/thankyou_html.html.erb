@@ -15,7 +15,7 @@
     vc_coupons = coupons.compact()
     vc_coupons.reject!{|x| x.product_code != 'vc'}
   end
--%>
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -45,12 +45,12 @@
 	</p>
 
 	<h3>LICENSE <%= key %></h3>
-<% for item in @order.line_items -%>
+<% for item in @order.line_items %>
 <pre>
 <%=item.product.name%>:
 <%= item.license_key %> <a href="<%= item.license_url %>">Activate Now</a>
 </pre>
-<% end -%>
+<% end %>
 
 	<div class="s"></div>
 	<p>Please let us know if you have any questions or comments. Enjoy your purchase.</p>
@@ -60,17 +60,17 @@
 	<div class="d"></div>
 	<%= render :partial => '/store/order/receipt', :order => @order %>
 
-	<% if coupons && coupons.length > 0 -%>
+	<% if coupons && coupons.length > 0 %>
 	<div class="d"></div>
 	<h3>COUPONS</h3>
-	<%   if vc_coupons.length != 0 -%>
+	<%   if vc_coupons.length != 0 %>
 	<p>
 	    If you have friends who might enjoy Voice Candy, here are 3 coupon
 	    codes for $3 off their purchases. They expire in 15 days.
 	</p>
 	<pre><%= vc_coupons.collect {|x| x.coupon}.join(',  ') %></pre>
-	<%   end -%>
-	<% end -%>
+	<%   end %>
+	<% end %>
     </div>
 </div>
 </body>

@@ -2,7 +2,7 @@
 
 <%= error_messages_for :product %>
 
-<% form_for(:product, :url => admin_products_path) do |f| %>
+<%= form_for(:product, :url => admin_products_path) do |f| %>
     <%= render :partial => 'form', :object => f %>
     <%= submit_tag "Create" %>
 <% end %>

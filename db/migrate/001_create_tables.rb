@@ -68,10 +68,9 @@ class CreateTables < ActiveRecord::Migration
       t.column "email", :text, :default => "", :null => false
     end
 
-    add_foreign_key_constraint "line_items", "order_id", "orders", "id", :on_update => nil, :on_delete => :cascade
-    add_foreign_key_constraint "line_items", "product_id", "products", "id", :on_update => nil, :on_delete => nil
-
-    add_foreign_key_constraint "orders", "coupon_id", "coupons", "id", :on_update => nil, :on_delete => :restrict
+    add_foreign_key :line_items, :orders, :dependent => :delete
+    add_foreign_key :line_items, :products
+    add_foreign_key :orders, :coupons
 
     p = Product.new
     p.code = "foo"
@@ -95,9 +94,9 @@ class CreateTables < ActiveRecord::Migration
   end
 
   def self.down
-    remove_foreign_key_constraint "line_items", "line_items_ibfk_order_id"
-    remove_foreign_key_constraint "line_items", "line_items_ibfk_product_id"
-    remove_foreign_key_constraint "orders", "orders_ibfk_coupon_id"
+    remove_foreign_key :line_items, :orders, :dependent => :delete
+    remove_foreign_key :line_items, :products
+    remove_foreign_key :orders, :coupons
     
     drop_table :list_subscribers
     drop_table :line_items

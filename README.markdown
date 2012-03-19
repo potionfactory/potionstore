@@ -15,7 +15,7 @@ Features:
 Dependencies
 ------------
 
-- Rails 2.1 or higher.
+- Rails 3.0 or higher.
 - PostgreSQL or MySQL
 
 
@@ -24,6 +24,9 @@ Installation
 
 This is a brief outline of the steps required to get the development environment of Potion Store up
 and running on your local machine.
+
+- Install gems via Bundler
+  - Run ```bundle install```
 
 - Edit the following config files to suit your needs
 
@@ -42,7 +45,7 @@ and running on your local machine.
   - Edit config/database.yml
   - run "rake db:migrate" to create the database schema
    
-- Run script/server and test through
+- Run ```rails s``` and test through
   <http://localhost:3000/store> and
   <http://localhost:3000/admin>
 
@@ -60,9 +63,9 @@ and running on your local machine.
 Debugging
 ---------
 
-1. gem install ruby-debug
+1. ```gem install ruby-debug```
 2. Put 'debugger' where you want to break in your source code
-3. Start the app with 'script/server --debugger' to enable breakpoints
+3. Start the app with ```rails s --debugger``` to enable breakpoints
 
   
 Final Notes

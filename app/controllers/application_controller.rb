@@ -3,12 +3,9 @@
 
 class ApplicationController < ActionController::Base
 
-  # Don't log any credit card data
-  filter_parameter_logging :password, :cc_number, :cc_code, :cc_month, :cc_year
-
   def check_authentication
     unless session[:logged_in]
-      session[:intended_url] = request.request_uri
+      session[:intended_url] = request.url
       logger.debug('intended_url: ' + session[:intended_url])
       redirect_to :controller => "/admin", :action => "login"
     end
@@ -25,7 +22,7 @@ end
 
 # Convenience global function to check if we're running in production mode
 def is_live?
-  return ENV['RAILS_ENV'] == 'production'
+  return Rails.env == 'production'
 end
 
 
@@ -68,7 +65,7 @@ if $STORE_PREFS['allow_google_checkout']
   end
 
   def _initialize_google_checkout
-    environment = ENV['RAILS_ENV'] || 'production'
+    environment = Rails.env || 'production'
 
     app_root = File.dirname(__FILE__) + '/../..'
     config_dir = app_root + '/config'
