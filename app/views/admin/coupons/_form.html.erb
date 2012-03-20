@@ -37,10 +37,7 @@
   	<tr>
   		<td>Product:</td>
   		<td>
-  			<select name="form[product_code]">
-  				<option value="all">All</a>
-  					<%= f.select :product_code, options_for_select(Product.find(:all).collect{|x| x.code}.uniq) %>
-  			</select>
+  		  <%= f.select :product_code, options_for_select(Product.all.collect{|x| x.code}.uniq), :prompt => true %>
   		</td>
   	</tr>
 
