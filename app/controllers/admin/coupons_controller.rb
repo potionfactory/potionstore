@@ -3,7 +3,7 @@ class Admin::CouponsController < ApplicationController
   before_filter :check_authentication
 
   def index
-    @coupons = Coupon.find_by_sql("select count(*) as count, i.code, i.product_code from coupons i group by i.code order by i.product_code")
+    @coupons = Coupon.find_by_sql("select count(*) as count, i.code, i.product_code from coupons i group by i.code order by i.product_code,i.code,count")
   end
 
   def show
