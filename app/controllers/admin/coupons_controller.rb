@@ -62,8 +62,8 @@ class Admin::CouponsController < ApplicationController
   def create
     if params[:coupon]
       form = params[:coupon]
-      
-      if Integer(form[:quantity]) == 1 && form[:coupon_code] != nil
+
+      if Integer(form[:quantity]) == 1 && !form[:coupon].blank?
         generate_coupon(form[:code], form[:product_code], form[:description],
                         form[:amount], form[:use_limit], form[:coupon].gsub(/[^0-9a-z ]/i, '').upcase)
       else
