@@ -4,15 +4,16 @@
   <tr>
     <th>Code</th>
     <th>Count</th>
+    <th>Product</th>
     <th></th>
   </tr>
 
-<% @coupons.each do |code, count| %>
+<% @coupons.each do |coupon| %>
   <tr>
-    <td><%= code %></td>
-    <td><%= count %></td>
-    <td><%= link_to 'Edit', admin_coupon_path(code) %></td>
-
+    <td><%= coupon.attributes['code'] %></td>
+    <td><%= coupon.attributes['count'] %></td>
+    <td><%= coupon.attributes['product_code'] %></td>
+    <td><%= link_to 'Edit', admin_coupon_path(coupon.attributes['code']) %></td>
   </tr>
 <% end %>
 </table>
