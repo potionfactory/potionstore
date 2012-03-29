@@ -14,3 +14,9 @@ gem 'jquery-rails', '>= 1.0.12'
 
 gem 'heroku'
 gem 'pg'
+
+group :assets do
+  gem 'sass-rails'
+  gem 'coffee-rails'
+  gem 'uglifier'
+end
