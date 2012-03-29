@@ -139,7 +139,7 @@ class Store::OrderController < ApplicationController
   def purchase
     redirect_to :action => 'index' and return unless params[:order] && params[:items]
 
-    @order = Order.find_by_uuid(params[:order][:unique_id])
+    @order = Order.find_by_uuid(params[:order][:uuid])
 
     if @order
       if @order.status == 'C'
