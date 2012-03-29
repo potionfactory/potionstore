@@ -440,10 +440,13 @@ class Order < ActiveRecord::Base
       params["l_qty#{i}"] = item.quantity
     end
     
-    params["l_number#{self.line_items.count}"] = self.line_items.count
-    params["l_name#{self.line_items.count}"] = self.coupon.description
-    params["l_amt#{self.line_items.count}"] = -3.00
-    params["l_qty#{self.line_items.count}"] = 1
+    if self.coupon
+      params["l_number#{self.line_items.count}"] = self.line_items.count
+      params["l_name#{self.line_items.count}"] = self.coupon.description
+      params["l_amt#{self.line_items.count}"] = 0 - self.coupon.amount
+      params["l_qty#{self.line_items.count}"] = 1
+    end
+    
 
     res = PayPal.make_nvp_call(params)
 
