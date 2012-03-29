@@ -429,16 +429,21 @@ class Order < ActiveRecord::Base
       'state' => (self.state.blank?) ? 'N/A' : self.state,
       'countrycode' => self.country,
       'zip' => self.zipcode,
-      'amt' => self.total,
+      'amt' => round_money(self.total).to_f,
       'invnum' => self.uuid.gsub('-', '')
     }
-
+ 
     self.line_items.each_with_index do |item, i|
       params["l_number#{i}"] = item.product.code
       params["l_name#{i}"] = item.product.name
-      params["l_amt#{i}"] = item.unit_price
+      params["l_amt#{i}"] = round_money(item.unit_price).to_f
       params["l_qty#{i}"] = item.quantity
     end
+    
+    params["l_number#{self.line_items.count}"] = self.line_items.count
+    params["l_name#{self.line_items.count}"] = self.coupon.description
+    params["l_amt#{self.line_items.count}"] = -3.00
+    params["l_qty#{self.line_items.count}"] = 1
 
     res = PayPal.make_nvp_call(params)
 
