@@ -224,8 +224,7 @@ class Order < ActiveRecord::Base
   def coupon_text=(coupon_text)
     return if !coupon_text || coupon_text.strip == ''
     coupon = Coupon.find_by_coupon(coupon_text.strip)
-    if coupon != nil &&
-        self.coupon == nil &&
+    if coupon != nil && self.coupon == nil &&
         (coupon.product_code == 'all' || has_item_with_code(coupon.product_code)) &&
         coupon.enabled? && !coupon.expired?
       self.coupon = coupon
@@ -431,7 +430,7 @@ class Order < ActiveRecord::Base
       'countrycode' => self.country,
       'zip' => self.zipcode,
       'amt' => self.total,
-      'invnum' => self.id
+      'invnum' => self.uuid.gsub('-', '')
     }
 
     self.line_items.each_with_index do |item, i|
