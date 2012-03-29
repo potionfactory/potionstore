@@ -54,7 +54,7 @@ end
 # Container used for mass payment
 #
 class PayPalPayment
-  attr_accessor :email, :receiver_id, :unique_id, :note, :amount
+  attr_accessor :email, :receiver_id, :uuid, :note, :amount
 end
 
 
@@ -502,7 +502,7 @@ class PayPal
           else
             params["L_RECEIVERID#{num}"] = payments[num].receiver_id
           end
-          params["L_UNIQUEID#{num}"] = payments[num].unique_id
+          params["L_UNIQUEID#{num}"] = payments[num].uuid
           params["L_NOTE#{num}"] = payments[num].note
           params["L_AMT#{num}"] = payments[num].amount
         }
