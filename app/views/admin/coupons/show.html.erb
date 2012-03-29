@@ -50,21 +50,25 @@
     <td><%= coupon.coupon %></td>
     <td><%= coupon.used_count %></td>
     <td><%= coupon.use_limit %></td>
-    <td>
     <% if ! coupon.expired? %>
+    <td>
       <%= coupon.enabled? ? 'Enabled' : 'Disabled' %>
-    <% else %>
-      <span class="red bold">Expired</span>
-    <% end %>
     </td>
     <td>
-    <% if coupon.expiration_date != nil %>
-      <%= distance_of_time_in_words_to_now(coupon.expiration_date) %>
-      <%= " ago" if coupon.expiration_date < Time.now %>
-    <% else %>
-      Never
-    <% end %>
+      <% if coupon.expiration_date != nil %>
+        <%= distance_of_time_in_words_to_now(coupon.expiration_date) %>
+        <%= " ago" if coupon.expiration_date < Time.now %>
+      <% else %>
+        Never
+      <% end %>
     </td>
+    <% else %>
+    <td>
+      <span class="red bold">Expired</span>
+    </td>
+    <td>&nbsp;</td>
+    <% end %>
+
     <td>
       <% if coupon.enabled? %>
         <%= link_to 'Disable', admin_disable_coupon_path(coupon, 'disable') %>
