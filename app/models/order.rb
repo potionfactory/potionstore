@@ -663,7 +663,6 @@ class Order < ActiveRecord::Base
     def generate_token
       token = UUIDTools::UUID.timestamp_create.to_s
       self.uuid = token
-      logger.debug("TOKEN : #{token}")
       return token
     end
 end
