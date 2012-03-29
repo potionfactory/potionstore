@@ -63,13 +63,22 @@ class Admin::CouponsController < ApplicationController
     if params[:coupon]
       form = params[:coupon]
 
+      
+      expiration_date = Time.new(form["expiration_date(1i)"].to_i, 
+                          form["expiration_date(2i)"].to_i,
+                          form["expiration_date(3i)"].to_i,
+                          form["expiration_date(4i)"].to_i,
+                          form["expiration_date(5i)"].to_i)
+                          
       if Integer(form[:quantity]) == 1 && !form[:coupon].blank?
         generate_coupon(form[:code], form[:product_code], form[:description],
-                        form[:amount], form[:use_limit], form[:coupon].gsub(/[^0-9a-z ]/i, '').upcase)
+                        form[:amount], form[:use_limit], form[:coupon].gsub(/[^0-9a-z ]/i, '').upcase,
+                        expiration_date)
       else
         1.upto(Integer(form[:quantity])) { |i|
           generate_coupon(form[:code], form[:product_code], form[:description],
-                          form[:amount], form[:use_limit], Coupon.random_string_of_length(16).upcase)
+                          form[:amount], form[:use_limit], Coupon.random_string_of_length(16).upcase,
+                          expiration_date)
         }
       end
 
@@ -97,7 +106,7 @@ class Admin::CouponsController < ApplicationController
   end
   
   private
-    def generate_coupon(code, product_code, description, amount, use_limit, coupon_code)
+    def generate_coupon(code, product_code, description, amount, use_limit, coupon_code, expiration_date)
       coupon = Coupon.new
       coupon.code = code
       coupon.product_code = product_code
@@ -106,6 +115,7 @@ class Admin::CouponsController < ApplicationController
       coupon.use_limit = use_limit
       coupon.coupon = coupon_code
       coupon.creation_time = Time.now
+      coupon.expiration_date = expiration_date
       coupon.save 
     end
 end
