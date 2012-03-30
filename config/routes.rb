@@ -7,7 +7,8 @@ Potionstore::Application.routes.draw do
     match "order/purchase" => "store/order#purchase"
     match "order/thankyou" => "store/order#thankyou"
     match "order/receipt" => "store/order#receipt"
-    
+    match "order/purchase_paypal" => "store/order#purchase_paypal"
+    match "order/confirm_paypal" => "store/order#confirm_paypal"
     resources :order, :singular => true, :module => "store"
   end
 

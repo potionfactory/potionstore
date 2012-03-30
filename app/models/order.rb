@@ -464,7 +464,7 @@ class Order < ActiveRecord::Base
       'method' => 'SetExpressCheckout',
       'returnURL' => return_url,
       'cancelURL' => cancel_url,
-      'paymentrequest_0_amt' => self.total,
+      'paymentrequest_0_amt' => round_money(self.total).to_f,
       'noshipping' => 1,
       'allownote' => 0,
       'channeltype' => 'Merchant',
@@ -477,6 +477,13 @@ class Order < ActiveRecord::Base
       params["l_paymentrequest_0_amt#{i}"] = item.unit_price
       params["l_paymentrequest_0_qty#{i}"] = item.quantity
     end
+    
+    if self.coupon
+      params["l_paymentrequest_0_number#{self.line_items.count + 1}"] = self.line_items.count
+      params["l_paymentrequest_0_name#{self.line_items.count + 1}"] = self.coupon.description
+      params["l_paymentrequest_0_amt#{self.line_items.count + 1}"] = 0 - self.coupon.amount
+      params["l_paymentrequest_0_qty#{self.line_items.count + 1}"] = 1
+    end
 
     return PayPal.make_nvp_call(params)
   end
@@ -487,8 +494,8 @@ class Order < ActiveRecord::Base
       'token' => token,
       'payerID' => payer_id,
       'paymentrequest_0_paymentaction' => 'Sale',
-      'paymentrequest_0_invnum' => self.id,
-      'paymentrequest_0_amt' => self.total,
+      'paymentrequest_0_invnum' => self.uuid.gsub('-', ''),
+      'paymentrequest_0_amt' => round_money(self.total).to_f
     }
 
     self.line_items.each_with_index do |item, i|
@@ -498,6 +505,13 @@ class Order < ActiveRecord::Base
       params["l_paymentrequest_0_qty#{i}"] = item.quantity
     end
 
+    if self.coupon
+      params["l_paymentrequest_0_number#{self.line_items.count}"] = self.line_items.count
+      params["l_paymentrequest_0_name#{self.line_items.count}"] = self.coupon.description
+      params["l_paymentrequest_0_amt#{self.line_items.count}"] = 0 - self.coupon.amount
+      params["l_paymentrequest_0_qty#{self.line_items.count}"] = 1
+    end
+    
     res = PayPal.make_nvp_call(params)
 
     if res.ack == 'Success' || res.ack == 'SuccessWithWarning'
