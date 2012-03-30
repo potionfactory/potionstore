@@ -28,7 +28,7 @@
 		<div class="clear">&nbsp;</div>
 	</div>
 	<div id="footer">
-		<div id="copyright"><p><%=$STORE_PREFS['copyright_html']%> Powered by <a href="http://www.potionfactory.com/potionstore">Potion Store</a></p></div>
+		<div id="copyright"><p><%=$STORE_PREFS['copyright_html'].html_safe %> Powered by <a href="http://www.potionfactory.com/potionstore">Potion Store</a></p></div>
 	</div>
 </div>
 <% if is_live?() && ! $STORE_PREFS['google_analytics_account'].blank? %>
