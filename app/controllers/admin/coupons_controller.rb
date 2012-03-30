@@ -63,13 +63,16 @@ class Admin::CouponsController < ApplicationController
     if params[:coupon]
       form = params[:coupon]
 
-      
-      expiration_date = Time.new(form["expiration_date(1i)"].to_i, 
-                          form["expiration_date(2i)"].to_i,
-                          form["expiration_date(3i)"].to_i,
-                          form["expiration_date(4i)"].to_i,
-                          form["expiration_date(5i)"].to_i)
-                          
+      if ! form["expiration_date(1i)"].blank?
+        expiration_date = Time.new(form["expiration_date(1i)"].to_i,
+                            form["expiration_date(2i)"].to_i,
+                            form["expiration_date(3i)"].to_i,
+                            form["expiration_date(4i)"].to_i,
+                            form["expiration_date(5i)"].to_i)
+      else
+        expiration_date = nil
+      end
+
       if Integer(form[:quantity]) == 1 && !form[:coupon].blank?
         generate_coupon(form[:code], form[:product_code], form[:description],
                         form[:amount], form[:use_limit], form[:coupon].gsub(/[^0-9a-z ]/i, '').upcase,
