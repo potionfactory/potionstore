@@ -597,7 +597,7 @@ class Order < ActiveRecord::Base
     command = $GCHECKOUT_FRONTEND.create_checkout_command
     command.continue_shopping_url = $STORE_PREFS['company_url']
     command.edit_cart_url = edit_cart_url
-
+    
     for line_item in self.line_items
       command.shopping_cart.create_item do |item|
         item.name = line_item.product.name
@@ -609,19 +609,11 @@ class Order < ActiveRecord::Base
         # The order doesn't become status C until we get final notification from Google,
         # but we're still optimistically showing the buyer their license key because otherwise
         # the delay can be as much as 20 minutes on the GCheckout side
-        line_item.license_key = make_license(line_item.product.code, self.licensee_name, line_item.quantity)
-        line_item.save()
-
-        digital_content = Google4R::Checkout::DigitalContent.new
-        digital_content.key = line_item.license_key
-        digital_content.description = "#{line_item.product.name}, licensed to #{self.licensee_name}"
-        digital_content.display_disposition = 'OPTIMISTIC'
-
-        # NOTE: If you don't like the way the license key is presented on Google Checkout after
-        # the buyer completes the purchase, you can also not set the digital_content.key and
-        # format everything with digital_content.description. You can even put HTML in there.
-
-        item.digital_content = digital_content
+        item.create_digital_content do |dc| 
+          dc.display_disposition = Google4R::Checkout::Item::DigitalContent::OPTIMISTIC 
+          dc.description = "#{line_item.product.name}, licensed to #{self.licensee_name}"
+          dc.key = make_license(line_item.product.code, self.licensee_name, line_item.quantity)
+        end
       end
     end
 
@@ -638,6 +630,8 @@ class Order < ActiveRecord::Base
 
     begin
       res = command.send_to_google_checkout()
+      self.coupon.used_count += 1
+      self.save
       return res.redirect_url
     rescue
       logger.error("An error while talking to google checkout: #{$!}")

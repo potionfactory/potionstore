@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.2'
 gem 'foreigner'
-gem "google4r-checkout", "~> 1.1.0"
+gem "google4r-checkout", :git => 'git://github.com/nbudin/google4r-checkout.git'
 gem "money", "~> 4.0.1"
 #gem 'mysql2', '~> 0.3.0'
 gem 'uuidtools'
