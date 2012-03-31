@@ -630,8 +630,10 @@ class Order < ActiveRecord::Base
 
     begin
       res = command.send_to_google_checkout()
-      self.coupon.used_count += 1
-      self.save
+      if self.coupon
+        self.coupon.used_count += 1
+        self.save
+      end
       return res.redirect_url
     rescue
       logger.error("An error while talking to google checkout: #{$!}")
