@@ -513,7 +513,7 @@ class Order < ActiveRecord::Base
       'note' => "Refund for #{itemsdesc} from #{company}"
     }
 
-    res = PayPal.make_nvp_call(params, micropayment = self.total < 12)
+    res = PayPal.make_nvp_call(params)
 
     if res.ack == 'Success' || res.ack == 'SuccessWithWarning'
       self.status = 'R'
