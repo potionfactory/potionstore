@@ -2,8 +2,8 @@
 
 <%= error_messages_for :order %>
 
-<% form_for(:order, :url => admin_orders_path) do |f| %>
-<%= render :partial => "form", :object => f -%>
+<%= form_for(:order, :url => admin_orders_path) do |f| %>
+<%= render :partial => "form", :object => f %>
   <p>
     <%= submit_tag "Create" %>
   </p>

@@ -1,6 +1,6 @@
 <h1>Add Coupons</h1>
 
-<% form_tag :action => "generate_coupons" do -%>
+<%= form_tag :action => "generate_coupons" do %>
 
 <table class="form">
 	<tr>
@@ -44,16 +44,16 @@
 	</tr>
 </table>
 
-<% end -%>
+<% end %>
 
-<% if @coupons -%>
+<% if @coupons %>
 <h2>Generated Coupons</h2>
 <pre>
-<% for coupon in @coupons -%>
+<% for coupon in @coupons %>
 <%= coupon.coupon %>
-<% end -%>
+<% end %>
 </pre>
-<% end -%>
+<% end %>
 
 
 

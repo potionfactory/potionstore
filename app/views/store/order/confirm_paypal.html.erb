@@ -50,20 +50,20 @@ $(document).ready(function(){
 	<% end %>
 
 	<table id="order">
-		<% for item in @order.line_items -%>
-		<%   if item.quantity > 0 -%>
+		<% for item in @order.line_items %>
+		<%   if item.quantity > 0 %>
 		<tr>
 			<td class="price"><%= item.quantity %> @ <%= number_to_currency item.unit_price %> each</td>
 			<td class="prod"><%= item.product.name %></td>
 		</tr>
-		<%   end -%>
-		<% end -%>
-		<% if @order.coupon -%>
+		<%   end %>
+		<% end %>
+		<% if @order.coupon %>
 		<tr>
 			<td class="price">-<%= number_to_currency(@order.coupon_amount) %></td>
 			<td><%= @order.coupon.description %></td>
 		</tr>
-		<% end -%>
+		<% end %>
 		<tr id="total">
 			<td></td>
 			<td>Total: <strong><%= number_to_currency @order.total %></strong></td>
@@ -71,7 +71,7 @@ $(document).ready(function(){
 	</table>
 </div>
 
-<% form_tag({:action => "purchase_paypal"}, {:onsubmit => "javascript:return validate();"}) do -%>
+<%= form_tag({:action => "purchase_paypal"}, {:onsubmit => "javascript:return validate();"}) do %>
 
 <div class="d"></div>
 
@@ -95,4 +95,4 @@ $(document).ready(function(){
 
 <p><input id="submit" name="commit" type="submit" value="&nbsp; Place Order &rarr;" /></p>
 
-<% end -%>
+<% end %>
