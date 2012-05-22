@@ -2,3 +2,5 @@ db/schema.rb
 log
 tmp
 **DS_Store
+config/google_checkout.yml
+config/paypal.yml
