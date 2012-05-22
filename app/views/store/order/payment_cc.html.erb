@@ -144,18 +144,15 @@ $(document).ready(function(){
 
 <div class="narrow">
 	<h2>Billing Information</h2>
-    <p>
-        <span><br/>Name:</span>
-        <label id="fname">First<br/><%= text_field "order", "first_name", :size=>15 %></label>
-        <label id="lname">Last<br/><%= text_field "order", "last_name", :size=>15 %></label>
-    </p>
-    <div class="cl"></div>
+    <p><label><span>First Name</span><%= text_field "order", "first_name", :size=>15, :class => "required" %></label></p>
+    <p><label><span>Last Name</span><%= text_field "order", "last_name", :size=>15, :class => "required" %></label></p>
+
     <p id="company">
         <label><span>Company:</span><%= text_field "order", "company" %></label>
     </p>
 
-    <p><label><span>Address Line 1:</span><input id="order_address1" name="address1" size="30" type="text" value="<%= params['address1'] %>"/></label></p>
-    <p><label><span>Address Line 2:</span><input id="order_address2" name="address2" size="30" type="text" value="<%= params['address2'] %>" /></label></p>
+    <p><label><span>Address Line 1:</span><input id="order_address1" class="required" name="address1" size="30" type="text" value="<%= params['address1'] %>"/></label></p>
+    <p><label><span>Address Line 2:</span><input id="order_address2" class="required" name="address2" size="30" type="text" value="<%= params['address2'] %>" /></label></p>
 
     <p>
         <label id="city"><span>City:</span><%= text_field "order", "city", :size=>15 %></label>
@@ -195,7 +192,7 @@ $(document).ready(function(){
 
     <p id="ccexp">
         <label><span>Expiration Date:</span>
-		<%= text_field "order", "cc_month", :maxlength => 2 %></label>/<%= text_field "order", "cc_year", :maxlength=>2 %>
+		<%= text_field "order", "cc_month", :maxlength => 2, :class => "required" %></label>/<%= text_field "order", "cc_year", :maxlength=>2, :class => "required" %>
 		<label>CSC: <%= text_field "order", "cc_code", :size =>4 %></label>
 		<%= image_tag "store/cvv.png", :alt => "Security Code", :width => 37, :height => 21 %>
     </p>
@@ -205,7 +202,7 @@ $(document).ready(function(){
 
 <div class="narrow">
 	<h2>Almost There</h2>
-	<p><label><span>Name on License:</span> <%= text_field "order", "licensee_name" %></label></p>
+	<p><label><span>Name on License:</span> <%= text_field "order", "licensee_name", :class => "required" %></label></p>
 	<p><label><span>Comment:</span><%= text_field "order", "comment" %></label></p>
 	<p><span>&nbsp;</span><label><input type="checkbox" name="subscribe" value="checked"/>
         Keep me updated with <%=$STORE_PREFS['company_name']%> news.</label></p>

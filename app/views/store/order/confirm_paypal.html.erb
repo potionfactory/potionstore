@@ -23,6 +23,14 @@ $(document).ready(function(){
 	$('#order_company').blur(  function() { setup_help_value('#order_company'); });
 	$('#order_comment').focus( function() { setup_help_value('#order_comment'); });
 	$('#order_comment').blur(  function() { setup_help_value('#order_comment'); });
+	
+	$('#purchase_paypal').validate({
+  		submitHandler: function (form) {
+          	setup_help_values();
+  			$('#submit').get(0).disabled = true;
+  			form.submit();
+  		}
+  	});
 });
 
 </script>
@@ -71,22 +79,22 @@ $(document).ready(function(){
 	</table>
 </div>
 
-<%= form_tag({:action => "purchase_paypal"}, {:onsubmit => "javascript:return validate();"}) do %>
+<%= form_tag({:action => "purchase_paypal"}, {:id => "purchase_paypal"}) do %>
 
 <div class="d"></div>
 
 <div class="narrow">
 	<h2>Your Information</h2>
-    <p><span>Name on License:</span> <%= text_field "order", "licensee_name" %></p>
+    <p><span>Name on License:</span> <%= text_field "order", "licensee_name", :class => "required" %></p>
 
-    <p><label><span>Email:</span><%= text_field "order", "email"  %></label></p>
+    <p><label><span>Email:</span><%= text_field "order", "email", :class => "required" %></label></p>
 
     <p id="company" style="margin-top:10px">
         <label><span>Company:</span><%= text_field "order", "company" %></label>
     </p>
 
     <p>
-		<label><span>Comment:</span><%= text_field "order", "comment" %></label>
+        <label><span>Comment:</span><%= text_field "order", "comment" %></label>
     </p>
 
 	<p><span>&nbsp;</span><label><input type="checkbox" name="subscribe" value="checked"/>
