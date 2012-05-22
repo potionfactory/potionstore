@@ -18,9 +18,9 @@ class Store::LostLicenseController < ApplicationController
       render :action => 'index' and return
     end
     for order in orders
-      OrderMailer.deliver_thankyou(order, bcc = false)
+      OrderMailer.thankyou(order, bcc = false).deliver
       if $STORE_PREFS['send_lost_license_sent_notification_email']
-        OrderMailer.deliver_lost_license_sent(order)
+        OrderMailer.lost_license_sent(order).deliver
       end
     end
     redirect_to :action => 'sent'

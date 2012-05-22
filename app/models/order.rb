@@ -387,7 +387,7 @@ class Order < ActiveRecord::Base
 
     if self.email_receipt_when_finishing && !self.gcheckout?
       # Google Checkout orders get the emails delivered when the final OK notification from Google arrives
-      OrderMailer.deliver_thankyou(self) if is_live?()
+      OrderMailer.thankyou(self).deliver if is_live?()
     end
   end
 

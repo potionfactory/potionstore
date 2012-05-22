@@ -160,7 +160,7 @@ class AdminController < ApplicationController
 
 #         coupons = order.add_promo_coupons()
 
-#         email = OrderMailer.deliver_thankyou(order)
+#         email = OrderMailer.thankyou(order).deliver
 #       end
 #     end
 #   end

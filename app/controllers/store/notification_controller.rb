@@ -93,7 +93,7 @@ class Store::NotificationController < ApplicationController
 
     order.status = 'C'
     order.finish_and_save()
-    OrderMailer.deliver_thankyou(order) if is_live?()
+    OrderMailer.thankyou(order).deliver if is_live?()
 
     order.gcheckout_archive_order()
   end
