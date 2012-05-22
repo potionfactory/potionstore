@@ -10,6 +10,14 @@ Potionstore::Application.routes.draw do
     match "order/purchase_paypal" => "store/order#purchase_paypal"
     match "order/confirm_paypal" => "store/order#confirm_paypal"
     resources :order, :singular => true, :module => "store"
+    
+    # lost license routes
+    match 'lost_license' => 'store/lost_license#index'
+    match 'lost_license/retrieve' => 'store/lost_license#retrieve'
+    match 'lost_license/sent' => 'store/lost_license#sent'
+
+    # google checkout
+    match 'notification/gcheckout' => 'store/notification#gcheckout'
   end
 
   namespace :admin do
