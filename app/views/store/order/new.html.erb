@@ -62,7 +62,7 @@ $(document).ready(function(){
 			<% if $STORE_PREFS['allow_google_checkout'] then -%>
 			<p class="gcheckout">
 				<%= radio_button_tag 'payment_type', 'gcheckout', @payment_type == 'gcheckout', :id => 'gcheckout' %>
-				<%= image_tag "store/gcheckout.gif", :alt => "Google Checkout" %>
+				<%= image_tag "https://checkout.google.com/buttons/checkoutMobile.gif?merchant_id=&w=118&h=24&style=white&variant=no-text&loc=en_US", :alt => "Buy with Google Wallet", :id => 'gcheckoutimg' %>
 			</p>
 			<% end -%>
 		</td>
