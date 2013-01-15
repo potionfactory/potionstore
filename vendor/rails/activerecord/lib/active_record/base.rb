@@ -1286,7 +1286,7 @@ module ActiveRecord #:nodoc:
 
       # Turns the +table_name+ back into a class name following the reverse rules of +table_name+.
       def class_name(table_name = table_name) # :nodoc:
-        ActiveSupport::Deprecation.warn("ActiveRecord::Base#class_name is deprecated and will be removed in Rails 2.3.9.", caller)
+        ActiveSupport::Deprecation.warn("ActiveRecord::Base#class_name is deprecated and will be removed in Rails 3.", caller)
 
         # remove any prefix and/or suffix from the table name
         class_name = table_name[table_name_prefix.length..-(table_name_suffix.length + 1)].camelize
@@ -1897,7 +1897,11 @@ module ActiveRecord #:nodoc:
               # end
               self.class_eval <<-EOS, __FILE__, __LINE__ + 1
                 def self.#{method_id}(*args)
-                  options = args.extract_options!
+                  options = if args.length > #{attribute_names.size}
+                              args.extract_options!
+                            else
+                              {}
+                            end
                   attributes = construct_attributes_from_arguments(
                     [:#{attribute_names.join(',:')}],
                     args
@@ -2333,17 +2337,17 @@ module ActiveRecord #:nodoc:
         # And for value objects on a composed_of relationship:
         #   { :address => Address.new("123 abc st.", "chicago") }
         #     # => "address_street='123 abc st.' and address_city='chicago'"
-        def sanitize_sql_hash_for_conditions(attrs, default_table_name = quoted_table_name)
+        def sanitize_sql_hash_for_conditions(attrs, default_table_name = quoted_table_name, top_level = true)
           attrs = expand_hash_conditions_for_aggregates(attrs)
 
           conditions = attrs.map do |attr, value|
             table_name = default_table_name
 
-            unless value.is_a?(Hash)
+            if not value.is_a?(Hash)
               attr = attr.to_s
 
               # Extract table name from qualified attribute names.
-              if attr.include?('.')
+              if attr.include?('.') and top_level
                 attr_table_name, attr = attr.split('.', 2)
                 attr_table_name = connection.quote_table_name(attr_table_name)
               else
@@ -2351,8 +2355,10 @@ module ActiveRecord #:nodoc:
               end
 
               attribute_condition("#{attr_table_name}.#{connection.quote_column_name(attr)}", value)
+            elsif top_level
+              sanitize_sql_hash_for_conditions(value, connection.quote_table_name(attr.to_s), false)
             else
-              sanitize_sql_hash_for_conditions(value, connection.quote_table_name(attr.to_s))
+              raise ActiveRecord::StatementInvalid
             end
           end.join(' AND ')
 
