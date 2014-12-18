@@ -1,3 +1,9 @@
+Announcement
+------------
+
+This official branch of Potion Store is no longer supported.
+
+
 Welcome to Potion Store
 -----------------------
 
